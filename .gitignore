@@ -20,3 +20,5 @@ captures/
 .externalNativeBuild/
 .cxx/
 .kotlin/
+.vscode/
+gradle/gradle-daemon-jvm.properties

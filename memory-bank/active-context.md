@@ -1,6 +1,6 @@
 # Active context
 
-Last updated: 2026-04-29 (after Phase 0)
+Last updated: 2026-04-30 (pipeline done, Phase 0 finalized)
 
 ## Current phase
 
@@ -8,19 +8,20 @@ Last updated: 2026-04-29 (after Phase 0)
 
 ## What was just completed
 
-**Phase 0 — Test infrastructure setup**
+**Phase 0 — Test infrastructure setup (finalized)**
 
-- Added 6 new test library entries to `gradle/libs.versions.toml` (`kotlinx-coroutines-test`, `turbine`, `room-testing`, `work-testing`, `ktor-client-mock`, `truth`)
-- Added 2 new version refs (`turbine = "1.2.0"`, `truth = "1.4.4"`)
-- Wired all test deps in `app/build.gradle.kts` (testImplementation + androidTestImplementation)
-- Set `ksp { arg("room.schemaLocation", "$projectDir/schemas") }` for Room schema export
-- Created test directory structure:
-  - `app/src/test/java/.../testutil/` — shared test utilities
-  - `app/src/test/java/.../fakes/` — fake implementations (reserved, empty)
-  - `app/src/test/resources/fixtures/examplemanhwa/` — HTML fixtures (reserved, empty)
-- Created `testutil/MainDispatcherRule.kt` — JUnit TestRule replacing Dispatchers.Main
-- Created `testutil/KtorMockHelpers.kt` — `mockHttpClient()`, `readFixture()`, `respondHtml()`
-- Created `memory-bank/` directory with 7 context files
+- Test utilities fixed for Ktor 3.0.1 mock engine API and AGP 9.x compatibility
+- Build compiles (`assembleDebug`), unit tests pass, lint passes
+- WSL environment bootstrapped (JDK 17 + Android SDK via `scripts/setup-wsl.sh`)
+
+**CI/CD pipeline**
+
+- Local pre-push hook: `scripts/pre-push` (unit tests, optional instrumented)
+- Manual full check: `scripts/ci-check` (lint + unit + instrumented + assemble)
+- GitHub Actions CI: `.github/workflows/ci.yml` (push/PR → lint → test → assemble → upload)
+- GitHub Actions Release: `.github/workflows/release.yml` (tag v* → build → GitHub Release)
+- Conditional signing: `app/build.gradle.kts` reads `KEYSTORE_*` env vars, no-op without them
+- Commit conventions: see `memory-bank/commit-conventions.md`
 
 ## What's next
 
@@ -43,6 +44,7 @@ None.
 - Hand-rolled fakes for interfaces we control (`Source`, repositories) — not Mockito/MockK
 - `com.opus.novelparser` is the package (not `com.example.reader` as in architecture examples)
 - Entities/DAOs/migrations go under `data/local/database/` subpackages (dao, entities, mappers, migrations)
+- Commit prefixes: `feat:` `fix:` `refactor:` `ci:` `cd:` `docs:` — see `memory-bank/commit-conventions.md`
 
 ## Pending decisions
 

@@ -11,6 +11,10 @@ Phase-by-phase implementation status. Checked = done, empty = planned, ~ = in pr
 - [x] Create test directory structure (`testutil/`, `fakes/`, `fixtures/`)
 - [x] Create `testutil/MainDispatcherRule.kt`
 - [x] Create `testutil/KtorMockHelpers.kt`
+- [x] Fix Ktor 3.0.1 mock engine API compatibility
+- [x] Fix AGP 9.x Kotlin source sets compatibility (`gradle.properties`)
+- [x] Fix themes (Material Components → platform Material)
+- [x] Set up CI/CD pipeline (pre-push hook, GitHub Actions, release workflow)
 - [ ] Create `testutil/TestFixtures.kt` (deferred to Phase 1)
 
 ## Phase 1 — Domain models & Source contract TDD
