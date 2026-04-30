@@ -1,0 +1,108 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  "instructions": [
+    "architecture.md",
+    "app/src/main/**/AGENTS.md",
+    "memory-bank/active-context.md",
+    "memory-bank/conventions.md"
+  ],
+
+  "permission": {
+    "edit": "allow",
+    "webfetch": "ask",
+    "bash": {
+      "*":                                  "ask",
+
+      "ls *":                               "allow",
+      "cat *":                              "allow",
+      "find *":                             "allow",
+      "grep *":                             "allow",
+      "rg *":                               "allow",
+      "head *":                             "allow",
+      "tail *":                             "allow",
+      "wc *":                               "allow",
+      "tree *":                             "allow",
+      "file *":                             "allow",
+
+      "git status":                         "allow",
+      "git log *":                          "allow",
+      "git diff *":                         "allow",
+      "git show *":                         "allow",
+      "git branch":                         "allow",
+      "git branch --show-current":          "allow",
+      "git add *":                          "allow",
+      "git restore *":                      "allow",
+      "git stash":                          "allow",
+      "git stash list":                     "allow",
+      "git stash show *":                   "allow",
+
+      "git commit *":                       "ask",
+      "git push *":                         "ask",
+      "git pull *":                         "ask",
+      "git merge *":                        "ask",
+      "git rebase *":                       "ask",
+      "git checkout *":                     "ask",
+      "git switch *":                       "ask",
+      "git tag *":                          "ask",
+
+      "git reset --hard *":                 "deny",
+      "git clean -fd*":                     "deny",
+      "git push --force*":                  "deny",
+      "git push -f *":                      "deny",
+
+      "./gradlew :app:assembleDebug":       "allow",
+      "./gradlew :app:lintDebug":           "allow",
+      "./gradlew :app:testDebugUnitTest":   "allow",
+      "./gradlew :app:testDebug*":          "allow",
+      "./gradlew :app:ktlintCheck":         "allow",
+      "./gradlew :app:detekt":              "allow",
+      "./gradlew :app:dependencies *":      "allow",
+      "./gradlew :app:tasks":               "allow",
+      "./gradlew help *":                   "allow",
+      "./gradlew tasks":                    "allow",
+      "./gradlew --version":                "allow",
+
+      "./gradlew :app:ktlintFormat":        "ask",
+      "./gradlew :app:installDebug":        "ask",
+      "./gradlew :app:assembleRelease":     "ask",
+      "./gradlew :app:bundleRelease":       "ask",
+      "./gradlew :app:connectedDebugAndroidTest": "ask",
+      "./gradlew clean":                    "ask",
+
+      "adb *":                              "ask",
+      "adb devices":                        "allow",
+      "adb logcat *":                       "allow",
+      "adb shell am *":                     "ask",
+      "adb install *":                      "deny",
+      "adb uninstall *":                    "deny",
+
+      "rm -rf *":                           "deny",
+      "rm -fr *":                           "deny",
+      "sudo *":                             "deny",
+      "chmod -R *":                         "deny",
+      "chown *":                            "deny",
+      "curl * | *sh*":                      "deny",
+      "wget * | *sh*":                      "deny"
+    }
+  },
+
+  "watcher": {
+    "ignore": [
+      "build/**",
+      "**/build/**",
+      ".gradle/**",
+      ".idea/**",
+      ".kotlin/**",
+      ".cxx/**",
+      ".externalNativeBuild/**",
+      "captures/**",
+      "**/*.iml",
+      "local.properties",
+      "**/generated/**",
+      "**/intermediates/**",
+      "**/outputs/**",
+      "**/tmp/**"
+    ]
+  }
+}
