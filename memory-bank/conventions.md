@@ -97,3 +97,12 @@ fun onAction(action: XAction)           // single entry point for UI events
 - Public APIs: KDoc on type + non-obvious members
 - `camelCase` functions; `PascalCase` composables; `UPPER_SNAKE` constants
 - No abbreviations except established ones (`url`, `id`, `db`, `vm`)
+
+## Git & GitHub
+
+- **Local operations** (`add`, `commit`, `branch`, `merge`, `restore`, `rebase`): use `git`
+- **GitHub operations** (`push`, `pull`, `pr`, `release`, `issue`, `workflow`): use `gh` CLI
+- Never use raw `git push` — use `gh` to interact with the remote
+- Create PRs with `gh pr create`, merge with `gh pr merge`
+- Create releases with `gh release create`
+- See `memory-bank/commit-conventions.md` for commit prefix rules

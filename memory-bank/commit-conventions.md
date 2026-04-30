@@ -24,3 +24,17 @@ Every commit uses one of the prefixes below. A commit never mixes prefixes.
 5. **Subject line:** imperative mood, present tense, ≤ 72 characters. Body explains *why*, not *what*.
 
 6. **Pre-push hook validates unit tests** before every push. Run `scripts/ci-check` before opening a PR for the full suite.
+
+7. **GitHub interactions use `gh` CLI.** Local git operations (`add`, `commit`, `branch`, `merge`, `restore`) use `git`. Remote GitHub operations (`push`, `pull`, `pr`, `release`, `issue`, `workflow`) use `gh`. Examples:
+
+   ```bash
+   # Local — use git
+   git add src/foo.kt
+   git commit -m "feat: add foo"
+   git branch feature/foo
+
+   # Remote — use gh
+   gh pr create --title "feat: add foo" --body "..."
+   gh pr merge --squash
+   gh release create v1.0.0 --title "First release" --generate-notes
+   ```
