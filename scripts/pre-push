@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# pre-push hook — runs unit tests. Instrumented tests run only if an emulator
+# or physical device is attached.
+
+if [ -z "${ANDROID_HOME:-}" ]; then
+    echo "ERROR: ANDROID_HOME is not set. Run scripts/setup-wsl.sh first."
+    exit 1
+fi
+
+echo "=============================="
+echo " Pre-push: Unit Tests"
+echo "=============================="
+./gradlew :app:testDebugUnitTest
+
+HAS_DEVICE=false
+if command -v adb >/dev/null 2>&1; then
+    if adb devices 2>/dev/null | tail -n +2 | grep -q "device$"; then
+        HAS_DEVICE=true
+    fi
+fi
+
+if $HAS_DEVICE; then
+    echo ""
+    echo "=============================="
+    echo " Pre-push: Instrumented Tests"
+    echo "=============================="
+    ./gradlew :app:connectedDebugAndroidTest
+else
+    echo ""
+    echo "NOTE: No emulator/device detected. Skipping instrumented tests."
+    echo "      Run 'scripts/ci-check' before opening a PR."
+fi
+
+echo ""
+echo "=============================="
+echo " Pre-push: PASSED"
+echo "=============================="

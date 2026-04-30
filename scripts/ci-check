@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Full local CI check — run manually before opening a PR.
+# Runs lint, unit tests, instrumented tests (if emulator/device present),
+# and debug assemble.
+
+echo "=============================="
+echo " Lint"
+echo "=============================="
+./gradlew :app:lintDebug
+
+echo ""
+echo "=============================="
+echo " Unit Tests"
+echo "=============================="
+./gradlew :app:testDebugUnitTest
+
+echo ""
+echo "=============================="
+echo " Instrumented Tests"
+echo "=============================="
+HAS_DEVICE=false
+if command -v adb >/dev/null 2>&1; then
+    if adb devices 2>/dev/null | tail -n +2 | grep -q "device$"; then
+        HAS_DEVICE=true
+    fi
+fi
+
+if $HAS_DEVICE; then
+    ./gradlew :app:connectedDebugAndroidTest
+else
+    echo "No emulator/device detected. Skipping instrumented tests."
+fi
+
+echo ""
+echo "=============================="
+echo " Assemble Debug"
+echo "=============================="
+./gradlew :app:assembleDebug
+
+echo ""
+echo "=============================="
+echo " ci-check: PASSED"
+echo "=============================="
