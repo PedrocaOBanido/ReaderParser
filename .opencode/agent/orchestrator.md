@@ -63,7 +63,7 @@ permission:
     "journey-runner":                     allow
     "refactor-renamer":                  allow
     "researcher":                         allow
-    "*":                                  deny
+    "*":                                  allow
 ---
 
 # Orchestrator
