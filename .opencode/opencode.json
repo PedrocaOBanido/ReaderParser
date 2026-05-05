@@ -10,7 +10,8 @@
 
   "permission": {
     "edit": "allow",
-    "webfetch": "ask",
+    "webfetch": "allow",
+    "websearch": "allow",
     "bash": {
       "*":                                  "ask",
 
@@ -24,6 +25,7 @@
       "wc *":                               "allow",
       "tree *":                             "allow",
       "file *":                             "allow",
+      "w3m *":                              "allow",
 
       "git status":                         "allow",
       "git log *":                          "allow",
@@ -70,6 +72,7 @@
       "./gradlew :app:connectedDebugAndroidTest": "ask",
       "./gradlew clean":                    "ask",
 
+      "android *":                          "allow",
       "adb *":                              "ask",
       "adb devices":                        "allow",
       "adb logcat *":                       "allow",

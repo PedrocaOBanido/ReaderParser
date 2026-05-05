@@ -2,6 +2,18 @@
 description: Handles Room schema changes. Bumps version, writes explicit SQL migrations, adds migration tests. Refuses fallbackToDestructiveMigration.
 mode: subagent
 temperature: 0.1
+agent:
+  class: W
+  owns: Room schema changes, migrations, version bumps, new entities/DAOs
+  reads: data/local/database/AGENTS.md
+  routing:
+    - entity
+    - DAO
+    - migration
+    - schema
+    - version bump
+    - column
+    - table
 permission:
   edit: allow
   write: allow
@@ -25,16 +37,16 @@ You handle Room schema changes. You always do exactly these steps, in
 order:
 
 1. Read `AppDatabase.kt`. Note the current `version` and the entity list.
-2. Read the latest schema JSON in `app/schemas/com.example.reader.data.local.database.AppDatabase/`.
+2. Read the latest schema JSON in `app/schemas/com.opus.readerparser.data.local.database.AppDatabase/`.
 3. Update affected `@Entity` data classes, DAOs, and mappers.
 4. Bump `AppDatabase.version` by exactly 1. Never skip versions.
 5. Create `Migration_<old>_<new>.kt` under
-   `app/src/main/kotlin/com/example/reader/data/local/database/migrations/`.
+   `app/src/main/kotlin/com/opus/readerparser/data/local/database/migrations/`.
    Use hand-written SQL. Reference Room's `Migration` class directly.
 6. Register the migration in `core/di/DatabaseModule.kt` where the database
    is built.
 7. Add a migration test in
-   `app/src/androidTest/kotlin/com/example/reader/data/local/database/MigrationTest.kt`
+   `app/src/androidTest/kotlin/com/opus/readerparser/data/local/database/MigrationTest.kt`
    using `MigrationTestHelper`. The test must:
    - Open the DB at the old version.
    - Insert representative rows.
@@ -76,4 +88,4 @@ prose. List the entities you'll modify, the new version number, and
 whether identity changes are involved. Stop and wait for confirmation
 before any edits.
 
-Reference `app/src/main/kotlin/com/example/reader/data/local/database/AGENTS.md`.
+Reference `app/src/main/kotlin/com/opus/readerparser/data/local/database/AGENTS.md`.

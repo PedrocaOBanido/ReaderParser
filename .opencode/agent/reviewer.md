@@ -2,6 +2,15 @@
 description: Read-only code reviewer. Audits diffs for layering, identity, state, and test coverage violations. Does not edit files.
 mode: subagent
 temperature: 0.1
+agent:
+  class: R
+  owns: Read-only audit of layering, identity, state, and test coverage
+  reads: the diff under review
+  routing:
+    - review
+    - audit
+    - find issues
+    - before merging
 permission:
   edit: deny
   write: deny

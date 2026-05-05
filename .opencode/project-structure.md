@@ -34,13 +34,13 @@ reader-app/                              # repo root
 │   ├── build.gradle.kts
 │   ├── proguard-rules.pro
 │   ├── schemas/                         # Room exported schemas — CHECK IN
-│   │   └── com.example.reader.data.local.database.AppDatabase/
+│   │   └── com.opus.readerparser.data.local.database.AppDatabase/
 │   │       ├── 1.json
 │   │       └── 2.json
 │   └── src/
 │       ├── main/
 │       │   ├── AndroidManifest.xml
-│       │   ├── kotlin/com/example/reader/
+│       │   ├── kotlin/com/opus/readerparser/
 │       │   │   ├── App.kt                                 # @HiltAndroidApp
 │       │   │   │
 │       │   │   ├── ui/
@@ -163,7 +163,7 @@ reader-app/                              # repo root
 │       │       └── xml/
 │       │
 │       ├── test/                        # JVM unit tests
-│       │   ├── kotlin/com/example/reader/
+│       │   ├── kotlin/com/opus/readerparser/
 │       │   │   ├── fakes/                                 # hand-rolled fakes
 │       │   │   │   ├── FakeSeriesRepository.kt
 │       │   │   │   ├── FakeChapterRepository.kt
@@ -181,7 +181,7 @@ reader-app/                              # repo root
 │       │               └── chapter.html
 │       │
 │       └── androidTest/                 # instrumented tests
-│           └── kotlin/com/example/reader/
+│           └── kotlin/com/opus/readerparser/
 │               ├── data/local/database/
 │               │   └── MigrationTest.kt
 │               └── ui/                                    # Compose UI tests
@@ -292,14 +292,14 @@ default "en" if not given).
 
 Required steps:
 
-1. Create directory `app/src/main/kotlin/com/example/reader/sources/${1,,}/`
+1. Create directory `app/src/main/kotlin/com/opus/readerparser/sources/${1,,}/`
    (lowercase the package).
 2. Create `$1.kt` extending `HtmlSource`. Override only the methods listed in
-   `app/src/main/kotlin/com/example/reader/sources/AGENTS.md`. Leave the
+   `app/src/main/kotlin/com/opus/readerparser/sources/AGENTS.md`. Leave the
    non-applicable content method as `error("...")`.
 3. Compute `id` via `computeSourceId("$1", "$4", ContentType.$3)`.
 4. Add the source to the `SourceModule` provider in
-   `app/src/main/kotlin/com/example/reader/core/di/SourceModule.kt`.
+   `app/src/main/kotlin/com/opus/readerparser/core/di/SourceModule.kt`.
 5. Create test scaffolding under `app/src/test/kotlin/.../sources/${1,,}/`
    with placeholder fixtures in `app/src/test/resources/fixtures/${1,,}/`.
 
@@ -317,7 +317,7 @@ agent: screen-author
 
 Create a new screen named `$1` (PascalCase, no "Screen" suffix).
 
-Generate exactly four files in `app/src/main/kotlin/com/example/reader/ui/${1,,}/`:
+Generate exactly four files in `app/src/main/kotlin/com/opus/readerparser/ui/${1,,}/`:
 
 1. `$1Screen.kt` — entry point. Takes `viewModel: $1ViewModel = hiltViewModel()`,
    collects state with `collectAsStateWithLifecycle()`, collects effects in
@@ -372,11 +372,11 @@ Required steps:
    `app/schemas/`.
 2. Bump `AppDatabase.version` by 1.
 3. Create `Migration_${old}_${new}.kt` under
-   `app/src/main/kotlin/com/example/reader/data/local/database/migrations/`
+   `app/src/main/kotlin/com/opus/readerparser/data/local/database/migrations/`
    with explicit SQL for the change. Do not use any auto-migration helpers.
 4. Register the migration in `DatabaseModule`.
 5. Add a migration test in
-   `app/src/androidTest/kotlin/com/example/reader/data/local/database/MigrationTest.kt`
+   `app/src/androidTest/kotlin/com/opus/readerparser/data/local/database/MigrationTest.kt`
    using `MigrationTestHelper`.
 6. Update affected entities, DAOs, and mappers.
 7. Run `./gradlew :app:assembleDebug` to regenerate the schema JSON; verify
@@ -401,7 +401,7 @@ description: Writes Source plugins for new sites. Knows HtmlSource, Jsoup, and t
 ---
 
 You write `Source` plugins for this app. The contract you implement is in
-`app/src/main/kotlin/com/example/reader/data/source/Source.kt`. The base
+`app/src/main/kotlin/com/opus/readerparser/data/source/Source.kt`. The base
 class you extend is `HtmlSource` in the same directory.
 
 You have three jobs and only three:
@@ -447,7 +447,7 @@ You don't write business logic. You scaffold the structure and leave TODO
 markers for the ViewModel body. Ask the user for the screen's purpose before
 writing any state fields.
 
-Reference: `app/src/main/kotlin/com/example/reader/ui/AGENTS.md`.
+Reference: `app/src/main/kotlin/com/opus/readerparser/ui/AGENTS.md`.
 ```
 
 ### `.opencode/agent/room-migration.md`
@@ -471,7 +471,7 @@ You never:
 - Skip the migration test.
 - Change a primary key or foreign key without explicit approval — ask first.
 
-Reference: `app/src/main/kotlin/com/example/reader/data/local/database/AGENTS.md`.
+Reference: `app/src/main/kotlin/com/opus/readerparser/data/local/database/AGENTS.md`.
 ```
 
 ### `.opencode/agent/reviewer.md`
@@ -506,7 +506,7 @@ and let the user decide.
 
 Short, targeted reminders. Each lives next to the code it governs.
 
-### `app/src/main/kotlin/com/example/reader/ui/AGENTS.md`
+### `app/src/main/kotlin/com/opus/readerparser/ui/AGENTS.md`
 
 ```markdown
 # UI rules
@@ -521,7 +521,7 @@ Short, targeted reminders. Each lives next to the code it governs.
 - Hoist anything used in 2+ screens into `ui/components/`.
 ```
 
-### `app/src/main/kotlin/com/example/reader/data/source/AGENTS.md`
+### `app/src/main/kotlin/com/opus/readerparser/data/source/AGENTS.md`
 
 ```markdown
 # Source contract
@@ -533,7 +533,7 @@ Short, targeted reminders. Each lives next to the code it governs.
 - Sources throw on error. They do not log, do not catch, do not return null sentinels.
 ```
 
-### `app/src/main/kotlin/com/example/reader/sources/AGENTS.md`
+### `app/src/main/kotlin/com/opus/readerparser/sources/AGENTS.md`
 
 ```markdown
 # Adding a source
@@ -549,7 +549,7 @@ Use `selectFirst(...)` + null-safety, not `select(...).first()`. Always
 `absUrl(...)` for hrefs and image sources. Always `.trim()` text nodes.
 ```
 
-### `app/src/main/kotlin/com/example/reader/data/local/database/AGENTS.md`
+### `app/src/main/kotlin/com/opus/readerparser/data/local/database/AGENTS.md`
 
 ```markdown
 # Database rules
@@ -592,8 +592,8 @@ When setting up the repo from scratch:
 
 1. Create the Android project with Android Studio's "Empty Activity (Compose)"
    template. Pick the package name; the rest of this doc uses
-   `com.example.reader` as a placeholder.
-2. Replace `app/src/main/kotlin/com/example/reader/MainActivity.kt` with the
+   `com.opus.readerparser` as a placeholder.
+2. Replace `app/src/main/kotlin/com/opus/readerparser/MainActivity.kt` with the
    directory layout from §1. Empty packages are fine; create files as needed.
 3. Drop in `architecture.md`, `AGENTS.md`, and `opencode.json` at the repo root.
 4. Create `.opencode/agent/`, `.opencode/command/` and populate from §4 and §5.

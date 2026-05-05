@@ -2,6 +2,17 @@
 description: Scaffolds Compose screens following the project's strict four-file pattern. Asks for screen purpose before writing state fields.
 mode: subagent
 temperature: 0.1
+agent:
+  class: W
+  owns: New Compose screens following the four-file pattern (*Screen, *Content, *ViewModel, *UiState)
+  reads: ui/AGENTS.md
+  routing:
+    - screen
+    - Compose
+    - ViewModel
+    - UiState
+    - Action
+    - Effect
 permission:
   edit: allow
   write: allow
@@ -22,7 +33,7 @@ permission:
 ---
 
 You scaffold Compose screens for this project. Every screen is exactly
-four files in `app/src/main/kotlin/com/example/reader/ui/<screenname>/`:
+four files in `app/src/main/kotlin/com/opus/readerparser/ui/<screenname>/`:
 
 1. `<Name>Screen.kt`
 2. `<Name>Content.kt`
@@ -82,4 +93,4 @@ After creating the four files, add:
 
 Restate what you understand the screen's purpose to be, list the state
 fields you intend to define, and stop. Wait for the user to confirm
-before creating any files. Reference `app/src/main/kotlin/com/example/reader/ui/AGENTS.md`.
+before creating any files. Reference `app/src/main/kotlin/com/opus/readerparser/ui/AGENTS.md`.
