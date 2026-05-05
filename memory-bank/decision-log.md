@@ -23,7 +23,7 @@ Chronological record of non-obvious decisions. Newest first.
 
 ## 2026-04-29 — Bootstrap decisions (prior to this session)
 
-**Decision:** Package is `com.opus.novelparser`, not `com.example.reader` as in architecture examples.
+**Decision:** Package is `com.opus.readerparser`, not `com.example.reader` as in architecture examples.
 **Why:** Android Studio project template default. Architecture examples use `com.example.reader` for illustration only.
 
 **Decision:** Source files placed under `src/main/java/` not `src/main/kotlin/`.

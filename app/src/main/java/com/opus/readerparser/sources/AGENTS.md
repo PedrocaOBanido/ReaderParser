@@ -9,3 +9,5 @@
 
 Use `selectFirst(...)` + null-safety, not `select(...).first()`. Always
 `absUrl(...)` for hrefs and image sources. Always `.trim()` text nodes.
+- For Android API reference while implementing a source, load
+  `skill("android-cli")` and use `android docs search <query>`.

@@ -1,10 +1,17 @@
 # Active context
 
-Last updated: 2026-04-30 (pushed, ready for Phase 1)
+Last updated: 2026-05-01 (Android CLI integration)
 
 ## Current phase
 
-**Phase 1** — Domain models & Source contract TDD (not yet started)
+**Phase 8** — Android CLI integration (in progress)
+
+- `android-cli` skill integrated into pipeline and agents
+- `scripts/emulator` + `scripts/run-journeys` created for AVD + journey management
+- `journeys/` directory with 3 initial XML specs (`library.xml`, `browse.xml`, `series.xml`)
+- `AGENTS.md` §15 documents when/how agents load the skill
+- `memory-bank/` files updated to reflect Phase 8
+- TODO: `chmod +x` the new scripts
 
 ## What was just completed
 
@@ -42,7 +49,7 @@ None.
 - TDD: tests first, then production code (red → green → refactor)
 - No `runBlocking` — use `runTest` from `kotlinx-coroutines-test`
 - Hand-rolled fakes for interfaces we control (`Source`, repositories) — not Mockito/MockK
-- `com.opus.novelparser` is the package (not `com.example.reader` as in architecture examples)
+- `com.opus.readerparser` is the package (not `com.example.reader` as in architecture examples)
 - Entities/DAOs/migrations go under `data/local/database/` subpackages (dao, entities, mappers, migrations)
 - Commit prefixes: `feat:` `fix:` `refactor:` `ci:` `cd:` `docs:` — see `memory-bank/commit-conventions.md`
 

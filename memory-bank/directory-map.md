@@ -1,9 +1,9 @@
 # Directory map
 
-Package root: `com.opus.novelparser` (under `app/src/main/java/`)
+Package root: `com.opus.readerparser` (under `app/src/main/java/`)
 
 ```
-com.opus.novelparser/
+com.opus.readerparser/
 ├── App.kt                              @HiltAndroidApp entry point
 │
 ├── domain/
@@ -51,12 +51,22 @@ com.opus.novelparser/
 
 | Source set | Path | Purpose |
 |---|---|---|
-| Unit tests | `app/src/test/java/com/opus/novelparser/` | Domain models, ViewModels, repositories, sources |
-| Test utilities | `app/src/test/java/com/opus/novelparser/testutil/` | Shared helpers available in all JVM tests |
-| Fakes | `app/src/test/java/com/opus/novelparser/fakes/` | Hand-rolled test doubles for interfaces we control |
+| Unit tests | `app/src/test/java/com/opus/readerparser/` | Domain models, ViewModels, repositories, sources |
+| Test utilities | `app/src/test/java/com/opus/readerparser/testutil/` | Shared helpers available in all JVM tests |
+| Fakes | `app/src/test/java/com/opus/readerparser/fakes/` | Hand-rolled test doubles for interfaces we control |
 | Test resources | `app/src/test/resources/` | HTML fixtures, JSON fixtures |
-| Instrumented tests | `app/src/androidTest/java/com/opus/novelparser/` | Compose UI tests, migration tests, worker tests |
+| Instrumented tests | `app/src/androidTest/java/com/opus/readerparser/` | Compose UI tests, migration tests, worker tests |
 | Room schemas | `app/schemas/` | Auto-exported by KSP (checked into VCS) |
+| Journey tests | `journeys/` | XML specs for screen-to-screen flow tests on emulator |
+
+## Infrastructure
+
+| File | Purpose |
+|---|---|
+| `avd-config.json` | Shared AVD configuration (device, API, image) for pipeline and agents |
+| `scripts/emulator` | AVD lifecycle management via `android emulator` |
+| `scripts/run-journeys` | Journey test listing and execution guidance |
+| `.github/workflows/journey.yml` | Manual-trigger CI workflow for journey tests on emulator |
 
 ## Key identity rules
 

@@ -305,3 +305,40 @@ To save round trips on out-of-scope requests:
 
 If a request implies any of the above, surface the conflict before writing
 code.
+
+---
+
+## 15. Android CLI integration
+
+The `android-cli` skill is available to all agents. Load it via
+`skill("android-cli")` when:
+
+| Situation | Use this |
+|---|---|
+| Writing Compose UI, unsure about API behavior | `android docs search <query>` |
+| Verifying Compose output on a running emulator | `android layout` or `android screen capture --annotate` |
+| Debugging a UI test failure | `android layout --diff` to see what changed |
+| Checking SDK/environment state | `android info` |
+| Provisioning an emulator for manual testing | `android emulator create` then `android emulator start` |
+| Running an APK on a connected device | `android run --apks=<path>` |
+| Executing journey tests | Read `journeys/*.xml`, follow steps with `android layout` + `adb shell input` |
+
+**Emulator provisioning by agents:**
+
+- Use `avd-config.json` for consistent AVD configuration.
+- Check `android emulator list` first — do not create a duplicate AVD.
+- Stop the emulator when done: `android emulator stop`.
+- If an emulator is already running (via pipeline), use it rather than creating
+  another.
+- Pipeline provisioning takes precedence; agents provision only when no
+  emulator is available.
+
+**Journey tests:**
+
+- Journey XML files live in `journeys/`. Run `scripts/run-journeys` to list or
+  inspect them.
+- An agent with `skill("android-cli")` loaded reads the XML and executes each
+  `<action>` step-by-step against a running emulator.
+- Use `android layout` to find UI elements, `adb shell input tap/swipe` to
+  interact, `android screen capture` for visual verification.
+- Report results as JSON per `journeys/README.md`.

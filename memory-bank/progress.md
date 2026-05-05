@@ -91,3 +91,17 @@ Phase-by-phase implementation status. Checked = done, empty = planned, ~ = in pr
 - [ ] `data/local/filesystem/DownloadStore.kt` + `DownloadStoreTest.kt`
 - [ ] `data/local/prefs/SettingsStore.kt` + `SettingsStoreTest.kt`
 - [ ] `core/util/HashingTest.kt`
+
+## Phase 8 — Android CLI integration & journey tests
+
+- [x] `avd-config.json` (shared AVD config for pipeline + agents)
+- [x] `scripts/emulator` (AVD lifecycle: create, start, stop, list, delete)
+- [x] `scripts/run-journeys` (journey listing + agent execution guidance)
+- [x] `.github/workflows/journey.yml` (manual-trigger CI for journey tests)
+- [x] `journeys/library.xml`, `journeys/browse.xml`, `journeys/series.xml`
+- [x] `journeys/README.md` (format docs, agent execution instructions)
+- [x] `scripts/setup-wsl.sh` updated to use `android sdk install`
+- [x] `scripts/ci-check` updated with optional journey step
+- [x] `AGENTS.md` §15 (when/how agents load android-cli skill)
+- [x] `ui/AGENTS.md` + `sources/AGENTS.md` updated with skill references
+- [x] `scripts/emulator` + `run-journeys` made executable (`chmod +x`)

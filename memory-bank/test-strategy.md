@@ -13,10 +13,11 @@
 | 5 | Compose `*Content` composables | `androidTest/` | `createComposeRule()`, Compose testing APIs |
 | 6 | WorkManager workers | `androidTest/` | `WorkManagerTestInitHelper` |
 | 7 | Edge cases (downloads, hashing, prefs) | JVM | Standard JUnit/Truth |
+| 8 | Journey tests (screen-to-screen flows) | Emulator via android CLI | `android layout`, `adb input`, `android screen` |
 
 ## Available test utilities
 
-Located in `app/src/test/java/com/opus/novelparser/testutil/`:
+Located in `app/src/test/java/com/opus/readerparser/testutil/`:
 
 | Utility | Purpose |
 |---|---|
@@ -43,5 +44,5 @@ Located in `app/src/test/java/com/opus/novelparser/testutil/`:
 ## What tests are NOT written (by design)
 
 - No integration tests covering full screen → repository → source → network. Covered by the layered test pyramid (unit + UI).
-- No end-to-end tests. Personal-use app; manual smoke testing is sufficient.
-- No performance benchmarks unless a specific bottleneck is identified.
+- Journey tests complement Compose UI tests; they verify screen-to-screen flows
+  on a real emulator but are agent-driven (not automated in CI by default).
