@@ -1,59 +1,54 @@
 # Active context
 
-Last updated: 2026-05-01 (Android CLI integration)
+Last updated: 2026-05-04 (Phase 1 complete)
 
 ## Current phase
 
-**Phase 8** — Android CLI integration (in progress)
+**Phase 1** — Domain models & Source contract ✅ **COMPLETE**
 
-- `android-cli` skill integrated into pipeline and agents
-- `scripts/emulator` + `scripts/run-journeys` created for AVD + journey management
-- `journeys/` directory with 3 initial XML specs (`library.xml`, `browse.xml`, `series.xml`)
-- `AGENTS.md` §15 documents when/how agents load the skill
-- `memory-bank/` files updated to reflect Phase 8
-- TODO: `chmod +x` the new scripts
+- 8 domain models: ContentType, SeriesStatus, ChapterContent, Filter, FilterList, Series, Chapter, SeriesPage
+- Source interface, HtmlSource base class (Ktor+Jsoup), SourceRegistry, computeSourceId utility
+- Test infrastructure: TestFixtures (5 factory functions), FakeSource (hand-rolled, configurable + call recording)
+- 59 tests across 12 test suites, all green
+- Test sources migrated from `java/` to `kotlin/` directory
+- `domain-author` subagent added, orchestrator task dispatch made runtime-driven
 
 ## What was just completed
 
-**Phase 0 — Test infrastructure setup (finalized)**
+**Phase 1 — Domain models & Source contract TDD (a9467c9)**
 
-- Test utilities fixed for Ktor 3.0.1 mock engine API and AGP 9.x compatibility
-- Build compiles (`assembleDebug`), unit tests pass, lint passes
-- WSL environment bootstrapped (JDK 17 + Android SDK via `scripts/setup-wsl.sh`)
-
-**CI/CD pipeline**
-
-- Local pre-push hook: `scripts/pre-push` (unit tests, optional instrumented)
-- Manual full check: `scripts/ci-check` (lint + unit + instrumented + assemble)
-- GitHub Actions CI: `.github/workflows/ci.yml` (push/PR → lint → test → assemble → upload)
-- GitHub Actions Release: `.github/workflows/release.yml` (tag v* → build → GitHub Release)
-- Conditional signing: `app/build.gradle.kts` reads `KEYSTORE_*` env vars, no-op without them
-- Commit conventions: see `memory-bank/commit-conventions.md`
+- 8 immutable domain data classes matching architecture.md §3.2 exactly
+- `ChapterContent` sealed interface with exactly two variants (Text, Pages)
+- `Source` interface with 5 properties + 6 suspend functions + `supports(filter)` default
+- `HtmlSource` abstract base class (161 lines) with Ktor+Jsoup integration and 15 MockEngine tests
+- `SourceRegistry` wrapping `Map<Long, Source>` with `get(id)` and `all()`
+- `computeSourceId()` pure function using `hashCode().toLong() and 0xFFFFFFFFL`
+- Test infrastructure: `TestFixtures.kt` + `FakeSource.kt` with call recording
+- Zero Android dependencies in domain layer, zero wildcard imports
 
 ## What's next
 
-Phase 1 — Domain models & Source contract:
-1. Write tests first for all domain types (`SeriesTest`, `ChapterTest`, `SeriesPageTest`, `FilterListTest`, `ChapterContentTest`, `SeriesStatusTest`, `ContentTypeTest`)
-2. Write `SourceContractTest` and `HtmlSourceTest` using `MockEngine`
-3. Implement domain models to make tests pass
-4. Implement `Source` interface, `HtmlSource` base class, `SourceRegistry`, `computeSourceId()`
-5. Create `TestFixtures.kt` with factory functions for test data
-6. Create `FakeSource.kt` for future repository tests
+Phase 2 — First source plugin (example manhwa):
+1. Choose a manhwa site for the first concrete source
+2. Scrape and save HTML fixtures (popular, search, series detail, chapter)
+3. Implement `ExampleManhwa` extending `HtmlSource` with real CSS selectors
+4. Write parser tests using MockEngine + HTML fixtures
+5. Register in `core/di/SourceModule.kt`
 
 ## Known blockers
 
-None.
+None. Phase 2 awaits user decision on which manhwa site to implement first.
 
 ## Active conventions in play
 
 - TDD: tests first, then production code (red → green → refactor)
 - No `runBlocking` — use `runTest` from `kotlinx-coroutines-test`
-- Hand-rolled fakes for interfaces we control (`Source`, repositories) — not Mockito/MockK
-- `com.opus.readerparser` is the package (not `com.example.reader` as in architecture examples)
-- Entities/DAOs/migrations go under `data/local/database/` subpackages (dao, entities, mappers, migrations)
-- Commit prefixes: `feat:` `fix:` `refactor:` `ci:` `cd:` `docs:` — see `memory-bank/commit-conventions.md`
+- Hand-rolled fakes for interfaces we control — not Mockito/MockK
+- `com.opus.readerparser` package
+- Test sources in `app/src/test/kotlin/`
+- Commit prefixes: `feat:` `fix:` `refactor:` `ci:` `cd:` `docs:`
+- Git for local ops, `gh` CLI for remote
 
 ## Pending decisions
 
 - Which manhwa site will be the first concrete source for Phase 2?
-- Whether to create `src/test/kotlin/` directory or keep using `src/test/java/` (currently java/ is used)

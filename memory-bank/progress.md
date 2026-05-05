@@ -15,23 +15,23 @@ Phase-by-phase implementation status. Checked = done, empty = planned, ~ = in pr
 - [x] Fix AGP 9.x Kotlin source sets compatibility (`gradle.properties`)
 - [x] Fix themes (Material Components → platform Material)
 - [x] Set up CI/CD pipeline (pre-push hook, GitHub Actions, release workflow)
-- [ ] Create `testutil/TestFixtures.kt` (deferred to Phase 1)
+- [x] Create `testutil/TestFixtures.kt` (deferred to Phase 1)
 
 ## Phase 1 — Domain models & Source contract TDD
 
-- [ ] `domain/model/Series.kt` + `SeriesTest.kt`
-- [ ] `domain/model/Chapter.kt` + `ChapterTest.kt`
-- [ ] `domain/model/SeriesPage.kt` + `SeriesPageTest.kt`
-- [ ] `domain/model/FilterList.kt` + `FilterListTest.kt`
-- [ ] `domain/model/ChapterContent.kt` + `ChapterContentTest.kt`
-- [ ] `domain/model/SeriesStatus.kt` + `SeriesStatusTest.kt`
-- [ ] `domain/model/ContentType.kt` + `ContentTypeTest.kt`
-- [ ] `data/source/Source.kt` + `SourceContractTest.kt`
-- [ ] `data/source/HtmlSource.kt` + `HtmlSourceTest.kt`
-- [ ] `data/source/SourceRegistry.kt`
-- [ ] `testutil/TestFixtures.kt`
-- [ ] `fakes/FakeSource.kt`
-- [ ] `core/util/computeSourceId.kt` (or inline in Source.kt companion)
+- [x] `domain/model/Series.kt` + `SeriesTest.kt`
+- [x] `domain/model/Chapter.kt` + `ChapterTest.kt`
+- [x] `domain/model/SeriesPage.kt` + `SeriesPageTest.kt`
+- [x] `domain/model/FilterList.kt` + `FilterListTest.kt`
+- [x] `domain/model/ChapterContent.kt` + `ChapterContentTest.kt`
+- [x] `domain/model/SeriesStatus.kt` + `SeriesStatusTest.kt`
+- [x] `domain/model/ContentType.kt` + `ContentTypeTest.kt`
+- [x] `data/source/Source.kt` + `SourceContractTest.kt`
+- [x] `data/source/HtmlSource.kt` + `HtmlSourceTest.kt`
+- [x] `data/source/SourceRegistry.kt`
+- [x] `testutil/TestFixtures.kt`
+- [x] `fakes/FakeSource.kt`
+- [x] `core/util/computeSourceId.kt` (or inline in Source.kt companion)
 
 ## Phase 2 — First source plugin (example manhwa)
 
