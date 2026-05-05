@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# AVD lifecycle management via android CLI.
+# Usage: scripts/emulator {create|start|stop|list|delete}
+# Config: reads avd-config.json in repo root (falls back to defaults).
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+CONFIG="$REPO_ROOT/avd-config.json"
+
+get_name() {
+    if [ -f "$CONFIG" ]; then
+        python3 -c "import json,sys; print(json.load(open('$CONFIG')).get('name','readerparser-api36'))" 2>/dev/null \
+            || echo "readerparser-api36"
+    else
+        echo "readerparser-api36"
+    fi
+}
+
+get_image() {
+    if [ -f "$CONFIG" ]; then
+        python3 -c "import json,sys; print(json.load(open('$CONFIG')).get('image','system-images;android-36;google_apis;x86_64'))" 2>/dev/null \
+            || echo "system-images;android-36;google_apis;x86_64"
+    else
+        echo "system-images;android-36;google_apis;x86_64"
+    fi
+}
+
+cmd_create() {
+    local name image
+    name="$(get_name)"
+    image="$(get_image)"
+
+    if android emulator list 2>/dev/null | grep -qF "$name"; then
+        echo "AVD '$name' already exists."
+        return 0
+    fi
+
+    echo "Installing system image: $image"
+    android sdk install "$image"
+
+    echo "Creating AVD '$name'..."
+    android emulator create "$name" --image "$image"
+    echo "AVD '$name' created."
+}
+
+cmd_start() {
+    local name
+    name="$(get_name)"
+    echo "Starting AVD '$name'..."
+    android emulator start "$name"
+    echo "AVD '$name' ready."
+}
+
+cmd_stop() {
+    local name
+    name="$(get_name)"
+    echo "Stopping AVD '$name'..."
+    android emulator stop "$name" 2>/dev/null || echo "AVD '$name' was not running."
+}
+
+cmd_list() {
+    android emulator list
+}
+
+cmd_delete() {
+    local name
+    name="$(get_name)"
+    android emulator stop "$name" 2>/dev/null || true
+    android emulator remove "$name"
+    echo "AVD '$name' deleted."
+}
+
+case "${1:-}" in
+    create) cmd_create ;;
+    start)  cmd_start ;;
+    stop)   cmd_stop ;;
+    list)   cmd_list ;;
+    delete) cmd_delete ;;
+    *)
+        echo "Usage: $0 {create|start|stop|list|delete}" >&2
+        echo "Config: $CONFIG" >&2
+        exit 1
+        ;;
+esac

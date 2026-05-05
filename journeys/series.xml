@@ -1,0 +1,32 @@
+<journey name="Series Screen">
+   <description>
+      Verifies the series detail screen shows cover, metadata, and chapter list,
+      and navigation to the reader works for both novels and manhwa.
+   </description>
+   <actions>
+      <action>
+         Launch the ReaderParser app and navigate to a series detail screen.
+      </action>
+      <action>
+         Verify that the series cover image is displayed.
+      </action>
+      <action>
+         Verify that the series title is visible.
+      </action>
+      <action>
+         Verify that the series description is visible.
+      </action>
+      <action>
+         Verify that a chapter list is displayed.
+      </action>
+      <action>
+         Scroll down through the chapter list.
+      </action>
+      <action>
+         Tap the first chapter in the list.
+      </action>
+      <action>
+         Verify that the reader screen is displayed.
+      </action>
+   </actions>
+</journey>

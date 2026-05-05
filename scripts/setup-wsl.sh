@@ -9,7 +9,6 @@ print_status() { echo ">>> $*"; }
 # ============================================================
 
 export SDK_ROOT="${ANDROID_HOME:-$HOME/android-sdk}"
-export CMDLINE_TOOLS_URL="https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
 
 # -- 1. JDK 17 -------------------------------------------------
 if command -v java &>/dev/null && java -version 2>&1 | grep -q 'version "17'; then
@@ -23,30 +22,26 @@ fi
 JAVA_HOME_DIR=$(readlink -f "$(dirname "$(dirname "$(readlink -f "$(which java)")")")")
 print_status "JAVA_HOME: $JAVA_HOME_DIR"
 
-# -- 2. Android command-line tools -----------------------------
-if [ -f "$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" ]; then
-    print_status "Android cmdline-tools already present"
+# -- 2. Android CLI --------------------------------------------
+if command -v android >/dev/null 2>&1; then
+    print_status "Android CLI already installed ($(android --version 2>&1))"
 else
-    print_status "Downloading Android command-line tools..."
-    mkdir -p "$SDK_ROOT/cmdline-tools"
-    TMP_ZIP=$(mktemp)
-    curl -fsSL "$CMDLINE_TOOLS_URL" -o "$TMP_ZIP"
-    unzip -qo "$TMP_ZIP" -d "$SDK_ROOT/cmdline-tools"
-    mv "$SDK_ROOT/cmdline-tools/cmdline-tools" "$SDK_ROOT/cmdline-tools/latest"
-    rm "$TMP_ZIP"
+    print_status "Installing Android CLI..."
+    curl -fsSL https://dl.google.com/android/cli/latest/linux_x86_64/install.sh | bash
+    print_status "Android CLI installed"
 fi
 
-# -- 3. SDK packages -------------------------------------------
-print_status "Installing Android SDK packages..."
-yes | "$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$SDK_ROOT" --licenses > /dev/null 2>&1
+# -- 3. Android SDK packages ------------------------------------
+mkdir -p "$SDK_ROOT"
+export ANDROID_HOME="$SDK_ROOT"
 
-"$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$SDK_ROOT" --install \
+print_status "Installing Android SDK packages (API 36)..."
+android sdk install \
     "platforms;android-36" \
     "build-tools;36.0.0" \
     "platform-tools" \
     "emulator" \
-    "system-images;android-36;google_apis;x86_64" \
-    > /dev/null 2>&1
+    "system-images;android-36;google_apis;x86_64"
 
 print_status "SDK packages installed"
 
@@ -66,7 +61,7 @@ fi
 for VAR in \
     "export ANDROID_HOME=$SDK_ROOT" \
     "export JAVA_HOME=$JAVA_HOME_DIR" \
-    'export PATH="$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"'; do
+    'export PATH="$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$PATH"'; do
     if ! grep -qF "$VAR" "$SHELL_RC" 2>/dev/null; then
         echo "$VAR" >> "$SHELL_RC"
     fi

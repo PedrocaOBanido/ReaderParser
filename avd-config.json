@@ -1,0 +1,11 @@
+{
+  "name": "readerparser-api36",
+  "device": "pixel_6",
+  "api": 36,
+  "arch": "x86_64",
+  "image": "system-images;android-36;google_apis;x86_64",
+  "ram": "2048",
+  "storage": "512",
+  "cores": 2,
+  "gpu": "host"
+}

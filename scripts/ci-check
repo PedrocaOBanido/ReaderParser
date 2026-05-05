@@ -41,5 +41,31 @@ echo "=============================="
 
 echo ""
 echo "=============================="
+echo " Journey Tests (optional)"
+echo "=============================="
+if command -v android >/dev/null 2>&1; then
+    if scripts/emulator list 2>/dev/null | grep -q .; then
+        HAS_AVD=true
+    else
+        HAS_AVD=false
+    fi
+else
+    HAS_AVD=false
+fi
+
+if $HAS_AVD; then
+    scripts/emulator start
+    adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done'
+    android run --apks=app/build/outputs/apk/debug/app-debug.apk
+    echo "Emulator ready. Journey tests listed below."
+    echo "To execute: have an agent load skill('android-cli') and follow the steps."
+    scripts/run-journeys
+    scripts/emulator stop
+else
+    echo "No AVD configured. Run 'scripts/emulator create' first."
+fi
+
+echo ""
+echo "=============================="
 echo " ci-check: PASSED"
 echo "=============================="

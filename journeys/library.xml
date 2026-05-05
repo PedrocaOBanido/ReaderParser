@@ -1,0 +1,23 @@
+<journey name="Library Screen">
+   <description>
+      Verifies the library screen displays saved series in a grid,
+      supports filtering and basic navigation.
+   </description>
+   <actions>
+      <action>
+         Launch the ReaderParser app.
+      </action>
+      <action>
+         Verify that the Library screen is displayed.
+      </action>
+      <action>
+         Verify that the app title "ReaderParser" is visible.
+      </action>
+      <action>
+         Tap the "Browse" navigation item.
+      </action>
+      <action>
+         Verify that the Browse screen is displayed.
+      </action>
+   </actions>
+</journey>

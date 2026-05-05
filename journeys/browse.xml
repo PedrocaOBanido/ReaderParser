@@ -1,0 +1,26 @@
+<journey name="Browse Screen">
+   <description>
+      Verifies the browse screen shows source selection and can navigate
+      into a source's popular listing.
+   </description>
+   <actions>
+      <action>
+         Launch the ReaderParser app.
+      </action>
+      <action>
+         Tap the "Browse" navigation item.
+      </action>
+      <action>
+         Verify that a list of available sources is displayed.
+      </action>
+      <action>
+         Tap the first source in the list.
+      </action>
+      <action>
+         Verify that a list of series is displayed (popular listing).
+      </action>
+      <action>
+         Verify that the source name is visible in the top bar.
+      </action>
+   </actions>
+</journey>

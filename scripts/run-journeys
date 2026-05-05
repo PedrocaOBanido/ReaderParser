@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Journey test runner.
+# Usage:
+#   scripts/run-journeys                    list available journeys
+#   scripts/run-journeys <journey.xml>      print steps for agent execution
+#   scripts/run-journeys --setup            boot emulator + install APK
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+JOURNEYS_DIR="$REPO_ROOT/journeys"
+APK_PATH="$REPO_ROOT/app/build/outputs/apk/debug/app-debug.apk"
+
+cmd_list() {
+    echo "Available journeys:"
+    for f in "$JOURNEYS_DIR"/*.xml; do
+        [ -f "$f" ] || continue
+        local name
+        name="$(python3 -c "
+import xml.etree.ElementTree as ET
+tree = ET.parse('$f')
+root = tree.getroot()
+print(root.attrib.get('name', 'unnamed'))
+" 2>/dev/null || basename "$f")"
+        echo "  $name  ($(basename "$f"))"
+    done
+}
+
+cmd_steps() {
+    local file="$1"
+    if [ ! -f "$file" ]; then
+        echo "Journey not found: $file" >&2
+        exit 1
+    fi
+    python3 -c "
+import xml.etree.ElementTree as ET
+tree = ET.parse('$file')
+root = tree.getroot()
+name = root.attrib.get('name', 'unnamed')
+desc = root.findtext('description', 'No description')
+print(f'Journey: {name}')
+print(f'Description: {desc}')
+print()
+for action in root.findall('.//action'):
+    text = action.text.strip() if action.text else '(empty)'
+    print(f'  [ ] {text}')
+" 2>/dev/null
+}
+
+cmd_setup() {
+    echo "Setting up emulator for journey tests..."
+    "$SCRIPT_DIR/emulator" create
+    "$SCRIPT_DIR/emulator" start
+
+    echo "Waiting for device..."
+    adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done'
+
+    if [ -f "$APK_PATH" ]; then
+        echo "Installing APK..."
+        android run --apks="$APK_PATH"
+    else
+        echo "APK not found at $APK_PATH. Run ./gradlew :app:assembleDebug first." >&2
+        exit 1
+    fi
+
+    echo "Setup complete."
+}
+
+case "${1:-}" in
+    ""|"list") cmd_list ;;
+    --setup)   cmd_setup ;;
+    *.xml)
+        cmd_steps "$1"
+        echo ""
+        echo "---"
+        echo "This journey must be executed by an agent."
+        echo "Load skill('android-cli') and follow each step using:"
+        echo "  android layout          - inspect UI tree"
+        echo "  android screen capture  - screenshot"
+        echo "  adb shell input tap/swipe - interact"
+        echo "  android layout --diff   - check changes"
+        echo ""
+        echo "Report results as JSON per journeys/README.md."
+        ;;
+    *)
+        echo "Usage: $0 [journey.xml | --setup]" >&2
+        echo "       $0 (no args)   list journeys" >&2
+        exit 1
+        ;;
+esac
