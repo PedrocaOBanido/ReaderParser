@@ -87,14 +87,14 @@ the agent will not invent them, by design.
 
 Manual path, if you'd rather:
 
-1. Create `app/src/main/kotlin/com/example/reader/sources/<sitename>/<SiteName>.kt`.
+1. Create `app/src/main/kotlin/com/opus/readerparser/sources/<sitename>/<SiteName>.kt`.
 2. Extend `HtmlSource`. Override `chapterTextParse` for novels **or**
    `chapterPagesParse` for manhwa — never both.
 3. Register the new source in `core/di/SourceModule.kt`.
 4. Add HTML fixtures under `app/src/test/resources/fixtures/<sitename>/`.
 5. Add a `MockEngine`-backed test.
 
-Full rules in `app/src/main/kotlin/com/example/reader/sources/AGENTS.md`.
+Full rules in `app/src/main/kotlin/com/opus/readerparser/sources/AGENTS.md`.
 
 ---
 

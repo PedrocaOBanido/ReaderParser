@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.opus.novelparser"
+    namespace = "com.opus.readerparser"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -14,7 +14,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.opus.novelparser"
+        applicationId = "com.opus.readerparser"
         minSdk = 26
         targetSdk = 36
         versionCode = 1

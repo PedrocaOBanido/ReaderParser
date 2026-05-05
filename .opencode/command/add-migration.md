@@ -11,11 +11,11 @@ Required steps:
    `app/schemas/`.
 2. Bump `AppDatabase.version` by 1.
 3. Create `Migration_${old}_${new}.kt` under
-   `app/src/main/kotlin/com/example/reader/data/local/database/migrations/`
+   `app/src/main/kotlin/com/opus/readerparser/data/local/database/migrations/`
    with explicit SQL for the change. Do not use any auto-migration helpers.
 4. Register the migration in `DatabaseModule`.
 5. Add a migration test in
-   `app/src/androidTest/kotlin/com/example/reader/data/local/database/MigrationTest.kt`
+   `app/src/androidTest/kotlin/com/opus/readerparser/data/local/database/MigrationTest.kt`
    using `MigrationTestHelper`.
 6. Update affected entities, DAOs, and mappers.
 7. Run `./gradlew :app:assembleDebug` to regenerate the schema JSON; verify

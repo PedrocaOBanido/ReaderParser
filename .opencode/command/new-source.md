@@ -9,14 +9,14 @@ default "en" if not given).
 
 Required steps:
 
-1. Create directory `app/src/main/kotlin/com/example/reader/sources/${1,,}/`
+1. Create directory `app/src/main/kotlin/com/opus/readerparser/sources/${1,,}/`
    (lowercase the package).
 2. Create `$1.kt` extending `HtmlSource`. Override only the methods listed in
-   `app/src/main/kotlin/com/example/reader/sources/AGENTS.md`. Leave the
+   `app/src/main/kotlin/com/opus/readerparser/sources/AGENTS.md`. Leave the
    non-applicable content method as `error("...")`.
 3. Compute `id` via `computeSourceId("$1", "$4", ContentType.$3)`.
 4. Add the source to the `SourceModule` provider in
-   `app/src/main/kotlin/com/example/reader/core/di/SourceModule.kt`.
+   `app/src/main/kotlin/com/opus/readerparser/core/di/SourceModule.kt`.
 5. Create test scaffolding under `app/src/test/kotlin/.../sources/${1,,}/`
    with placeholder fixtures in `app/src/test/resources/fixtures/${1,,}/`.
 

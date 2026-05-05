@@ -1,4 +1,4 @@
-package com.opus.novelparser.testutil
+package com.opus.readerparser.testutil
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.TestDispatcher

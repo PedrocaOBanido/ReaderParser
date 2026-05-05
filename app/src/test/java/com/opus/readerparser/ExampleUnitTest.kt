@@ -1,4 +1,4 @@
-package com.opus.novelparser
+package com.opus.readerparser
 
 import org.junit.Test
 

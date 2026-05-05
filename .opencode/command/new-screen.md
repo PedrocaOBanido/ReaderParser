@@ -5,7 +5,7 @@ agent: screen-author
 
 Create a new screen named `$1` (PascalCase, no "Screen" suffix).
 
-Generate exactly four files in `app/src/main/kotlin/com/example/reader/ui/${1,,}/`:
+Generate exactly four files in `app/src/main/kotlin/com/opus/readerparser/ui/${1,,}/`:
 
 1. `$1Screen.kt` — entry point. Takes `viewModel: $1ViewModel = hiltViewModel()`,
    collects state with `collectAsStateWithLifecycle()`, collects effects in

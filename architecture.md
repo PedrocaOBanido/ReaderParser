@@ -80,7 +80,7 @@ flowchart TD
 ### 3.1 Content type and chapter content
 
 ```kotlin
-package com.example.reader.domain.model
+package com.opus.readerparser.domain.model
 
 enum class ContentType { NOVEL, MANHWA }
 
@@ -103,7 +103,7 @@ Pure data classes. No Room annotations, no serialization annotations, no
 Android types.
 
 ```kotlin
-package com.example.reader.domain.model
+package com.opus.readerparser.domain.model
 
 data class Series(
     val sourceId: Long,
@@ -148,7 +148,7 @@ This is the most important interface in the codebase. Every site plugin
 implements it. Repositories depend on it; nothing depends on concrete sources.
 
 ```kotlin
-package com.example.reader.data.source
+package com.opus.readerparser.data.source
 
 interface Source {
     val id: Long              // stable hash, used as FK in DB
@@ -192,7 +192,7 @@ Most sites are HTML. Provide a shared base class with Ktor + Jsoup wired up so
 each concrete source only writes parsing logic.
 
 ```kotlin
-package com.example.reader.data.source
+package com.opus.readerparser.data.source
 
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -267,7 +267,7 @@ abstract class HtmlSource(
 ### 4.2 Worked example — a manhwa source
 
 ```kotlin
-package com.example.reader.sources.examplemanhwa
+package com.opus.readerparser.sources.examplemanhwa
 
 class ExampleManhwa(client: HttpClient) : HtmlSource(client) {
     override val id = computeSourceId("ExampleManhwa", "en", ContentType.MANHWA)
@@ -327,7 +327,7 @@ instead of `chapterPagesParse(doc)`, and its `type` is `NOVEL`.
 Compile-time list of sources. Loaded once at app start by Hilt.
 
 ```kotlin
-package com.example.reader.data.source
+package com.opus.readerparser.data.source
 
 class SourceRegistry(private val sources: Map<Long, Source>) {
     operator fun get(id: Long): Source =
@@ -675,7 +675,7 @@ type-specific content state.
 Single Gradle module to start. Split when build times hurt.
 
 ```
-app/src/main/kotlin/com/example/reader/
+app/src/main/kotlin/com/opus/readerparser/
 ├── ui/
 │   ├── library/        LibraryScreen, LibraryViewModel, LibraryUiState
 │   ├── browse/         BrowseScreen, SourceListScreen
