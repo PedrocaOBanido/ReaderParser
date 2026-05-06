@@ -262,9 +262,8 @@ When tests are flaky, fix the test. Do not add `@Ignore`.
 
 ## 12b. Git & GitHub
 
-- **Local operations** (`add`, `commit`, `branch`, `merge`, `restore`, `rebase`): use `git`
-- **GitHub operations** (`push`, `pull`, `pr`, `release`, `issue`, `workflow`): use `gh` CLI
-- Never use raw `git push` — use `gh` to interact with the remote
+- **Git operations** (`add`, `commit`, `branch`, `merge`, `restore`, `rebase`, `push`, `pull`): use `git`
+- **GitHub operations** (`pr`, `release`, `issue`, `workflow`): use `gh` CLI
 - Create PRs with `gh pr create`, merge with `gh pr merge`
 - Create releases with `gh release create`
 - See `memory-bank/commit-conventions.md` for commit prefix rules
