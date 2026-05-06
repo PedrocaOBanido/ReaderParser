@@ -2,6 +2,7 @@
 description: Routes free-form tasks to the right specialized subagent. Plans before delegating, never edits source files itself, always surfaces clarifying questions verbatim.
 mode: primary
 temperature: 0.1
+category: build
 permission:
   edit: deny
   write: deny

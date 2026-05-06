@@ -2,6 +2,7 @@
 description: Writes Source plugins for new sites. Extends HtmlSource, registers in DI, scaffolds tests with HTML fixtures. Refuses to invent CSS selectors.
 mode: subagent
 temperature: 0.1
+category: sisyphus-junior
 agent:
   class: W
   owns: New Source plugins (Jsoup parsers for novel/manhwa sites)

@@ -2,6 +2,7 @@
 description: Executes builds, lints, unit tests, and formatters. The verify-and-fix gate. Reads source and gradle output; never authors code. ktlintFormat is the one mass-edit it owns.
 mode: subagent
 temperature: 0.1
+category: explore
 agent:
   class: X
   owns: Builds, lint, unit tests, ktlintFormat, scripts/ci-check

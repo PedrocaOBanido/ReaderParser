@@ -2,6 +2,7 @@
 description: Handles Room schema changes. Bumps version, writes explicit SQL migrations, adds migration tests. Refuses fallbackToDestructiveMigration.
 mode: subagent
 temperature: 0.1
+category: sisyphus-junior
 agent:
   class: W
   owns: Room schema changes, migrations, version bumps, new entities/DAOs

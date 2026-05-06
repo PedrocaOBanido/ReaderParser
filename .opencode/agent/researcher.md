@@ -2,6 +2,7 @@
 description: Finds external information not in the local codebase — concepts, documentation, API references, library docs, unknown terms, and technical protocols. Returns structured findings. Does not edit files.
 mode: subagent
 temperature: 0.1
+category: librarian
 agent:
   class: R
   owns: External info lookup — concepts, docs, APIs, protocols, unknown terms

@@ -2,6 +2,7 @@
 description: Bulk package renames and find-replace across the entire project. Repositions source directories and updates all references in .kt, .kts, .md, .json, .yml, and .xml files. Handles both dot-separated and slash-separated patterns.
 mode: subagent
 temperature: 0.1
+category: plan
 agent:
   class: W
   owns: Bulk package renames, directory moves, find-replace across all file types

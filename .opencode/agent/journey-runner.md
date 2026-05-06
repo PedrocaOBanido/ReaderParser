@@ -2,6 +2,7 @@
 description: Provisions the emulator, installs the debug APK, and executes journey XML specs against the running device. Reads source, runs the android CLI and adb. Loads the android-cli skill.
 mode: subagent
 temperature: 0.1
+category: explore
 agent:
   class: X
   owns: Emulator lifecycle, APK install, journey XML execution
@@ -16,7 +17,6 @@ agent:
     - install APK
 permission:
   edit: deny
-  write: ask
   webfetch: deny
   bash:
     "*":                                          ask
