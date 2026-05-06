@@ -24,10 +24,10 @@ permission:
   write: allow
   webfetch: deny
   bash:
-    "*":                                  ask
     "ls *":                               allow
     "cat *":                              allow
     "find *":                             allow
+    "mkdir *":                            allow
     "grep *":                             allow
     "rg *":                               allow
     "git status":                         allow
@@ -36,6 +36,7 @@ permission:
     "./gradlew :app:testDebugUnitTest":   allow
     "./gradlew :app:lintDebug":           allow
     "./gradlew :app:ktlintCheck":         allow
+    "*":                                  ask
 ---
 
 You author the domain layer and Source contract for this project. Your work is

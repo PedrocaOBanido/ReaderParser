@@ -42,11 +42,24 @@ abstract class HtmlSource(
     // =========================================================================
 
     /**
+     * Fetches [url] via Ktor and returns the raw response body as a [String].
+     * Throws on any HTTP error — there is no catch here.
+     *
+     * Override to add per-source headers (e.g., User-Agent for Cloudflare bypass).
+     * Favor overriding this over [fetchDoc] — the base class handles Jsoup parsing.
+     */
+    protected open suspend fun fetchDocBody(url: String): String =
+        client.get(url).bodyAsText()
+
+    /**
      * Fetches [url] via Ktor and parses the response body as a Jsoup [Document].
+     * Calls [fetchDocBody] internally, so overriding [fetchDocBody] is sufficient to
+     * customize HTTP headers without duplicating Jsoup wiring.
+     *
      * Throws on any HTTP or parse error — there is no catch here.
      */
-    protected suspend fun fetchDoc(url: String): Document =
-        Jsoup.parse(client.get(url).bodyAsText(), url)
+    protected open suspend fun fetchDoc(url: String): Document =
+        Jsoup.parse(fetchDocBody(url), url)
 
     // =========================================================================
     // Abstract — must be overridden

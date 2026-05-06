@@ -1,0 +1,58 @@
+<!--
+  PLACEHOLDER FIXTURE — Replace with real HTML from https://asurascans.com/browse?page=1
+  This file must contain the server-rendered HTML of the browse/popular listing page.
+  Save the full page source (View Source, not Inspect Element).
+
+  Key selectors tested:
+  - #series-grid div.series-card: series card elements
+  - a[href^="/comics/"]: series URL (cover link)
+  - h3: series title
+  - img: cover image
+  - span.capitalize: status ("ongoing", "completed")
+  - a[aria-label="Next page"]: pagination next link
+-->
+<html>
+<body>
+  <div id="series-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-6">
+    <div class="series-card group bg-[#1f1a2e] rounded-lg overflow-hidden" data-series-id="2114">
+      <a href="/comics/eternally-regressing-knight-b6e039fe" class="block relative aspect-[3/4] overflow-hidden">
+        <img src="https://cdn.asurascans.com/asura-images/covers/eternally-regressing-knight.b0c5e0-400.webp" alt="Eternally Regressing Knight" />
+      </a>
+      <div class="p-3">
+        <a href="/comics/eternally-regressing-knight-b6e039fe"><h3 class="text-sm font-semibold">Eternally Regressing Knight</h3></a>
+        <div class="flex items-center gap-2 mt-2">
+          <span>109 Chapters</span>
+          <span class="capitalize">ongoing</span>
+        </div>
+      </div>
+    </div>
+    <div class="series-card group bg-[#1f1a2e] rounded-lg overflow-hidden" data-series-id="2200">
+      <a href="/comics/sword-devouring-swordmaster-b6e039fe" class="block relative aspect-[3/4] overflow-hidden">
+        <img src="https://cdn.asurascans.com/asura-images/covers/sword-devouring-swordmaster.1b5fe5-400.webp" alt="Sword-Devouring Swordmaster" />
+      </a>
+      <div class="p-3">
+        <a href="/comics/sword-devouring-swordmaster-b6e039fe"><h3 class="text-sm font-semibold">Sword-Devouring Swordmaster</h3></a>
+        <div class="flex items-center gap-2 mt-2">
+          <span>27 Chapters</span>
+          <span class="capitalize">ongoing</span>
+        </div>
+      </div>
+    </div>
+    <div class="series-card group bg-[#1f1a2e] rounded-lg overflow-hidden" data-series-id="2175">
+      <a href="/comics/the-great-mage-returns-after-4000-years-b6e039fe" class="block relative aspect-[3/4] overflow-hidden">
+        <img src="https://cdn.asurascans.com/asura-images/covers/the-great-mage-returns-after-4000-years.c5b622-400.webp" alt="The Great Mage Returns After 4000 Years" />
+      </a>
+      <div class="p-3">
+        <a href="/comics/the-great-mage-returns-after-4000-years-b6e039fe"><h3 class="text-sm font-semibold">The Great Mage Returns After 4000 Years</h3></a>
+        <div class="flex items-center gap-2 mt-2">
+          <span>255 Chapters</span>
+          <span class="capitalize">ongoing</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <a href="/browse?page=2" aria-label="Next page">Next</a>
+</body>
+</html>

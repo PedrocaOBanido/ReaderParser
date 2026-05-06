@@ -17,7 +17,6 @@ permission:
   write: allow
   webfetch: deny
   bash:
-    "*":                                  ask
     # ── Read-only inspection ─────────────────────────
     "ls *":                               allow
     "cat *":                              allow
@@ -45,6 +44,7 @@ permission:
     "./gradlew :app:lintDebug":           allow
     "./gradlew :app:testDebugUnitTest":   allow
     "./gradlew :app:ktlintCheck":         allow
+    "*":                                  ask
 ---
 
 # Refactor Renamer

@@ -7,7 +7,6 @@ permission:
   write: deny
   webfetch: deny
   bash:
-    "*":                                  ask
     # ── Read-only inspection ─────────────────────────
     "ls *":                               allow
     "cat *":                              allow
@@ -20,6 +19,7 @@ permission:
     "tree *":                             allow
     "stat *":                             allow
     "file *":                             allow
+    "head *":                             allow
     "which *":                            allow
     "command -v *":                       allow
     "echo *":                             allow
@@ -54,6 +54,8 @@ permission:
     "git stash *":                        allow
     "git switch *":                       allow
     "git checkout -b *":                  allow
+    # ── Wildcard Bashing ──────────
+    "*":                                  ask
   task:
     "source-author":                      allow
     "screen-author":                      allow

@@ -18,7 +18,6 @@ permission:
   write: allow
   webfetch: deny
   bash:
-    "*":                                  ask
     "ls *":                               allow
     "cat *":                              allow
     "find *":                             allow
@@ -30,6 +29,7 @@ permission:
     "./gradlew :app:lintDebug":           allow
     "./gradlew :app:testDebugUnitTest":   allow
     "./gradlew :app:ktlintCheck":         allow
+    "*":                                  ask
 ---
 
 You scaffold Compose screens for this project. Every screen is exactly

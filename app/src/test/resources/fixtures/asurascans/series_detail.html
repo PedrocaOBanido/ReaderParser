@@ -1,0 +1,104 @@
+<!--
+  PLACEHOLDER FIXTURE — Replace with real HTML from https://asurascans.com/comics/eternally-regressing-knight-b6e039fe
+  This file must contain the server-rendered HTML of the series detail page.
+  Save the full page source (View Source, not Inspect Element).
+
+  Key selectors tested:
+  - h1: series title
+  - a[href^="/browse?author="]: author name
+  - a[href^="/browse?artist="]: artist name
+  - meta[name=description]: series description
+  - span.capitalize: "ongoing" / "completed" / etc.
+  - a[data-astro-prefetch="hover"][href*="/chapter/"]: chapter rows
+-->
+<html lang="en">
+<head>
+  <meta name="description" content="You're a genius. Those words he heard as a child were poison. Encrid dreamed of becoming a knight..." />
+</head>
+<body>
+  <article>
+    <!-- Cover image (desktop) -->
+    <div id="desktop-cover-container" class="hidden lg:block">
+      <img src="https://cdn.asurascans.com/asura-images/covers/eternally-regressing-knight.b0c5e0-400.webp" alt="Eternally Regressing Knight" />
+    </div>
+
+    <h1 class="text-xl lg:text-[32px] font-semibold leading-tight">Eternally Regressing Knight</h1>
+
+    <!-- Author -->
+    <div class="flex items-center justify-between bg-[#1C1924] rounded px-4 py-2.5">
+      <span class="text-xs text-white/50">Author</span>
+      <a href="/browse?author=Kanara" class="text-sm font-medium hover:text-[#913FE2] transition-colors">Kanara</a>
+    </div>
+
+    <!-- Artist -->
+    <div class="flex items-center justify-between bg-[#1C1924] rounded px-4 py-2.5">
+      <span class="text-xs text-white/50">Artist</span>
+      <a href="/browse?artist=JQ%20Comics" class="text-sm font-medium hover:text-[#913FE2] transition-colors">JQ Comics</a>
+    </div>
+
+    <!-- Status -->
+    <div class="flex-1 bg-[#1C1924] rounded px-4 py-3">
+      <span class="w-2.5 h-2.5 rounded-full bg-[#A78BFA]"></span>
+      <span class="text-base font-bold text-[#A78BFA] capitalize"> ongoing </span>
+    </div>
+
+    <!-- Genres -->
+    <div class="hidden lg:flex max-w-full gap-2 flex-wrap">
+      <a href="/browse?genres=action" class="inline-flex flex-shrink-0 text-xs font-medium px-3 py-1.5"> Action </a>
+      <a href="/browse?genres=adventure" class="inline-flex flex-shrink-0 text-xs font-medium px-3 py-1.5"> Adventure </a>
+      <a href="/browse?genres=fantasy" class="inline-flex flex-shrink-0 text-xs font-medium px-3 py-1.5"> Fantasy </a>
+      <a href="/browse?genres=regression" class="inline-flex flex-shrink-0 text-xs font-medium px-3 py-1.5"> Regression </a>
+    </div>
+
+    <!-- Chapter list -->
+    <a href="/comics/eternally-regressing-knight-b6e039fe/chapter/108" data-astro-prefetch="hover" class="group flex items-center justify-between px-4 py-4 transition-colors hover:bg-white/5">
+      <div class="flex items-center gap-3 min-w-0 flex-1">
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-2">
+            <span class="font-medium transition-colors text-white group-hover:text-[#913FE2]">Chapter <!-- -->108</span>
+          </div>
+        </div>
+      </div>
+      <div class="flex-shrink-0 ml-3 text-right">
+        <span class="text-sm text-white/40">22 hours ago</span>
+      </div>
+    </a>
+    <a href="/comics/eternally-regressing-knight-b6e039fe/chapter/107" data-astro-prefetch="hover" class="group flex items-center justify-between px-4 py-4 transition-colors hover:bg-white/5">
+      <div class="flex items-center gap-3 min-w-0 flex-1">
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-2">
+            <span class="font-medium transition-colors text-white group-hover:text-[#913FE2]">Chapter <!-- -->107</span>
+          </div>
+        </div>
+      </div>
+      <div class="flex-shrink-0 ml-3 text-right">
+        <span class="text-sm text-white/40">last week</span>
+      </div>
+    </a>
+    <a href="/comics/eternally-regressing-knight-b6e039fe/chapter/106" data-astro-prefetch="hover" class="group flex items-center justify-between px-4 py-4 transition-colors hover:bg-white/5">
+      <div class="flex items-center gap-3 min-w-0 flex-1">
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-2">
+            <span class="font-medium transition-colors text-white group-hover:text-[#913FE2]">Chapter <!-- -->106</span>
+          </div>
+        </div>
+      </div>
+      <div class="flex-shrink-0 ml-3 text-right">
+        <span class="text-sm text-white/40">Apr 4, 2026</span>
+      </div>
+    </a>
+    <a href="/comics/eternally-regressing-knight-b6e039fe/chapter/105" data-astro-prefetch="hover" class="group flex items-center justify-between px-4 py-4 transition-colors hover:bg-white/5">
+      <div class="flex items-center gap-3 min-w-0 flex-1">
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-2">
+            <span class="font-medium transition-colors text-white group-hover:text-[#913FE2]">Chapter <!-- -->105</span>
+          </div>
+        </div>
+      </div>
+      <div class="flex-shrink-0 ml-3 text-right">
+        <span class="text-sm text-white/40">3 weeks ago</span>
+      </div>
+    </a>
+  </article>
+</body>
+</html>

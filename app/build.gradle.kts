@@ -114,6 +114,7 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
+    testImplementation(libs.ktor.client.cio)
     testImplementation(libs.ktor.client.mock)
     testImplementation(libs.truth)
     androidTestImplementation(libs.androidx.junit)
