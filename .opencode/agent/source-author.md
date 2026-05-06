@@ -18,7 +18,7 @@ agent:
 permission:
   edit: allow
   write: allow
-  webfetch: ask
+  webfetch: deny
   bash:
     "ls *":                               allow
     "cat *":                              allow
