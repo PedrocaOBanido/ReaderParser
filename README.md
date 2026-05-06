@@ -34,7 +34,7 @@ the rest of the app doesn't know or care which site it's talking to.
 | Image loading  | Coil 3                                     |
 | Background     | WorkManager                                |
 | DI             | Hilt                                       |
-| Min SDK        | 26 (Android 8.0)                           |
+| Min SDK        | 36 (Android 16.0)                           |
 | JVM target     | 17                                         |
 
 ---
