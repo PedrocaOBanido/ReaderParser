@@ -36,7 +36,7 @@ jobs:
           sdkmanager --install "platforms;android-36" "build-tools;36.0.0"
 
       - name: Run Detekt
-        run: ./gradlew :app:detekt
+        run: ./gradlew detekt
 
       - name: Upload Detekt report
         uses: actions/upload-artifact@v4
