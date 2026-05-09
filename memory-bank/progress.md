@@ -33,33 +33,43 @@ Phase-by-phase implementation status. Checked = done, empty = planned, ~ = in pr
 - [x] `fakes/FakeSource.kt`
 - [x] `core/util/computeSourceId.kt` (or inline in Source.kt companion)
 
-## Phase 2 — First source plugin (example manhwa)
+## Phase 2 — First source plugin (AsuraScans)
 
-- [ ] `src/test/resources/fixtures/examplemanhwa/popular.html`
-- [ ] `src/test/resources/fixtures/examplemanhwa/popular_empty.html`
-- [ ] `src/test/resources/fixtures/examplemanhwa/search.html`
-- [ ] `src/test/resources/fixtures/examplemanhwa/series.html`
-- [ ] `src/test/resources/fixtures/examplemanhwa/chapter.html`
-- [ ] `sources/examplemanhwa/ExampleManhwa.kt`
-- [ ] `sources/examplemanhwa/ExampleManhwaTest.kt`
-- [ ] Register in `core/di/SourceModule.kt`
+- [x] `src/test/resources/fixtures/asurascans/popular.html`
+- [x] `src/test/resources/fixtures/asurascans/popular_empty.html`
+- [x] `src/test/resources/fixtures/asurascans/search.html`
+- [x] `src/test/resources/fixtures/asurascans/series.html`
+- [x] `src/test/resources/fixtures/asurascans/chapter.html`
+- [x] `sources/asurascans/AsuraScans.kt`
+- [x] `sources/asurascans/AsuraScansTest.kt`
+- [x] Register in `core/di/SourceModule.kt`
 
 ## Phase 3 — Repository layer
 
-- [ ] `data/repository/SeriesRepository.kt` (interface)
-- [ ] `data/repository/ChapterRepository.kt` (interface)
-- [ ] `data/repository/SeriesRepositoryImpl.kt`
-- [ ] `data/repository/ChapterRepositoryImpl.kt`
-- [ ] `fakes/FakeSeriesRepository.kt`
-- [ ] `fakes/FakeChapterRepository.kt`
-- [ ] `fakes/TestDatabase.kt` (in-memory Room for JVM tests)
-- [ ] `data/local/database/entities/` (Room entities)
-- [ ] `data/local/database/dao/` (Room DAOs)
-- [ ] `data/local/database/mappers/` (entity ↔ domain mappers)
-- [ ] `data/local/database/AppDatabase.kt`
-- [ ] `SeriesRepositoryImplTest.kt`
-- [ ] `ChapterRepositoryImplTest.kt`
-- [ ] `MigrationTest.kt` (androidTest)
+- [x] `domain/SeriesRepository.kt` (interface)
+- [x] `domain/ChapterRepository.kt` (interface)
+- [x] `data/repository/SeriesRepositoryImpl.kt`
+- [x] `data/repository/ChapterRepositoryImpl.kt`
+- [x] `fakes/FakeSeriesRepository.kt`
+- [x] `fakes/FakeChapterRepository.kt`
+- [x] `data/local/database/entities/SeriesEntity.kt`
+- [x] `data/local/database/entities/ChapterEntity.kt`
+- [x] `data/local/database/entities/DownloadQueueEntity.kt`
+- [x] `data/local/database/dao/SeriesDao.kt`
+- [x] `data/local/database/dao/ChapterDao.kt`
+- [x] `data/local/database/dao/DownloadQueueDao.kt`
+- [x] `data/local/database/mappers/` (bidirectional entity ↔ domain mappers)
+- [x] `data/local/database/AppDatabase.kt` (v1, schema export enabled)
+- [x] `core/di/DatabaseModule.kt`
+- [x] `core/di/NetworkModule.kt`
+- [x] `core/di/RepositoryModule.kt`
+- [x] `domain/model/ChapterWithState.kt`
+- [x] `data/repository/SeriesRepositoryImplTest.kt`
+- [x] `data/repository/ChapterRepositoryImplTest.kt`
+- [x] `androidTest/.../dao/SeriesDaoTest.kt` (11 tests — pending emulator)
+- [x] `androidTest/.../dao/ChapterDaoTest.kt` (13 tests — pending emulator)
+- [x] `androidTest/.../dao/DownloadQueueDaoTest.kt` (10 tests — pending emulator)
+- [x] `androidTest/.../database/MigrationTest.kt` (pending emulator)
 
 ## Phase 4 — ViewModels
 

@@ -1,43 +1,61 @@
 # Active context
 
-Last updated: 2026-05-04 (Phase 1 complete)
+Last updated: 2026-05-08 (Phase 3 complete)
 
 ## Current phase
 
-**Phase 1** — Domain models & Source contract ✅ **COMPLETE**
+**Phase 3** — Repository layer ✅ **COMPLETE** (code on disk, androidTests pending emulator infra)
 
-- 8 domain models: ContentType, SeriesStatus, ChapterContent, Filter, FilterList, Series, Chapter, SeriesPage
-- Source interface, HtmlSource base class (Ktor+Jsoup), SourceRegistry, computeSourceId utility
-- Test infrastructure: TestFixtures (5 factory functions), FakeSource (hand-rolled, configurable + call recording)
-- 59 tests across 12 test suites, all green
-- Test sources migrated from `java/` to `kotlin/` directory
-- `domain-author` subagent added, orchestrator task dispatch made runtime-driven
+All Phase 3 artifacts are untracked/uncommitted; commit them as the next step before starting Phase 4.
 
 ## What was just completed
 
-**Phase 1 — Domain models & Source contract TDD (a9467c9)**
+**Phase 2 — AsuraScans source plugin** (committed earlier)
 
-- 8 immutable domain data classes matching architecture.md §3.2 exactly
-- `ChapterContent` sealed interface with exactly two variants (Text, Pages)
-- `Source` interface with 5 properties + 6 suspend functions + `supports(filter)` default
-- `HtmlSource` abstract base class (161 lines) with Ktor+Jsoup integration and 15 MockEngine tests
-- `SourceRegistry` wrapping `Map<Long, Source>` with `get(id)` and `all()`
-- `computeSourceId()` pure function using `hashCode().toLong() and 0xFFFFFFFFL`
-- Test infrastructure: `TestFixtures.kt` + `FakeSource.kt` with call recording
-- Zero Android dependencies in domain layer, zero wildcard imports
+- `sources/asurascans/AsuraScans.kt` — HtmlSource with real CSS selectors for popular, search, series detail, chapter pages
+- HTML fixtures under `src/test/resources/fixtures/asurascans/`
+- `AsuraScansTest.kt` — parser tests with MockEngine + HTML fixtures
+- Registered in `core/di/SourceModule.kt`
+
+**Phase 3 — Repository layer (T1–T13)**
+
+- **Entities** (`data/local/database/entities/`): `SeriesEntity`, `ChapterEntity`, `DownloadQueueEntity`
+- **DAOs** (`data/local/database/dao/`): `SeriesDao`, `ChapterDao`, `DownloadQueueDao` (Flow-based, suspend functions)
+- **Mappers** (`data/local/database/mappers/`): bidirectional entity ↔ domain mappers for all three entities
+- **AppDatabase** v1: Room schema export enabled, 3 DAOs registered
+- **Domain interfaces** (`domain/`): `SeriesRepository`, `ChapterRepository`
+- **Repository impls** (`data/repository/`): `SeriesRepositoryImpl`, `ChapterRepositoryImpl`
+- **Domain model**: `ChapterWithState`
+- **Hilt DI modules** (`core/di/`): `DatabaseModule`, `NetworkModule`, `RepositoryModule`
+- **Fakes** (`test/.../fakes/`): `FakeSeriesRepository`, `FakeChapterRepository`
+- **DAO tests** (`androidTest/.../dao/`): `SeriesDaoTest` (11 tests), `ChapterDaoTest` (13 tests), `DownloadQueueDaoTest` (10 tests)
+- **Migration test** (`androidTest/.../database/`): `MigrationTest` — v1 sanity checks + `migrate1To2()` template
+- **Unit tests** (`test/.../data/`): `SeriesRepositoryImplTest`, `ChapterRepositoryImplTest`
+
+### Emulator blocker
+
+`libpulse.so.0` is missing on this WSL instance — the AVD won't start.
+To unblock androidTests (T12 DAO tests + T13 MigrationTest):
+
+```bash
+sudo apt-get install -y libpulse0
+```
+
+Until then, androidTests are written and sound but cannot be executed locally.
 
 ## What's next
 
-Phase 2 — First source plugin (example manhwa):
-1. Choose a manhwa site for the first concrete source
-2. Scrape and save HTML fixtures (popular, search, series detail, chapter)
-3. Implement `ExampleManhwa` extending `HtmlSource` with real CSS selectors
-4. Write parser tests using MockEngine + HTML fixtures
-5. Register in `core/di/SourceModule.kt`
+**Phase 4 — ViewModels**
 
-## Known blockers
+1. `ui/library/LibraryViewModel.kt` + `LibraryViewModelTest.kt`
+2. `ui/browse/BrowseViewModel.kt` + `BrowseViewModelTest.kt`
+3. `ui/series/SeriesViewModel.kt` + `SeriesViewModelTest.kt`
+4. `ui/reader/novel/NovelReaderViewModel.kt` + `NovelReaderViewModelTest.kt`
+5. `ui/reader/manhwa/MangaReaderViewModel.kt` + `MangaReaderViewModelTest.kt`
+6. `ui/downloads/DownloadsViewModel.kt` + `DownloadsViewModelTest.kt`
+7. `ui/settings/SettingsViewModel.kt` + `SettingsViewModelTest.kt`
 
-None. Phase 2 awaits user decision on which manhwa site to implement first.
+Fakes are ready (`FakeSeriesRepository`, `FakeChapterRepository`). ViewModels use `MainDispatcherRule`.
 
 ## Active conventions in play
 
@@ -45,10 +63,8 @@ None. Phase 2 awaits user decision on which manhwa site to implement first.
 - No `runBlocking` — use `runTest` from `kotlinx-coroutines-test`
 - Hand-rolled fakes for interfaces we control — not Mockito/MockK
 - `com.opus.readerparser` package
-- Test sources in `app/src/test/kotlin/`
+- Unit tests in `app/src/test/kotlin/`, androidTests in `app/src/androidTest/`
 - Commit prefixes: `feat:` `fix:` `refactor:` `ci:` `cd:` `docs:`
 - Git for local ops, `gh` CLI for remote
-
-## Pending decisions
-
-- Which manhwa site will be the first concrete source for Phase 2?
+- Identity is `(sourceId, url)` — never auto-increment IDs as FKs
+- `fallbackToDestructiveMigration` forbidden in all build configs
