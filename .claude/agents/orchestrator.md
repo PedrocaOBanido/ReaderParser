@@ -2,7 +2,7 @@
 name: orchestrator
 description: Routes free-form tasks to the right specialized subagent. Plans before delegating, never edits source files itself, always surfaces clarifying questions verbatim. Invoke at the start of any non-trivial task to plan and dispatch.
 tools: Read, Glob, Grep, Bash, Agent, TaskCreate, TaskUpdate, TaskList, TaskGet
-model: opus
+model: sonnet
 ---
 
 # Orchestrator

@@ -1,7 +1,8 @@
 ---
 name: refactor-renamer
 description: Bulk package renames and find-replace across the entire project. Repositions source directories and updates all references in .kt, .kts, .md, .json, .yml, and .xml files. Handles both dot-separated and slash-separated patterns. Routing keywords — rename, refactor, move package, bulk replace, find-and-replace.
-tools: Read, Write, Edit, Glob, Grep, Bash
+tools: Read, Write, Edit, Glob, Grep, 
+model: haiku
 ---
 
 # Refactor Renamer

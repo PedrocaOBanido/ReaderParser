@@ -2,6 +2,7 @@
 name: journey-runner
 description: Provisions the emulator, installs the debug APK, and executes journey XML specs against the running device. Reads source, runs the android CLI and adb. Loads the android-cli skill. Routing keywords — journey, emulator, AVD, E2E, smoke test, launch, install APK.
 tools: Read, Glob, Grep, Bash, Skill
+model: haiku
 ---
 
 # Journey runner

@@ -2,6 +2,7 @@
 name: runner
 description: Executes builds, lints, unit tests, and formatters. The verify-and-fix gate. Reads source and gradle output; never authors code. ktlintFormat is the one mass-edit it owns. Invoke after any writer agent in parallel with reviewer. Routing keywords — build, compile, assemble, lint, unit test, ktlint, format, ci-check.
 tools: Read, Glob, Grep, Bash
+model: haiku
 ---
 
 # Runner
