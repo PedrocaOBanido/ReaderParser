@@ -1,7 +1,7 @@
 package com.opus.readerparser.data.repository
 
 import com.opus.readerparser.data.local.database.dao.DownloadQueueDao
-import com.opus.readerparser.data.local.database.entities.DownloadQueueEntity
+import com.opus.readerparser.data.local.database.dao.DownloadQueueWithDetails
 import com.opus.readerparser.domain.DownloadRepository
 import com.opus.readerparser.domain.model.DownloadItem
 import com.opus.readerparser.domain.model.DownloadState
@@ -16,7 +16,7 @@ class DownloadRepositoryImpl @Inject constructor(
 ) : DownloadRepository {
 
     override fun observeQueue(): Flow<List<DownloadItem>> =
-        dao.observeAll().map { entities -> entities.map { it.toDomain() } }
+        dao.observeAllWithDetails().map { rows -> rows.map { it.toDomain() } }
 
     override suspend fun cancel(sourceId: Long, chapterUrl: String) {
         dao.delete(sourceId, chapterUrl)
@@ -26,9 +26,11 @@ class DownloadRepositoryImpl @Inject constructor(
         dao.updateState(sourceId, chapterUrl, DownloadState.QUEUED.name, 0f)
     }
 
-    private fun DownloadQueueEntity.toDomain() = DownloadItem(
+    private fun DownloadQueueWithDetails.toDomain() = DownloadItem(
         sourceId = sourceId,
         chapterUrl = chapterUrl,
+        seriesTitle = seriesTitle,
+        chapterName = chapterName,
         state = DownloadState.valueOf(state),
         progress = progress,
         errorMessage = errorMessage,
