@@ -23,7 +23,7 @@ import com.opus.readerparser.testutil.TestFixtures
  * [ContentType.NOVEL] and [ChapterContent.Pages] for [ContentType.MANHWA]
  * when [chapterContentResult] has not been explicitly set.
  */
-class FakeSource(
+open class FakeSource(
     name: String = "FakeSource",
     lang: String = "en",
     type: ContentType = ContentType.NOVEL,
@@ -63,17 +63,17 @@ class FakeSource(
 
     override fun supports(filter: Filter): Boolean = supportsResult(filter)
 
-    override suspend fun getPopular(page: Int): SeriesPage {
+    override open suspend fun getPopular(page: Int): SeriesPage {
         getPopularCalls.add(page)
         return popularResult
     }
 
-    override suspend fun getLatest(page: Int): SeriesPage {
+    override open suspend fun getLatest(page: Int): SeriesPage {
         getLatestCalls.add(page)
         return latestResult
     }
 
-    override suspend fun search(
+    override open suspend fun search(
         query: String,
         page: Int,
         filters: FilterList,
@@ -82,17 +82,17 @@ class FakeSource(
         return searchResult
     }
 
-    override suspend fun getSeriesDetails(series: Series): Series {
+    override open suspend fun getSeriesDetails(series: Series): Series {
         getSeriesDetailsCalls.add(series)
         return seriesDetailsResult(series)
     }
 
-    override suspend fun getChapterList(series: Series): List<Chapter> {
+    override open suspend fun getChapterList(series: Series): List<Chapter> {
         getChapterListCalls.add(series)
         return chapterListResult
     }
 
-    override suspend fun getChapterContent(chapter: Chapter): ChapterContent {
+    override open suspend fun getChapterContent(chapter: Chapter): ChapterContent {
         getChapterContentCalls.add(chapter)
         return chapterContentResult ?: when (type) {
             ContentType.NOVEL -> TestFixtures.testTextContent()
