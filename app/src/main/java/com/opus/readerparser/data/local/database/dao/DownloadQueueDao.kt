@@ -10,6 +10,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface DownloadQueueDao {
 
+    @Query("SELECT * FROM download_queue ORDER BY sourceId ASC")
+    fun observeAll(): Flow<List<DownloadQueueEntity>>
+
     @Query("SELECT * FROM download_queue WHERE state = 'QUEUED' ORDER BY sourceId ASC")
     fun observeQueued(): Flow<List<DownloadQueueEntity>>
 

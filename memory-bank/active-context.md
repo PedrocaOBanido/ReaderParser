@@ -1,61 +1,64 @@
 # Active context
 
-Last updated: 2026-05-08 (Phase 3 complete)
+Last updated: 2026-05-09 (Phase 4 complete)
 
 ## Current phase
 
-**Phase 3** — Repository layer ✅ **COMPLETE** (code on disk, androidTests pending emulator infra)
+**Phase 4** — ViewModels ✅ **COMPLETE** (177 tests, 0 failures; build + lint clean)
 
-All Phase 3 artifacts are untracked/uncommitted; commit them as the next step before starting Phase 4.
+All Phase 4 artifacts are untracked/uncommitted; commit them before starting Phase 5.
 
 ## What was just completed
 
-**Phase 2 — AsuraScans source plugin** (committed earlier)
+**Phase 4 — ViewModels (7 screens + infrastructure)**
 
-- `sources/asurascans/AsuraScans.kt` — HtmlSource with real CSS selectors for popular, search, series detail, chapter pages
-- HTML fixtures under `src/test/resources/fixtures/asurascans/`
-- `AsuraScansTest.kt` — parser tests with MockEngine + HTML fixtures
-- Registered in `core/di/SourceModule.kt`
+### New domain models
+- `SourceInfo`, `DownloadState`, `DownloadItem`, `AppTheme`, `ManhwaLayout`, `ManhwaZoom`, `AppSettings`
 
-**Phase 3 — Repository layer (T1–T13)**
+### New domain interfaces
+- `SourceRepository`, `DownloadRepository`, `SettingsRepository`
 
-- **Entities** (`data/local/database/entities/`): `SeriesEntity`, `ChapterEntity`, `DownloadQueueEntity`
-- **DAOs** (`data/local/database/dao/`): `SeriesDao`, `ChapterDao`, `DownloadQueueDao` (Flow-based, suspend functions)
-- **Mappers** (`data/local/database/mappers/`): bidirectional entity ↔ domain mappers for all three entities
-- **AppDatabase** v1: Room schema export enabled, 3 DAOs registered
-- **Domain interfaces** (`domain/`): `SeriesRepository`, `ChapterRepository`
-- **Repository impls** (`data/repository/`): `SeriesRepositoryImpl`, `ChapterRepositoryImpl`
-- **Domain model**: `ChapterWithState`
-- **Hilt DI modules** (`core/di/`): `DatabaseModule`, `NetworkModule`, `RepositoryModule`
-- **Fakes** (`test/.../fakes/`): `FakeSeriesRepository`, `FakeChapterRepository`
-- **DAO tests** (`androidTest/.../dao/`): `SeriesDaoTest` (11 tests), `ChapterDaoTest` (13 tests), `DownloadQueueDaoTest` (10 tests)
-- **Migration test** (`androidTest/.../database/`): `MigrationTest` — v1 sanity checks + `migrate1To2()` template
-- **Unit tests** (`test/.../data/`): `SeriesRepositoryImplTest`, `ChapterRepositoryImplTest`
+### New data implementations
+- `SourceRepositoryImpl` — wraps `SourceRegistry.all()` → `SourceInfo`
+- `DownloadRepositoryImpl` — wraps `DownloadQueueDao.observeAll()` + cancel/retry
+- `SettingsRepositoryImpl` — wraps DataStore Preferences
+- `DownloadQueueDao` extended with `observeAll()` (no schema change, no migration)
+- `RepositoryModule` updated with 3 new `@Binds` entries
 
-### Emulator blocker
+### New test fakes
+- `FakeSourceRepository`, `FakeDownloadRepository`, `FakeSettingsRepository`
 
-`libpulse.so.0` is missing on this WSL instance — the AVD won't start.
-To unblock androidTests (T12 DAO tests + T13 MigrationTest):
+### ViewModels (7 screens — 2 production files + 1 test each)
+| Screen | ViewModel | UiState | Test |
+|---|---|---|---|
+| Library | LibraryViewModel | LibraryUiState/Action/Effect | LibraryViewModelTest |
+| Browse | BrowseViewModel | BrowseUiState/Action/Effect | BrowseViewModelTest |
+| Series | SeriesViewModel | SeriesUiState/Action/Effect | SeriesViewModelTest |
+| Novel reader | NovelReaderViewModel | NovelReaderUiState/Action/Effect | NovelReaderViewModelTest |
+| Manga reader | MangaReaderViewModel | MangaReaderUiState/Action/Effect | MangaReaderViewModelTest |
+| Downloads | DownloadsViewModel | DownloadsUiState/Action/Effect | DownloadsViewModelTest |
+| Settings | SettingsViewModel | SettingsUiState/Action | SettingsViewModelTest |
 
-```bash
-sudo apt-get install -y libpulse0
-```
-
-Until then, androidTests are written and sound but cannot be executed locally.
+### Key testing insight
+With `UnconfinedTestDispatcher` (default in `MainDispatcherRule`), `viewModelScope.launch`
+blocks in `init` run synchronously before the test body. Do NOT call `awaitItem()` twice to
+"wait for loading" — init is already complete. Check `vm.state.value` for init results,
+and call `awaitItem()` only for state changes triggered by explicit actions inside the test.
 
 ## What's next
 
-**Phase 4 — ViewModels**
+**Phase 5 — Compose Screens**
 
-1. `ui/library/LibraryViewModel.kt` + `LibraryViewModelTest.kt`
-2. `ui/browse/BrowseViewModel.kt` + `BrowseViewModelTest.kt`
-3. `ui/series/SeriesViewModel.kt` + `SeriesViewModelTest.kt`
-4. `ui/reader/novel/NovelReaderViewModel.kt` + `NovelReaderViewModelTest.kt`
-5. `ui/reader/manhwa/MangaReaderViewModel.kt` + `MangaReaderViewModelTest.kt`
-6. `ui/downloads/DownloadsViewModel.kt` + `DownloadsViewModelTest.kt`
-7. `ui/settings/SettingsViewModel.kt` + `SettingsViewModelTest.kt`
-
-Fakes are ready (`FakeSeriesRepository`, `FakeChapterRepository`). ViewModels use `MainDispatcherRule`.
+For each of the 7 screens, add the remaining 2 files (Screen.kt + Content.kt):
+1. `ui/library/LibraryScreen.kt` + `LibraryContent.kt`
+2. `ui/browse/BrowseScreen.kt` + `BrowseContent.kt`
+3. `ui/series/SeriesScreen.kt` + `SeriesContent.kt`
+4. `ui/reader/novel/NovelReaderScreen.kt` + `NovelReaderContent.kt`
+5. `ui/reader/manhwa/MangaReaderScreen.kt` + `MangaReaderContent.kt`
+6. `ui/downloads/DownloadsScreen.kt` + `DownloadsContent.kt`
+7. `ui/settings/SettingsScreen.kt` + `SettingsContent.kt`
+8. Navigation graph (`ui/navigation/NavGraph.kt`, `Destinations.kt`)
+9. Compose UI tests targeting `*Content` composables
 
 ## Active conventions in play
 
