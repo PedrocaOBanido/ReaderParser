@@ -72,7 +72,8 @@ class DownloadQueueDaoTest {
         val updated = original.copy(state = "RUNNING", progress = 0.5f)
         dao.upsert(updated)
 
-        dao.observeQueued().test {
+        // observeAll() — not observeQueued() — because the updated state is RUNNING
+        dao.observeAll().test {
             val items = awaitItem()
             assertThat(items).hasSize(1)
             assertThat(items[0].state).isEqualTo("RUNNING")
