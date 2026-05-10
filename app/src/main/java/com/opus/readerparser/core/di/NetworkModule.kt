@@ -27,7 +27,11 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideHttpClient(@ApplicationContext context: Context): HttpClient = HttpClient(OkHttp) {
+    fun provideJson(): Json = Json { ignoreUnknownKeys = true }
+
+    @Provides
+    @Singleton
+    fun provideHttpClient(@ApplicationContext context: Context, json: Json): HttpClient = HttpClient(OkHttp) {
         engine {
             config {
                 connectTimeout(15, TimeUnit.SECONDS)
@@ -40,9 +44,7 @@ object NetworkModule {
             storage = AcceptAllCookiesStorage()
         }
         install(ContentNegotiation) {
-            json(Json {
-                ignoreUnknownKeys = true
-            })
+            json(json)
         }
         install(HttpRequestRetry) {
             retryOnServerErrors(maxRetries = 2)

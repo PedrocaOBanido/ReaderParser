@@ -127,4 +127,5 @@ dependencies {
     androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.turbine)
     androidTestImplementation(libs.compose.ui.test.junit4)
+    androidTestImplementation(libs.ktor.client.mock)
 }

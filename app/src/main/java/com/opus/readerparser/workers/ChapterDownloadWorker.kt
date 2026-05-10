@@ -11,6 +11,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkerParameters
+import com.opus.readerparser.core.util.hashUrl
 import com.opus.readerparser.data.local.filesystem.DownloadStore
 import com.opus.readerparser.domain.ChapterRepository
 import com.opus.readerparser.domain.DownloadRepository
@@ -18,6 +19,9 @@ import com.opus.readerparser.domain.model.ChapterContent
 import com.opus.readerparser.domain.model.DownloadState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsBytes
 import java.util.concurrent.TimeUnit
 
 /**
@@ -37,6 +41,7 @@ class ChapterDownloadWorker @AssistedInject constructor(
     private val chapterRepository: ChapterRepository,
     private val downloadRepository: DownloadRepository,
     private val downloads: DownloadStore,
+    private val client: HttpClient,
 ) : CoroutineWorker(ctx, params) {
 
     override suspend fun doWork(): Result {
@@ -60,12 +65,15 @@ class ChapterDownloadWorker @AssistedInject constructor(
             downloadRepository.updateQueueState(sourceId, chapterUrl, DownloadState.RUNNING, 0f)
 
             // getContent delegates to the source internally; the worker never
-            // references SourceRegistry or HttpClient directly.
+            // references SourceRegistry directly. HttpClient is used only to
+            // provide the fetchBytes lambda for writeManhwa.
             val content = chapterRepository.getContent(chapter)
 
             when (content) {
                 is ChapterContent.Text -> downloads.writeNovel(chapter, content.html)
-                is ChapterContent.Pages -> downloads.writeManhwa(chapter, content.imageUrls)
+                is ChapterContent.Pages -> downloads.writeManhwa(chapter, content.imageUrls) { url ->
+                    client.get(url).bodyAsBytes()
+                }
             }
 
             chapterRepository.markDownloaded(chapter, true)
@@ -101,7 +109,7 @@ class ChapterDownloadWorker @AssistedInject constructor(
          * downloads for the same chapter can be detected or cancelled.
          */
         fun buildRequest(sourceId: Long, chapterUrl: String): OneTimeWorkRequest {
-            val tag = "download-$sourceId-${chapterUrl.hashCode()}"
+            val tag = "download-$sourceId-${hashUrl(chapterUrl)}"
             val inputData = Data.Builder()
                 .putLong(KEY_SOURCE_ID, sourceId)
                 .putString(KEY_CHAPTER_URL, chapterUrl)

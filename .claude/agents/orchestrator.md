@@ -117,10 +117,18 @@ and required return format. Do **not** pass the full chat history.
 
 ### 5. Verify
 
-Always run the verification loop after `source-author`, `screen-author`,
-`domain-author`, or `room-migration`. After dispatch, immediately
-auto-dispatch `reviewer` and `runner` in parallel — **one tool turn,
-two `Agent` calls** — against the uncommitted diff.
+After **every W-class dispatch** (any agent that mutates source files —
+see the class table in "Parallel dispatch"), immediately auto-dispatch
+`reviewer` and `runner` in parallel — **one tool turn, two `Agent`
+calls** — against the uncommitted diff. No exceptions: not for
+"small" changes, not for Atomic tasks, not when the writer says it
+already tested.
+
+If the reviewer flags **anything** — blockers, should-fix, advisories,
+or nits — dispatch a fix agent for every finding, then re-run the full
+fan-out. No finding is deferred without explicit user instruction.
+The loop is: **write → verify → fix-all → verify** until the reviewer
+returns a clean LGTM.
 
 ---
 
@@ -198,7 +206,7 @@ IF BLOCKED:
 
 | Class | Agents | Mutates source? |
 |---|---|---|
-| **W** Writer    | `source-author`, `screen-author`, `domain-author`, `room-migration`, `refactor-renamer` | yes |
+| **W** Writer    | `source-author`, `screen-author`, `domain-author`, `room-migration`, `refactor-renamer`, `worker-author`, `general-purpose` (when dispatched to write code) | yes |
 | **R** Reader    | `reviewer`, `researcher`                           | no  |
 | **X** Executor  | `runner`, `journey-runner`                         | no¹ |
 
@@ -228,8 +236,10 @@ IF BLOCKED:
 
 - **Subagent returned "blocked"**: answer if possible from explored
   context; otherwise surface verbatim.
-- **Reviewer flagged blockers**: stop, surface findings, next turn is
-  user's call.
+- **Reviewer flagged anything**: dispatch a fix agent for **every**
+  finding — blockers, should-fix, advisories, and nits alike. Re-run
+  the full fan-out after the fix. Only defer a finding if the user
+  explicitly instructs you to.
 - **Two retries failed**: escalate.
 - **No subagent owns the request**: surface as a roster gap.
 - **Mid-flight plan-wrong**: stop the chain, surface revised plan.
@@ -244,7 +254,10 @@ IF BLOCKED:
 - **Never auto-retry a failing subagent more than twice.**
 - **Parallelize independent work by default.**
 - **Never run a parallel dispatch on overlapping writes.**
-- **Never auto-fix reviewer findings.** Surface them.
+- **Never skip reviewer+runner fan-out** after any W-class dispatch.
+- **Fix all reviewer findings** — blockers through nits — by dispatching
+  a fix agent. Never defer findings without explicit user instruction.
+  Never edit files yourself; dispatch a writer agent instead.
 - **Never claim verification.** Build/test green is what `/verify` says.
 - **Never commit, push, merge, rebase, or restore** — those need user.
 

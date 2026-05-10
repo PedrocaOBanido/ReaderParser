@@ -17,6 +17,10 @@ import com.opus.readerparser.data.local.database.entities.SeriesEntity
 import com.opus.readerparser.data.local.filesystem.DownloadStore
 import com.opus.readerparser.data.repository.ChapterRepositoryImpl
 import com.opus.readerparser.data.source.Source
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.respond
+import io.ktor.http.HttpStatusCode
 import com.opus.readerparser.data.source.SourceRegistry
 import com.opus.readerparser.domain.ChapterRepository
 import com.opus.readerparser.domain.DownloadRepository
@@ -118,27 +122,17 @@ class ChapterDownloadWorkerTest {
     }
 
     /**
-     * Enqueues a work request, satisfies its constraints, then polls WorkInfo
-     * until the state is terminal (SUCCEEDED, FAILED, or CANCELLED).
-     * WorkManagerTestInitHelper's sync execution means the job runs synchronously
-     * after [setAllConstraintsMet]; a single [getWorkInfoById] call is sufficient,
-     * but we loop defensively for robustness.
+     * Enqueues a work request and satisfies its constraints.
+     * WorkManagerTestInitHelper runs the worker synchronously on the calling
+     * thread after [setAllConstraintsMet], so the work is already finished
+     * by the time that call returns.
      */
     private fun enqueueAndWait(sourceId: Long, chapterUrl: String): WorkInfo {
         val request = ChapterDownloadWorker.buildRequest(sourceId, chapterUrl)
         workManager.enqueue(request).result.get()
         val testDriver = WorkManagerTestInitHelper.getTestDriver(context)!!
         testDriver.setAllConstraintsMet(request.id)
-        // Spin until terminal — WorkManagerTestInitHelper runs work synchronously
-        // on the calling thread after setAllConstraintsMet in test mode.
-        var info = workManager.getWorkInfoById(request.id).get()!!
-        var retries = 0
-        while (!info.state.isFinished && retries < 10) {
-            Thread.sleep(100)
-            info = workManager.getWorkInfoById(request.id).get()!!
-            retries++
-        }
-        return info
+        return workManager.getWorkInfoById(request.id).get()!!
     }
 
     // --- tests ---
@@ -244,7 +238,12 @@ private class FakeDownloadStoreAndroidTest : DownloadStore {
         storedContent[chapter] = ChapterContent.Text(html)
     }
 
-    override suspend fun writeManhwa(chapter: Chapter, imageUrls: List<String>) {
+    override suspend fun writeManhwa(
+        chapter: Chapter,
+        imageUrls: List<String>,
+        fetchBytes: suspend (url: String) -> ByteArray,
+    ) {
+        imageUrls.forEach { url -> fetchBytes(url) }   // invoke so lambda is exercised
         manhwaWrites.add(chapter to imageUrls)
         storedContent[chapter] = ChapterContent.Pages(imageUrls)
     }
@@ -327,6 +326,11 @@ private class TestWorkerFactory(
     private val chapterRepository: ChapterRepository,
     private val downloadRepository: DownloadRepository,
     private val store: DownloadStore,
+    private val client: HttpClient = HttpClient(MockEngine) {
+        engine {
+            addHandler { respond(ByteArray(0), HttpStatusCode.OK) }
+        }
+    },
 ) : WorkerFactory() {
 
     override fun createWorker(
@@ -341,6 +345,7 @@ private class TestWorkerFactory(
             chapterRepository = chapterRepository,
             downloadRepository = downloadRepository,
             downloads = store,
+            client = client,
         )
     }
 }

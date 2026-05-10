@@ -42,12 +42,16 @@ interface DownloadStore {
      * Persists a manhwa chapter's pages to disk.
      *
      * @param imageUrls The ordered list of page URLs from the source.
-     *
-     * The concrete implementation (Phase 7) is responsible for fetching the
-     * image bytes from the network. The interface accepts only domain types so
-     * it remains Android-free and trivially fakeable in JVM tests.
+     * @param fetchBytes Caller-provided lambda that downloads bytes for a given URL.
+     *   Keeping the network call in the caller (the WorkManager worker) ensures this
+     *   interface and its implementation remain Android-free and trivially fakeable in
+     *   JVM unit tests.
      */
-    suspend fun writeManhwa(chapter: Chapter, imageUrls: List<String>)
+    suspend fun writeManhwa(
+        chapter: Chapter,
+        imageUrls: List<String>,
+        fetchBytes: suspend (url: String) -> ByteArray,
+    )
 
     /** Removes the downloaded files for [chapter], if they exist. */
     suspend fun delete(chapter: Chapter)

@@ -102,9 +102,12 @@ Phase-by-phase implementation status. Checked = done, empty = planned, ~ = in pr
 
 ## Phase 7 — Edge cases & regression safety
 
-- [ ] `data/local/filesystem/DownloadStoreImpl.kt` + `DownloadStoreTest.kt` (interface done in Phase 6; implementation + tests remain)
-- [ ] `data/local/prefs/SettingsStore.kt` + `SettingsStoreTest.kt`
-- [ ] `core/util/HashingTest.kt`
+- [x] `core/util/Hashing.kt` + `HashingTest.kt`
+- [x] `data/local/filesystem/DownloadStoreImpl.kt` + `DownloadStoreImplTest.kt`
+- [x] `data/local/prefs/DataStoreExt.kt` (internal `settingsDataStore` extension)
+- [x] `data/local/prefs/SettingsStore.kt` + `SettingsStoreTest.kt`
+- [x] `core/di/FilesystemModule.kt` (binds `DownloadStore → DownloadStoreImpl`)
+- [x] `core/di/PrefsModule.kt` (provides `DataStore<Preferences>`)
 
 ## Phase 8 — Android CLI integration & journey tests
 

@@ -40,7 +40,12 @@ class FakeDownloadStore : DownloadStore {
         storedContent[chapter] = ChapterContent.Text(html)
     }
 
-    override suspend fun writeManhwa(chapter: Chapter, imageUrls: List<String>) {
+    override suspend fun writeManhwa(
+        chapter: Chapter,
+        imageUrls: List<String>,
+        fetchBytes: suspend (url: String) -> ByteArray,
+    ) {
+        imageUrls.forEach { url -> fetchBytes(url) }   // invoke so callers can assert on it
         manhwaWrites.add(chapter to imageUrls)
         storedContent[chapter] = ChapterContent.Pages(imageUrls)
     }
