@@ -92,13 +92,17 @@ Phase-by-phase implementation status. Checked = done, empty = planned, ~ = in pr
 
 ## Phase 6 — Worker tests
 
-- [ ] `workers/ChapterDownloadWorker.kt`
-- [ ] `workers/LibraryUpdateWorker.kt`
-- [ ] `ChapterDownloadWorkerTest.kt` (androidTest)
+- [x] `workers/ChapterDownloadWorker.kt`
+- [x] `workers/LibraryUpdateWorker.kt`
+- [x] `ChapterDownloadWorkerTest.kt` (androidTest)
+- [x] `data/local/filesystem/DownloadStore.kt` (interface; domain-safe, no Android/Ktor imports)
+- [x] `fakes/FakeDownloadStore.kt`
+- [x] `ChapterRepository` + `DownloadRepository` extended with `findByUrl`, `markDownloaded`, `updateQueueState`
+- [x] `App.kt` wired as `Configuration.Provider`; `WorkManagerInitializer` removed from manifest
 
 ## Phase 7 — Edge cases & regression safety
 
-- [ ] `data/local/filesystem/DownloadStore.kt` + `DownloadStoreTest.kt`
+- [ ] `data/local/filesystem/DownloadStoreImpl.kt` + `DownloadStoreTest.kt` (interface done in Phase 6; implementation + tests remain)
 - [ ] `data/local/prefs/SettingsStore.kt` + `SettingsStoreTest.kt`
 - [ ] `core/util/HashingTest.kt`
 
