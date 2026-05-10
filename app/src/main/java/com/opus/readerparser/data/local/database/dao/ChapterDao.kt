@@ -25,6 +25,9 @@ interface ChapterDao {
     @Query("UPDATE chapters SET progress = :progress WHERE sourceId = :sourceId AND url = :url")
     suspend fun setProgress(sourceId: Long, url: String, progress: Float)
 
+    @Query("UPDATE chapters SET downloaded = :downloaded WHERE sourceId = :sourceId AND url = :url")
+    suspend fun markDownloaded(sourceId: Long, url: String, downloaded: Boolean)
+
     @Query("DELETE FROM chapters WHERE sourceId = :sourceId AND seriesUrl = :seriesUrl")
     suspend fun deleteBySeries(sourceId: Long, seriesUrl: String)
 }

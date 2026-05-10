@@ -31,6 +31,9 @@ class ChapterRepositoryImpl @Inject constructor(
         chapterDao.upsertAll(remote.map { it.toEntity() })
     }
 
+    override suspend fun findByUrl(sourceId: Long, url: String): Chapter? =
+        chapterDao.getByUrl(sourceId, url)?.toDomain()
+
     override suspend fun getContent(chapter: Chapter): ChapterContent =
         sourceRegistry[chapter.sourceId].getChapterContent(chapter)
 
@@ -40,5 +43,9 @@ class ChapterRepositoryImpl @Inject constructor(
 
     override suspend fun setProgress(chapter: Chapter, progress: Float) {
         chapterDao.setProgress(chapter.sourceId, chapter.url, progress)
+    }
+
+    override suspend fun markDownloaded(chapter: Chapter, downloaded: Boolean) {
+        chapterDao.markDownloaded(chapter.sourceId, chapter.url, downloaded)
     }
 }

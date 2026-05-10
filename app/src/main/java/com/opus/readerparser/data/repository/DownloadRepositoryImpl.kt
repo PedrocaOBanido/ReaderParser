@@ -26,6 +26,16 @@ class DownloadRepositoryImpl @Inject constructor(
         dao.updateState(sourceId, chapterUrl, DownloadState.QUEUED.name, 0f)
     }
 
+    override suspend fun updateQueueState(
+        sourceId: Long,
+        chapterUrl: String,
+        state: DownloadState,
+        progress: Float,
+        errorMessage: String?,
+    ) {
+        dao.updateStateWithError(sourceId, chapterUrl, state.name, progress, errorMessage)
+    }
+
     private fun DownloadQueueWithDetails.toDomain() = DownloadItem(
         sourceId = sourceId,
         chapterUrl = chapterUrl,

@@ -13,6 +13,15 @@ class FakeDownloadRepository : DownloadRepository {
     val cancelCalls: MutableList<Pair<Long, String>> = mutableListOf()
     val retryCalls: MutableList<Pair<Long, String>> = mutableListOf()
 
+    data class UpdateStateCall(
+        val sourceId: Long,
+        val chapterUrl: String,
+        val state: DownloadState,
+        val progress: Float,
+        val errorMessage: String?,
+    )
+    val updateQueueStateCalls: MutableList<UpdateStateCall> = mutableListOf()
+
     fun setQueue(items: List<DownloadItem>) {
         _queue.value = items
     }
@@ -29,6 +38,23 @@ class FakeDownloadRepository : DownloadRepository {
         _queue.value = _queue.value.map {
             if (it.sourceId == sourceId && it.chapterUrl == chapterUrl) {
                 it.copy(state = DownloadState.QUEUED, progress = 0f, errorMessage = null)
+            } else {
+                it
+            }
+        }
+    }
+
+    override suspend fun updateQueueState(
+        sourceId: Long,
+        chapterUrl: String,
+        state: DownloadState,
+        progress: Float,
+        errorMessage: String?,
+    ) {
+        updateQueueStateCalls.add(UpdateStateCall(sourceId, chapterUrl, state, progress, errorMessage))
+        _queue.value = _queue.value.map {
+            if (it.sourceId == sourceId && it.chapterUrl == chapterUrl) {
+                it.copy(state = state, progress = progress, errorMessage = errorMessage)
             } else {
                 it
             }

@@ -43,6 +43,15 @@ interface DownloadQueueDao {
     @Query("UPDATE download_queue SET state = :state, progress = :progress WHERE sourceId = :sourceId AND chapterUrl = :chapterUrl")
     suspend fun updateState(sourceId: Long, chapterUrl: String, state: String, progress: Float)
 
+    @Query("UPDATE download_queue SET state = :state, progress = :progress, errorMessage = :errorMessage WHERE sourceId = :sourceId AND chapterUrl = :chapterUrl")
+    suspend fun updateStateWithError(
+        sourceId: Long,
+        chapterUrl: String,
+        state: String,
+        progress: Float,
+        errorMessage: String?,
+    )
+
     @Query("DELETE FROM download_queue WHERE sourceId = :sourceId AND chapterUrl = :chapterUrl")
     suspend fun delete(sourceId: Long, chapterUrl: String)
 }

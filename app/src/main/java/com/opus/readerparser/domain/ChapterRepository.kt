@@ -11,8 +11,12 @@ interface ChapterRepository {
 
     suspend fun refreshChapters(series: Series)
 
+    /** Returns the chapter for the given identity pair, or null if not cached locally. */
+    suspend fun findByUrl(sourceId: Long, url: String): Chapter?
+
     suspend fun getContent(chapter: Chapter): ChapterContent
 
     suspend fun markRead(chapter: Chapter, read: Boolean)
     suspend fun setProgress(chapter: Chapter, progress: Float)
+    suspend fun markDownloaded(chapter: Chapter, downloaded: Boolean)
 }

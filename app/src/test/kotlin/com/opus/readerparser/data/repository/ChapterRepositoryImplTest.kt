@@ -61,6 +61,11 @@ class ChapterRepositoryImplTest {
             if (idx >= 0) store[idx] = store[idx].copy(progress = progress)
         }
 
+        override suspend fun markDownloaded(sourceId: Long, url: String, downloaded: Boolean) {
+            val idx = store.indexOfFirst { it.sourceId == sourceId && it.url == url }
+            if (idx >= 0) store[idx] = store[idx].copy(downloaded = downloaded)
+        }
+
         override suspend fun deleteBySeries(sourceId: Long, seriesUrl: String) {
             store.removeAll { it.sourceId == sourceId && it.seriesUrl == seriesUrl }
         }

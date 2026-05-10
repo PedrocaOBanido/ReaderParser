@@ -29,6 +29,7 @@ class FakeChapterRepository : ChapterRepository {
     val getContentCalls: MutableList<Chapter> = mutableListOf()
     val markReadCalls: MutableList<Pair<Chapter, Boolean>> = mutableListOf()
     val setProgressCalls: MutableList<Pair<Chapter, Float>> = mutableListOf()
+    val markDownloadedCalls: MutableList<Pair<Chapter, Boolean>> = mutableListOf()
 
     // -- chapter state --
     private val _chapterStates = MutableStateFlow<Map<String, List<ChapterWithState>>>(emptyMap())
@@ -39,6 +40,12 @@ class FakeChapterRepository : ChapterRepository {
     override suspend fun refreshChapters(series: Series) {
         refreshChaptersCalls.add(series)
     }
+
+    /** Pre-populate via [setChapters]; returns the first match for (sourceId, url). */
+    override suspend fun findByUrl(sourceId: Long, url: String): Chapter? =
+        _chapterStates.value.values.flatten()
+            .firstOrNull { it.chapter.sourceId == sourceId && it.chapter.url == url }
+            ?.chapter
 
     override suspend fun getContent(chapter: Chapter): ChapterContent {
         getContentCalls.add(chapter)
@@ -53,6 +60,11 @@ class FakeChapterRepository : ChapterRepository {
     override suspend fun setProgress(chapter: Chapter, progress: Float) {
         setProgressCalls.add(chapter to progress)
         updateChapterState(chapter) { it.copy(progress = progress) }
+    }
+
+    override suspend fun markDownloaded(chapter: Chapter, downloaded: Boolean) {
+        markDownloadedCalls.add(chapter to downloaded)
+        updateChapterState(chapter) { it.copy(downloaded = downloaded) }
     }
 
     // -- helpers for tests --
