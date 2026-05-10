@@ -106,3 +106,14 @@ fun onAction(action: XAction)           // single entry point for UI events
 - Create PRs with `gh pr create`, merge with `gh pr merge`
 - Create releases with `gh release create`
 - See `memory-bank/commit-conventions.md` for commit prefix rules
+
+## Orchestrator: reviewer + runner fan-out
+
+Dispatch `reviewer` and `runner` in parallel **only** after W-class changes to:
+- Source code (`.kt`, `.kts`, build files)
+- Project config (`build.gradle`, `libs.versions.toml`, `AndroidManifest.xml`, `gradle.properties`, etc.)
+
+**Skip the fan-out** for documentation-only changes:
+- Markdown files (`.md`) — including `CLAUDE.md`, `AGENTS.md`, `architecture.md`
+- Memory bank updates (`memory-bank/`)
+- Agent / orchestration config (`.claude/`)

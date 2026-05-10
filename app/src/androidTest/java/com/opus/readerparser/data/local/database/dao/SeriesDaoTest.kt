@@ -6,6 +6,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.opus.readerparser.data.local.database.AppDatabase
+import com.opus.readerparser.data.local.database.entities.ChapterEntity
 import com.opus.readerparser.data.local.database.entities.SeriesEntity
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -195,6 +196,56 @@ class SeriesDaoTest {
         val result = dao.getByUrl(sourceId = 1L, url = "https://example.com/1")
         assertThat(result!!.inLibrary).isTrue()
         assertThat(result.addedAt).isEqualTo(5000L)
+    }
+
+    // --- addToLibrary (regression: must NOT cascade-delete chapters) ---
+
+    @Test
+    fun addToLibrary_setsInLibraryTrue_andPreservesChapters() = runTest {
+        // Arrange: insert the series and a chapter FK'd to it
+        val series = seriesEntity(sourceId = 1L, url = "https://example.com/series/1")
+        dao.upsert(series)
+
+        // Cross-DAO: verifying FK ON DELETE CASCADE does NOT fire — requires ChapterDao to seed and query chapters
+        val chapterDao = database.chapterDao()
+        val chapter = ChapterEntity(
+            sourceId = 1L,
+            url = "https://example.com/series/1/ch/1",
+            seriesUrl = "https://example.com/series/1",
+            name = "Chapter 1",
+            number = 1f,
+            uploadDate = null,
+            read = false,
+            progress = 0f,
+            downloaded = false,
+        )
+        chapterDao.upsertAll(listOf(chapter))
+
+        // Act: mark the series as in-library using the UPDATE-only query
+        dao.addToLibrary(sourceId = 1L, url = "https://example.com/series/1", addedAt = 5000L)
+
+        // Assert: series is in library
+        val updatedSeries = dao.getByUrl(sourceId = 1L, url = "https://example.com/series/1")
+        assertThat(updatedSeries).isNotNull()
+        assertThat(updatedSeries!!.inLibrary).isTrue()
+        assertThat(updatedSeries.addedAt).isEqualTo(5000L)
+
+        // Assert: chapter was NOT cascade-deleted (regression guard for issue #5)
+        val chapters = chapterDao.getChaptersForSeries(
+            sourceId = 1L, seriesUrl = "https://example.com/series/1"
+        )
+        assertThat(chapters).hasSize(1)
+        assertThat(chapters[0].url).isEqualTo("https://example.com/series/1/ch/1")
+    }
+
+    @Test
+    fun addToLibrary_isNoOp_whenSeriesDoesNotExist() = runTest {
+        // Verifies that the UPDATE-only query throws no exception when the row is absent.
+        // Asserting null is a secondary check; the primary value is confirming no INSERT occurred.
+        dao.addToLibrary(sourceId = 99L, url = "https://nonexistent.invalid/", addedAt = 1000L)
+
+        val result = dao.getByUrl(sourceId = 99L, url = "https://nonexistent.invalid/")
+        assertThat(result).isNull()
     }
 
     // --- removeFromLibrary ---

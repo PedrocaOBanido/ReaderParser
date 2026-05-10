@@ -54,7 +54,7 @@ class SeriesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addToLibrary(series: Series) {
-        seriesDao.upsert(series.toEntity().copy(inLibrary = true, addedAt = System.currentTimeMillis()))
+        seriesDao.addToLibrary(series.sourceId, series.url, System.currentTimeMillis())
     }
 
     override suspend fun removeFromLibrary(series: Series) {

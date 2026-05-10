@@ -22,6 +22,7 @@ them in.
 
 @memory-bank/active-context.md
 @memory-bank/conventions.md
+@memory-bank/progress.md
 
 ---
 

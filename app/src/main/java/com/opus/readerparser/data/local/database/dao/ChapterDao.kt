@@ -28,6 +28,10 @@ interface ChapterDao {
     @Query("UPDATE chapters SET downloaded = :downloaded WHERE sourceId = :sourceId AND url = :url")
     suspend fun markDownloaded(sourceId: Long, url: String, downloaded: Boolean)
 
+    /** One-shot counterpart to [observeChapters]; returns the current list without subscribing to updates. */
+    @Query("SELECT * FROM chapters WHERE sourceId = :sourceId AND seriesUrl = :seriesUrl ORDER BY number ASC")
+    suspend fun getChaptersForSeries(sourceId: Long, seriesUrl: String): List<ChapterEntity>
+
     @Query("DELETE FROM chapters WHERE sourceId = :sourceId AND seriesUrl = :seriesUrl")
     suspend fun deleteBySeries(sourceId: Long, seriesUrl: String)
 }

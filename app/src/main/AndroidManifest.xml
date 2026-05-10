@@ -15,9 +15,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ReaderParser">
 
+        <!-- tools:ignore="Instantiatable": MainActivity is annotated with @AndroidEntryPoint.
+             Hilt generates a subclass at compile time that lint cannot resolve, producing
+             a false-positive Instantiatable warning. -->
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            tools:ignore="Instantiatable">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

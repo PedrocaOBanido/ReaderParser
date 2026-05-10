@@ -66,6 +66,10 @@ class ChapterRepositoryImplTest {
             if (idx >= 0) store[idx] = store[idx].copy(downloaded = downloaded)
         }
 
+        override suspend fun getChaptersForSeries(sourceId: Long, seriesUrl: String): List<ChapterEntity> =
+            store.filter { it.sourceId == sourceId && it.seriesUrl == seriesUrl }
+                .sortedBy { it.number }
+
         override suspend fun deleteBySeries(sourceId: Long, seriesUrl: String) {
             store.removeAll { it.sourceId == sourceId && it.seriesUrl == seriesUrl }
         }

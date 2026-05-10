@@ -15,6 +15,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Test
@@ -175,16 +177,23 @@ class SeriesRepositoryImplTest {
     // -----------------------------------------------------------------
 
     @Test
-    fun `addToLibrary upserts with inLibrary true and addedAt timestamp`() = runTest {
+    fun `addToLibrary sets inLibrary true and addedAt on existing series`() = runTest {
+        // series must already exist in DB (in practice, refreshDetails inserts it first)
+        fakeDao.upsert(testSeries.toEntity())
+
         repository.addToLibrary(testSeries)
 
         val stored = fakeDao.getByUrl(testSeries.sourceId, testSeries.url)
+        assertNotNull("expected series to exist in DAO", stored)
         assertTrue(stored!!.inLibrary)
-        assertTrue(stored.addedAt != null && stored.addedAt!! > 0L)
+        assertNotNull(stored.addedAt)
+        assertTrue(stored.addedAt!! > 0L)
     }
 
     @Test
-    fun `addToLibrary preserves series fields when upserting`() = runTest {
+    fun `addToLibrary preserves existing series fields`() = runTest {
+        fakeDao.upsert(testSeries.toEntity())
+
         repository.addToLibrary(testSeries)
 
         val stored = fakeDao.getByUrl(testSeries.sourceId, testSeries.url)!!
@@ -193,13 +202,24 @@ class SeriesRepositoryImplTest {
         assertEquals(testSeries.url, stored.url)
     }
 
+    @Test
+    fun `addToLibrary is a no-op when series does not exist in DB`() = runTest {
+        // Do NOT pre-insert — simulates calling addToLibrary before refreshDetails
+        repository.addToLibrary(testSeries)
+
+        // Row should still be absent; no crash, no insertion
+        val stored = fakeDao.getByUrl(testSeries.sourceId, testSeries.url)
+        assertNull(stored)
+    }
+
     // -----------------------------------------------------------------
     // removeFromLibrary
     // -----------------------------------------------------------------
 
     @Test
     fun `removeFromLibrary delegates to DAO removeFromLibrary`() = runTest {
-        // First add to library so there's something to remove
+        // Pre-insert the series so the UPDATE-only addToLibrary has a row to operate on
+        fakeDao.upsert(testSeries.toEntity())
         repository.addToLibrary(testSeries)
         // Now remove
         repository.removeFromLibrary(testSeries)
