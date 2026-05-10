@@ -3,6 +3,9 @@ name: Journey Tests
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   journeys:
     runs-on: ubuntu-latest

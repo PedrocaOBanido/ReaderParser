@@ -9,6 +9,9 @@ on:
     - cron: '42 0 * * 4'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   detekt:
     runs-on: ubuntu-latest
