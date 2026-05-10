@@ -87,6 +87,8 @@ abstract class HtmlSource(
      * Parses the series-detail page [doc] and merges any extra fields
      * (description, genres, status, etc.) into [series], returning the
      * enriched copy.
+     * The [series] argument is guaranteed to have [Series.type] matching [type];
+     * implementations should use `series.copy(...)` and are not required to re-set `type`.
      */
     protected abstract fun seriesDetailsParse(doc: Document, series: Series): Series
 
@@ -157,7 +159,7 @@ abstract class HtmlSource(
     }
 
     override suspend fun getSeriesDetails(series: Series): Series =
-        seriesDetailsParse(fetchDoc(series.url), series)
+        seriesDetailsParse(fetchDoc(series.url), series.copy(type = type))
 
     override suspend fun getChapterList(series: Series): List<Chapter> =
         fetchDoc(series.url)

@@ -364,6 +364,23 @@ class HtmlSourceTest {
         assertEquals("Jane Doe", result.author)       // enriched
     }
 
+    @Test
+    fun `getSeriesDetails normalises stub type to source type`() = runTest {
+        val html = "<html><body></body></html>"
+        val source = testManhwaSource(html)
+
+        val input = Series(
+            sourceId = source.id,
+            url = "https://test.invalid/series/1",
+            title = "Title",
+            type = ContentType.NOVEL,   // stub built with wrong type
+        )
+        val result = source.getSeriesDetails(input)
+
+        assertEquals(ContentType.MANHWA, result.type)   // source type wins
+        assertEquals(input.title, result.title)   // copy chain preserves other fields
+    }
+
     // -----------------------------------------------------------------
     // getChapterList
     // -----------------------------------------------------------------
