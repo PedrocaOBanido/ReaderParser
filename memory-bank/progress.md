@@ -73,22 +73,22 @@ Phase-by-phase implementation status. Checked = done, empty = planned, ~ = in pr
 
 ## Phase 4 — ViewModels
 
-- [ ] `ui/library/LibraryViewModel.kt` + `LibraryViewModelTest.kt`
-- [ ] `ui/browse/BrowseViewModel.kt` + `BrowseViewModelTest.kt`
-- [ ] `ui/series/SeriesViewModel.kt` + `SeriesViewModelTest.kt`
-- [ ] `ui/reader/novel/NovelReaderViewModel.kt` + `NovelReaderViewModelTest.kt`
-- [ ] `ui/reader/manhwa/MangaReaderViewModel.kt` + `MangaReaderViewModelTest.kt`
-- [ ] `ui/downloads/DownloadsViewModel.kt` + `DownloadsViewModelTest.kt`
-- [ ] `ui/settings/SettingsViewModel.kt` + `SettingsViewModelTest.kt`
+- [x] `ui/library/LibraryViewModel.kt` + `LibraryViewModelTest.kt`
+- [x] `ui/browse/BrowseViewModel.kt` + `BrowseViewModelTest.kt`
+- [x] `ui/series/SeriesViewModel.kt` + `SeriesViewModelTest.kt`
+- [x] `ui/reader/novel/NovelReaderViewModel.kt` + `NovelReaderViewModelTest.kt`
+- [x] `ui/reader/manhwa/MangaReaderViewModel.kt` + `MangaReaderViewModelTest.kt`
+- [x] `ui/downloads/DownloadsViewModel.kt` + `DownloadsViewModelTest.kt`
+- [x] `ui/settings/SettingsViewModel.kt` + `SettingsViewModelTest.kt`
 
 ## Phase 5 — Compose Content UI tests
 
-- [ ] `LibraryContentTest.kt` (androidTest)
-- [ ] `BrowseContentTest.kt` (androidTest)
-- [ ] `SeriesContentTest.kt` (androidTest)
-- [ ] `NovelReaderContentTest.kt` (androidTest)
-- [ ] `MangaReaderContentTest.kt` (androidTest)
-- [ ] `ComponentsTest.kt` (androidTest)
+- [x] `LibraryContentTest.kt` (androidTest)
+- [x] `BrowseContentTest.kt` (androidTest)
+- [x] `SeriesContentTest.kt` (androidTest)
+- [x] `NovelReaderContentTest.kt` (androidTest)
+- [x] `MangaReaderContentTest.kt` (androidTest)
+- [x] `ComponentsTest.kt` (androidTest)
 
 ## Phase 6 — Worker tests
 
