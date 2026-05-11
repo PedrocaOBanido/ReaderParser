@@ -24,6 +24,7 @@ class FakeSeriesRepository : SeriesRepository {
     var latestResult: SeriesPage = SeriesPage(emptyList(), false)
     var searchResult: SeriesPage = SeriesPage(emptyList(), false)
     var refreshDetailsResult: (Series) -> Series = { it }
+    var isInLibraryResult: (Long, String) -> Boolean = { _, _ -> false }
 
     // -- call recording --
     val fetchPopularCalls: MutableList<Pair<Long, Int>> = mutableListOf()
@@ -32,6 +33,7 @@ class FakeSeriesRepository : SeriesRepository {
     val refreshDetailsCalls: MutableList<Series> = mutableListOf()
     val addToLibraryCalls: MutableList<Series> = mutableListOf()
     val removeFromLibraryCalls: MutableList<Series> = mutableListOf()
+    val isInLibraryCalls: MutableList<Pair<Long, String>> = mutableListOf()
 
     // -- library state --
     private val _library = MutableStateFlow<List<Series>>(emptyList())
@@ -71,6 +73,11 @@ class FakeSeriesRepository : SeriesRepository {
     override suspend fun removeFromLibrary(series: Series) {
         removeFromLibraryCalls.add(series)
         _library.value = _library.value.filter { it.url != series.url || it.sourceId != series.sourceId }
+    }
+
+    override suspend fun isInLibrary(sourceId: Long, url: String): Boolean {
+        isInLibraryCalls.add(sourceId to url)
+        return isInLibraryResult(sourceId, url)
     }
 }
 

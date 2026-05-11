@@ -86,7 +86,8 @@ class SeriesViewModel @Inject constructor(
             try {
                 val updated = seriesRepository.refreshDetails(stubSeries)
                 chapterRepository.refreshChapters(updated)
-                _state.update { it.copy(series = updated, inLibrary = false, isLoading = false) }
+                val inLibrary = seriesRepository.isInLibrary(updated.sourceId, updated.url)
+                _state.update { it.copy(series = updated, inLibrary = inLibrary, isLoading = false) }
             } catch (e: Exception) {
                 _state.update { it.copy(isLoading = false, error = e.message ?: "Failed to load series") }
                 _effects.send(SeriesEffect.ShowError(e.message ?: "Failed to load series"))

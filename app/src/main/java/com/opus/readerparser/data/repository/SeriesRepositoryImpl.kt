@@ -26,13 +26,13 @@ class SeriesRepositoryImpl @Inject constructor(
 
     override suspend fun fetchPopular(sourceId: Long, page: Int): SeriesPage {
         val result = sourceRegistry[sourceId].getPopular(page)
-        seriesDao.upsertAll(result.series.map { it.toEntity() })
+        result.series.forEach { saveSeries(it) }
         return result
     }
 
     override suspend fun fetchLatest(sourceId: Long, page: Int): SeriesPage {
         val result = sourceRegistry[sourceId].getLatest(page)
-        seriesDao.upsertAll(result.series.map { it.toEntity() })
+        result.series.forEach { saveSeries(it) }
         return result
     }
 
@@ -43,13 +43,13 @@ class SeriesRepositoryImpl @Inject constructor(
         filters: FilterList,
     ): SeriesPage {
         val result = sourceRegistry[sourceId].search(query, page, filters)
-        seriesDao.upsertAll(result.series.map { it.toEntity() })
+        result.series.forEach { saveSeries(it) }
         return result
     }
 
     override suspend fun refreshDetails(series: Series): Series {
         val updated = sourceRegistry[series.sourceId].getSeriesDetails(series)
-        seriesDao.upsert(updated.toEntity())
+        saveSeries(updated)
         return updated
     }
 
@@ -59,5 +59,27 @@ class SeriesRepositoryImpl @Inject constructor(
 
     override suspend fun removeFromLibrary(series: Series) {
         seriesDao.removeFromLibrary(series.sourceId, series.url)
+    }
+
+    override suspend fun isInLibrary(sourceId: Long, url: String): Boolean =
+        seriesDao.getByUrl(sourceId, url)?.inLibrary ?: false
+
+    private suspend fun saveSeries(series: Series) {
+        val entity = series.toEntity()
+        val updated = seriesDao.updateDetails(
+            sourceId = entity.sourceId,
+            url = entity.url,
+            title = entity.title,
+            author = entity.author,
+            artist = entity.artist,
+            description = entity.description,
+            coverUrl = entity.coverUrl,
+            genresJson = entity.genresJson,
+            status = entity.status,
+            type = entity.type,
+        )
+        if (updated == 0) {
+            seriesDao.insert(entity)
+        }
     }
 }

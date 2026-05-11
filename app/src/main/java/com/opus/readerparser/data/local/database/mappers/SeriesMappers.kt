@@ -29,6 +29,4 @@ fun Series.toEntity(): SeriesEntity = SeriesEntity(
     genresJson = GenreJson.genresToJson(genres),
     status = status.name,
     type = type.name,
-    inLibrary = false,
-    addedAt = null,
 )

@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.opus.readerparser.domain.model.ChapterWithState
+import com.opus.readerparser.domain.model.ContentType
 import com.opus.readerparser.fakes.FakeChapterRepository
 import com.opus.readerparser.fakes.FakeSeriesRepository
 import com.opus.readerparser.testutil.MainDispatcherRule
@@ -95,5 +96,30 @@ class SeriesViewModelTest {
         vm.onAction(SeriesAction.Refresh)
         assertThat(seriesRepo.refreshDetailsCalls).hasSize(2) // init + Refresh
         assertThat(chapterRepo.refreshChaptersCalls).hasSize(2)
+    }
+
+    @Test
+    fun `OpenChapter routes to MANHWA reader when series type is MANHWA`() = runTest {
+        val manhwaSeries = TestFixtures.testSeries(type = ContentType.MANHWA)
+        seriesRepo.refreshDetailsResult = { manhwaSeries }
+        val vmManhwa = SeriesViewModel(
+            savedState = SavedStateHandle(
+                mapOf("sourceId" to manhwaSeries.sourceId, "seriesUrl" to manhwaSeries.url)
+            ),
+            seriesRepository = seriesRepo,
+            chapterRepository = chapterRepo,
+        )
+        vmManhwa.effects.test {
+            vmManhwa.onAction(SeriesAction.OpenChapter(chapter.copy(seriesUrl = manhwaSeries.url)))
+            val effect = awaitItem() as SeriesEffect.NavigateToReader
+            assertThat(effect.type).isEqualTo(ContentType.MANHWA)
+        }
+    }
+
+    @Test
+    fun `refresh sets inLibrary from repository`() = runTest {
+        seriesRepo.isInLibraryResult = { _, _ -> true }
+        vm.onAction(SeriesAction.Refresh)
+        assertThat(vm.state.value.inLibrary).isTrue()
     }
 }

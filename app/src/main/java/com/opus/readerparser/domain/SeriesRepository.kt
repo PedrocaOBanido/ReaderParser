@@ -25,4 +25,6 @@ interface SeriesRepository {
      */
     suspend fun addToLibrary(series: Series)
     suspend fun removeFromLibrary(series: Series)
+
+    suspend fun isInLibrary(sourceId: Long, url: String): Boolean
 }

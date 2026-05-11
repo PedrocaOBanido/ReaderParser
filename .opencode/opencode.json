@@ -90,6 +90,13 @@
     }
   },
 
+  "lsp": {
+    "kotlin": {
+      "command": ["kotlin-language-server"],
+      "extensions": [".kt", "kts"]
+    }
+  },
+
   "watcher": {
     "ignore": [
       "build/**",

@@ -63,6 +63,35 @@ class SeriesRepositoryImplTest {
             }
         }
 
+        override suspend fun updateDetails(
+            sourceId: Long,
+            url: String,
+            title: String,
+            author: String?,
+            artist: String?,
+            description: String?,
+            coverUrl: String?,
+            genresJson: String,
+            status: String,
+            type: String,
+        ): Int {
+            val idx = store.indexOfFirst { it.sourceId == sourceId && it.url == url }
+            return if (idx >= 0) {
+                store[idx] = store[idx].copy(
+                    title = title, author = author, artist = artist,
+                    description = description, coverUrl = coverUrl,
+                    genresJson = genresJson, status = status, type = type,
+                )
+                1
+            } else {
+                0
+            }
+        }
+
+        override suspend fun insert(series: SeriesEntity) {
+            store.add(series)
+        }
+
         override suspend fun delete(sourceId: Long, url: String) {
             store.removeAll { it.sourceId == sourceId && it.url == url }
         }
@@ -171,6 +200,25 @@ class SeriesRepositoryImplTest {
             assertEquals(enriched.author, stored!!.author)
             assertEquals(enriched.description, stored!!.description)
         }
+
+    @Test
+    fun `refreshDetails does not cascade delete chapters`() = runTest {
+        // Pre-insert series with inLibrary=true, simulating a library entry
+        fakeDao.upsert(testSeries.toEntity().copy(inLibrary = true, addedAt = 1000L))
+
+        val enriched = testSeries.copy(author = "Updated Author")
+        fakeSource.seriesDetailsResult = { enriched }
+
+        repository.refreshDetails(testSeries)
+
+        // Verify series was updated
+        val stored = fakeDao.getByUrl(testSeries.sourceId, testSeries.url)
+        assertEquals("Updated Author", stored!!.author)
+
+        // Verify inLibrary and addedAt were preserved (not wiped by saveSeries)
+        assertTrue(stored.inLibrary)
+        assertEquals(1000L, stored.addedAt)
+    }
 
     // -----------------------------------------------------------------
     // addToLibrary
