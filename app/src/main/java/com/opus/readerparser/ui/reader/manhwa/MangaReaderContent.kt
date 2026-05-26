@@ -5,8 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -22,24 +23,33 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import coil3.ImageLoader
+import coil3.SingletonImageLoader
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
 import com.opus.readerparser.ui.theme.ReaderParserTheme
+import kotlin.math.abs
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MangaReaderContent(
     state: MangaReaderUiState,
     onAction: (MangaReaderAction) -> Unit,
+    imageLoader: ImageLoader? = null,
 ) {
+    val currentState by rememberUpdatedState(state)
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -109,31 +119,50 @@ fun MangaReaderContent(
                     }
                 }
                 state.pages.isNotEmpty() -> {
-                    val pagerState = rememberPagerState(
-                        initialPage = state.currentPage,
-                        pageCount = { state.pages.size },
-                    )
-
-                    LaunchedEffect(pagerState) {
-                        snapshotFlow { pagerState.currentPage }.collect { page ->
-                            onAction(MangaReaderAction.SetPage(page))
-                        }
-                    }
-
-                    HorizontalPager(
-                        state = pagerState,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .testTag("pages_pager"),
-                    ) { page ->
-                        AsyncImage(
-                            model = state.pages[page],
-                            contentDescription = "Page ${page + 1}",
-                            contentScale = ContentScale.FillWidth,
-                            placeholder = ColorPainter(Color.LightGray),
-                            error = ColorPainter(Color.Gray),
-                            modifier = Modifier.fillMaxWidth(),
+                    key(state.chapter?.url) {
+                        val listState = rememberLazyListState(
+                            initialFirstVisibleItemIndex = state.currentPage.coerceIn(0, state.pages.lastIndex),
                         )
+
+                        LaunchedEffect(listState) {
+                            snapshotFlow {
+                                val layoutInfo = listState.layoutInfo
+                                val items = layoutInfo.visibleItemsInfo
+                                if (items.isEmpty()) return@snapshotFlow currentState.currentPage
+                                val viewportCenter =
+                                    (layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset) / 2
+                                items.minBy {
+                                    abs(it.offset + it.size / 2 - viewportCenter)
+                                }.index
+                            }
+                                .collect { page -> onAction(MangaReaderAction.SetPage(page)) }
+                        }
+
+                        val placeholderPainter = ColorPainter(MaterialTheme.colorScheme.surfaceVariant)
+                        val errorPainter = ColorPainter(MaterialTheme.colorScheme.errorContainer)
+
+                        LazyColumn(
+                            state = listState,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .testTag("pages_list"),
+                        ) {
+                            itemsIndexed(
+                                items = state.pages,
+                                key = { index, pageUrl -> "$index-$pageUrl" },
+                            ) { index, pageUrl ->
+                                AsyncImage(
+                                    model = pageUrl,
+                                    contentDescription = "Page ${index + 1}",
+                                    imageLoader = imageLoader
+                                        ?: SingletonImageLoader.get(LocalPlatformContext.current),
+                                    contentScale = ContentScale.FillWidth,
+                                    placeholder = placeholderPainter,
+                                    error = errorPainter,
+                                    modifier = Modifier.fillMaxWidth(),
+                                )
+                            }
+                        }
                     }
                 }
                 else -> {

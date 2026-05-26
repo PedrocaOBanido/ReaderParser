@@ -102,6 +102,7 @@ dependencies {
     // Coil
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
+    androidTestImplementation(libs.coil.test)
 
     // WorkManager
     implementation(libs.work.runtime)
