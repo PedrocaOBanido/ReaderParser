@@ -2,6 +2,7 @@ package com.opus.readerparser.ui.library
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.opus.readerparser.core.util.TitleMatcher
 import com.opus.readerparser.domain.SeriesRepository
 import com.opus.readerparser.domain.model.Series
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,11 +27,15 @@ class LibraryViewModel @Inject constructor(
     private val _effects = Channel<LibraryEffect>(Channel.BUFFERED)
     val effects: Flow<LibraryEffect> = _effects.receiveAsFlow()
 
+    /** The complete, unfiltered library list used as the source for re-filtering. */
+    private var allLibrarySeries: List<Series> = emptyList()
+
     init {
         viewModelScope.launch {
             seriesRepository.observeLibrary().collect { library ->
+                allLibrarySeries = library
                 _state.update { current ->
-                    current.copy(series = library.sorted(current.sortBy))
+                    current.copy(series = filterAndSort(library, current.searchQuery, current.sortBy))
                 }
             }
         }
@@ -49,19 +54,37 @@ class LibraryViewModel @Inject constructor(
                 }
             }
             is LibraryAction.SetSortBy -> _state.update { current ->
+                val sorted = filterAndSort(allLibrarySeries, current.searchQuery, action.sortBy)
+                current.copy(sortBy = action.sortBy, series = sorted)
+            }
+            is LibraryAction.SetFilterUnreadOnly -> _state.update { current ->
                 current.copy(
-                    sortBy = action.sortBy,
-                    series = current.series.sorted(action.sortBy),
+                    filterUnreadOnly = action.enabled,
+                    series = filterAndSort(allLibrarySeries, current.searchQuery, current.sortBy),
                 )
             }
-            is LibraryAction.SetFilterUnreadOnly -> _state.update {
-                it.copy(filterUnreadOnly = action.enabled)
+            is LibraryAction.SetSearchQuery -> _state.update { current ->
+                val filtered = filterAndSort(allLibrarySeries, action.query, current.sortBy)
+                current.copy(searchQuery = action.query, series = filtered)
             }
         }
     }
 
-    private fun List<Series>.sorted(sortBy: LibrarySortBy): List<Series> = when (sortBy) {
-        LibrarySortBy.TITLE -> sortedBy { it.title }
-        LibrarySortBy.DEFAULT -> this
+    /**
+     * Applies the given [query] and [sortBy] to the raw [library] list and
+     * returns the filtered, sorted result.
+     */
+    private fun filterAndSort(
+        library: List<Series>,
+        query: String,
+        sortBy: LibrarySortBy,
+    ): List<Series> {
+        val filtered = library.filter { series ->
+            query.isBlank() || TitleMatcher.matches(query, series.title)
+        }
+        return when (sortBy) {
+            LibrarySortBy.TITLE -> filtered.sortedBy { it.title }
+            LibrarySortBy.DEFAULT -> filtered
+        }
     }
 }

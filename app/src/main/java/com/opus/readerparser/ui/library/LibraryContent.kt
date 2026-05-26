@@ -13,8 +13,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.Card
@@ -26,6 +32,8 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -34,6 +42,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -103,57 +112,93 @@ fun LibraryContent(
             )
         },
     ) { innerPadding ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
         ) {
-            when {
-                state.isLoading -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .testTag("loading"),
-                    )
-                }
-                state.error != null -> {
-                    Column(
-                        modifier = Modifier.align(Alignment.Center),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Text(
-                            text = state.error,
-                            modifier = Modifier.testTag("error_message"),
-                            color = MaterialTheme.colorScheme.error,
-                            textAlign = TextAlign.Center,
+            // Search bar
+            OutlinedTextField(
+                value = state.searchQuery,
+                onValueChange = { onAction(LibraryAction.SetSearchQuery(it)) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                    .testTag("search_field"),
+                placeholder = { Text("Search library…") },
+                leadingIcon = {
+                    Icon(Icons.Filled.Search, contentDescription = "Search")
+                },
+                trailingIcon = {
+                    if (state.searchQuery.isNotEmpty()) {
+                        IconButton(onClick = { onAction(LibraryAction.SetSearchQuery("")) }) {
+                            Icon(
+                                Icons.Filled.Clear,
+                                contentDescription = "Clear search",
+                                modifier = Modifier.size(20.dp),
+                            )
+                        }
+                    }
+                },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                keyboardActions = KeyboardActions(
+                    onSearch = { onAction(LibraryAction.SetSearchQuery(state.searchQuery)) },
+                ),
+                colors = OutlinedTextFieldDefaults.colors(),
+            )
+
+            Box(modifier = Modifier.weight(1f)) {
+                when {
+                    state.isLoading -> {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .testTag("loading"),
                         )
                     }
-                }
-                state.series.isEmpty() -> {
-                    Text(
-                        text = "Your library is empty.\nBrowse sources to add series.",
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(32.dp),
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-                else -> {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        contentPadding = GridContentPadding,
-                        horizontalArrangement = Arrangement.spacedBy(GridItemSpacing),
-                        verticalArrangement = Arrangement.spacedBy(GridItemSpacing),
-                        modifier = Modifier.testTag("series_list"),
-                    ) {
-                        items(state.series, key = { "${it.sourceId}|${it.url}" }) { series ->
-                            LibrarySeriesCard(
-                                series = series,
-                                onClick = { onAction(LibraryAction.OpenSeries(series)) },
-                                onLongClick = { onAction(LibraryAction.RemoveFromLibrary(series)) },
+                    state.error != null -> {
+                        Column(
+                            modifier = Modifier.align(Alignment.Center),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Text(
+                                text = state.error,
+                                modifier = Modifier.testTag("error_message"),
+                                color = MaterialTheme.colorScheme.error,
+                                textAlign = TextAlign.Center,
                             )
+                        }
+                    }
+                    state.series.isEmpty() -> {
+                        Text(
+                            text = if (state.searchQuery.isNotEmpty())
+                                "No series match \"${state.searchQuery}\"."
+                            else
+                                "Your library is empty.\nBrowse sources to add series.",
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(32.dp),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    else -> {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            contentPadding = GridContentPadding,
+                            horizontalArrangement = Arrangement.spacedBy(GridItemSpacing),
+                            verticalArrangement = Arrangement.spacedBy(GridItemSpacing),
+                            modifier = Modifier.testTag("series_list"),
+                        ) {
+                            items(state.series, key = { "${it.sourceId}|${it.url}" }) { series ->
+                                LibrarySeriesCard(
+                                    series = series,
+                                    onClick = { onAction(LibraryAction.OpenSeries(series)) },
+                                    onLongClick = { onAction(LibraryAction.RemoveFromLibrary(series)) },
+                                )
+                            }
                         }
                     }
                 }

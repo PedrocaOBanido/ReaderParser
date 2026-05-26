@@ -87,4 +87,110 @@ class LibraryViewModelTest {
             assertThat(awaitItem()).isEqualTo(LibraryEffect.NavigateToSeries(series))
         }
     }
+
+    // -----------------------------------------------------------------
+    // Search tests
+    // -----------------------------------------------------------------
+
+    @Test
+    fun `SetSearchQuery updates searchQuery in state`() = runTest {
+        vm.onAction(LibraryAction.SetSearchQuery("query"))
+        assertThat(vm.state.value.searchQuery).isEqualTo("query")
+    }
+
+    @Test
+    fun `search filters series by title`() = runTest {
+        val novel = TestFixtures.testSeries(title = "Solo Leveling", url = "https://test.invalid/solo")
+        val manhwa = TestFixtures.testSeries(title = "Tower of God", url = "https://test.invalid/tower")
+
+        vm.state.test {
+            awaitItem() // initial empty
+            repo.addToLibrary(novel)
+            awaitItem() // [novel]
+            repo.addToLibrary(manhwa)
+            awaitItem() // [novel, manhwa]
+
+            vm.onAction(LibraryAction.SetSearchQuery("Solo"))
+            val filtered = awaitItem()
+            assertThat(filtered.series.map { it.title }).containsExactly("Solo Leveling")
+        }
+    }
+
+    @Test
+    fun `search matches single typo`() = runTest {
+        val novel = TestFixtures.testSeries(title = "Solo Leveling", url = "https://test.invalid/solo")
+        val manhwa = TestFixtures.testSeries(title = "Tower of God", url = "https://test.invalid/tower")
+
+        vm.state.test {
+            awaitItem() // initial empty
+            repo.addToLibrary(novel)
+            awaitItem() // [novel]
+            repo.addToLibrary(manhwa)
+            awaitItem() // [novel, manhwa]
+
+            // "Solo Levelin" (one deletion from "Solo Leveling")
+            vm.onAction(LibraryAction.SetSearchQuery("Solo Levelin"))
+            val filtered = awaitItem()
+            assertThat(filtered.series.map { it.title }).containsExactly("Solo Leveling")
+        }
+    }
+
+    @Test
+    fun `search does not match when two chars differ`() = runTest {
+        val novel = TestFixtures.testSeries(title = "Solo Leveling", url = "https://test.invalid/solo")
+
+        vm.state.test {
+            awaitItem() // initial empty
+            repo.addToLibrary(novel)
+            awaitItem() // [novel]
+
+            // Two char difference
+            vm.onAction(LibraryAction.SetSearchQuery("Solo Levelex"))
+            val filtered = awaitItem()
+            assertThat(filtered.series).isEmpty()
+        }
+    }
+
+    @Test
+    fun `clearing search shows all series`() = runTest {
+        val novel = TestFixtures.testSeries(title = "Solo Leveling", url = "https://test.invalid/solo")
+        val manhwa = TestFixtures.testSeries(title = "Tower of God", url = "https://test.invalid/tower")
+
+        vm.state.test {
+            awaitItem() // initial empty
+            repo.addToLibrary(novel)
+            awaitItem() // [novel]
+            repo.addToLibrary(manhwa)
+            awaitItem() // [novel, manhwa]
+
+            vm.onAction(LibraryAction.SetSearchQuery("Solo"))
+            awaitItem() // filtered
+
+            vm.onAction(LibraryAction.SetSearchQuery(""))
+            val all = awaitItem()
+            assertThat(all.series.map { it.title }).containsExactly("Solo Leveling", "Tower of God")
+        }
+    }
+
+    @Test
+    fun `search respects sort order`() = runTest {
+        val a = TestFixtures.testSeries(title = "Zebra", url = "https://test.invalid/z")
+        val b = TestFixtures.testSeries(title = "Apple", url = "https://test.invalid/a")
+
+        vm.state.test {
+            awaitItem() // initial empty
+            repo.addToLibrary(a)
+            awaitItem() // [Zebra]
+            repo.addToLibrary(b)
+            awaitItem() // [Zebra, Apple]
+
+            vm.onAction(LibraryAction.SetSortBy(LibrarySortBy.TITLE))
+            awaitItem() // [Apple, Zebra]
+
+            vm.onAction(LibraryAction.SetSearchQuery("Zebra"))
+            val filtered = awaitItem()
+            assertThat(filtered.series.map { it.title }).containsExactly("Zebra")
+            assertThat(filtered.sortBy).isEqualTo(LibrarySortBy.TITLE)
+        }
+    }
 }

@@ -16,6 +16,9 @@ interface SeriesDao {
     @Query("SELECT * FROM series WHERE sourceId = :sourceId AND url = :url")
     suspend fun getByUrl(sourceId: Long, url: String): SeriesEntity?
 
+    @Query("SELECT * FROM series WHERE sourceId = :sourceId")
+    suspend fun getBySourceId(sourceId: Long): List<SeriesEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(series: SeriesEntity)
 

@@ -10,6 +10,7 @@ data class LibraryUiState(
     val error: String? = null,
     val sortBy: LibrarySortBy = LibrarySortBy.DEFAULT,
     val filterUnreadOnly: Boolean = false,
+    val searchQuery: String = "",
 )
 
 sealed interface LibraryAction {
@@ -17,6 +18,7 @@ sealed interface LibraryAction {
     data class RemoveFromLibrary(val series: Series) : LibraryAction
     data class SetSortBy(val sortBy: LibrarySortBy) : LibraryAction
     data class SetFilterUnreadOnly(val enabled: Boolean) : LibraryAction
+    data class SetSearchQuery(val query: String) : LibraryAction
 }
 
 sealed interface LibraryEffect {

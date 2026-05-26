@@ -40,6 +40,9 @@ class SeriesRepositoryImplTest {
         override suspend fun getByUrl(sourceId: Long, url: String): SeriesEntity? =
             store.find { it.sourceId == sourceId && it.url == url }
 
+        override suspend fun getBySourceId(sourceId: Long): List<SeriesEntity> =
+            store.filter { it.sourceId == sourceId }
+
         override suspend fun upsert(series: SeriesEntity) {
             val idx = store.indexOfFirst { it.sourceId == series.sourceId && it.url == series.url }
             if (idx >= 0) store[idx] = series else store.add(series)
@@ -175,6 +178,144 @@ class SeriesRepositoryImplTest {
 
         assertEquals(expected, result)
         assertEquals(listOf(Triple("query", 3, filters)), fakeSource.searchCalls)
+    }
+
+    // -----------------------------------------------------------------
+    // search — fallback to cached series when remote returns empty
+    // -----------------------------------------------------------------
+
+    @Test
+    fun `search returns remote result when non-empty even for page 1`() = runTest {
+        val cached = testSeries.toEntity().copy(
+            url = "https://test.invalid/cached",
+            title = "Cached Series",
+            inLibrary = false,
+        )
+        fakeDao.upsert(cached)
+
+        val remoteSeries = testSeries.copy(title = "Remote Series")
+        fakeSource.searchResult = SeriesPage(listOf(remoteSeries), hasNextPage = false)
+
+        val result = repository.search(fakeSource.id, "something", 1, FilterList())
+
+        // Should return the remote result, not the cached one
+        assertEquals(listOf(remoteSeries), result.series)
+
+        // Remote result is also persisted
+        val stored = fakeDao.getByUrl(testSeries.sourceId, testSeries.url)
+        assertEquals("Remote Series", stored!!.title)
+    }
+
+    @Test
+    fun `search falls back to cached series when remote returns empty for page 1`() = runTest {
+        val solo = testSeries.toEntity().copy(
+            url = "https://test.invalid/solo",
+            title = "Solo Leveling",
+            inLibrary = false,
+        )
+        val tower = testSeries.toEntity().copy(
+            url = "https://test.invalid/tower",
+            title = "Tower of God",
+            inLibrary = false,
+        )
+        fakeDao.upsert(solo)
+        fakeDao.upsert(tower)
+
+        fakeSource.searchResult = SeriesPage(emptyList(), hasNextPage = false)
+
+        val result = repository.search(fakeSource.id, "Solo", 1, FilterList())
+
+        assertEquals(false, result.hasNextPage)
+        assertEquals(1, result.series.size)
+        assertEquals("Solo Leveling", result.series[0].title)
+    }
+
+    @Test
+    fun `search fallback matches single typo`() = runTest {
+        val solo = testSeries.toEntity().copy(
+            url = "https://test.invalid/solo",
+            title = "Solo Leveling",
+            inLibrary = false,
+        )
+        fakeDao.upsert(solo)
+
+        fakeSource.searchResult = SeriesPage(emptyList(), hasNextPage = false)
+
+        // "Solo Levelin" — one deletion, should match
+        val result = repository.search(fakeSource.id, "Solo Levelin", 1, FilterList())
+
+        assertEquals(1, result.series.size)
+        assertEquals("Solo Leveling", result.series[0].title)
+    }
+
+    @Test
+    fun `search fallback does not match when two chars differ`() = runTest {
+        val solo = testSeries.toEntity().copy(
+            url = "https://test.invalid/solo",
+            title = "Solo Leveling",
+            inLibrary = false,
+        )
+        fakeDao.upsert(solo)
+
+        fakeSource.searchResult = SeriesPage(emptyList(), hasNextPage = false)
+
+        val result = repository.search(fakeSource.id, "Solo Levelex", 1, FilterList())
+
+        assertEquals(0, result.series.size)
+    }
+
+    @Test
+    fun `search does not fall back when remote result is non-empty`() = runTest {
+        val cached = testSeries.toEntity().copy(
+            url = "https://test.invalid/cached",
+            title = "Cached Series",
+            inLibrary = false,
+        )
+        fakeDao.upsert(cached)
+
+        fakeSource.searchResult = SeriesPage(
+            listOf(testSeries.copy(title = "Remote Result")),
+            hasNextPage = true,
+        )
+
+        val result = repository.search(fakeSource.id, "anything", 1, FilterList())
+
+        assertEquals(1, result.series.size)
+        assertEquals("Remote Result", result.series[0].title)
+    }
+
+    @Test
+    fun `search does not fall back for page greater than 1`() = runTest {
+        val cached = testSeries.toEntity().copy(
+            url = "https://test.invalid/cached",
+            title = "Cached Series",
+            inLibrary = false,
+        )
+        fakeDao.upsert(cached)
+
+        fakeSource.searchResult = SeriesPage(emptyList(), hasNextPage = false)
+
+        val result = repository.search(fakeSource.id, "anything", 2, FilterList())
+
+        // page != 1, so no fallback
+        assertEquals(0, result.series.size)
+    }
+
+    @Test
+    fun `search does not fall back for blank query`() = runTest {
+        val cached = testSeries.toEntity().copy(
+            url = "https://test.invalid/cached",
+            title = "Cached Series",
+            inLibrary = false,
+        )
+        fakeDao.upsert(cached)
+
+        fakeSource.searchResult = SeriesPage(emptyList(), hasNextPage = false)
+
+        val result = repository.search(fakeSource.id, "", 1, FilterList())
+
+        // blank query — no fallback
+        assertEquals(0, result.series.size)
     }
 
     // -----------------------------------------------------------------

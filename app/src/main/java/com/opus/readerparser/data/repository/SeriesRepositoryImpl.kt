@@ -1,5 +1,6 @@
 package com.opus.readerparser.data.repository
 
+import com.opus.readerparser.core.util.TitleMatcher
 import com.opus.readerparser.data.local.database.dao.SeriesDao
 import com.opus.readerparser.data.local.database.mappers.toDomain
 import com.opus.readerparser.data.local.database.mappers.toEntity
@@ -44,6 +45,17 @@ class SeriesRepositoryImpl @Inject constructor(
     ): SeriesPage {
         val result = sourceRegistry[sourceId].search(query, page, filters)
         result.series.forEach { saveSeries(it) }
+
+        // Fallback: if remote returned empty for page 1 with a non-blank query,
+        // search locally cached series for this source using the title matcher.
+        if (result.series.isEmpty() && page == 1 && query.isNotBlank()) {
+            val cached = seriesDao.getBySourceId(sourceId).map { it.toDomain() }
+            val matched = cached
+                .filter { TitleMatcher.matches(query, it.title) }
+                .sortedBy { it.title }
+            return SeriesPage(matched, hasNextPage = false)
+        }
+
         return result
     }
 
