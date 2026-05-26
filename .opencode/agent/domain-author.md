@@ -1,8 +1,9 @@
 ---
 description: Authors domain models, the Source interface, HtmlSource base class, SourceRegistry, and computeSourceId. Follows TDD — tests first, then implementations. Never violates AGENTS.md §1 non-negotiables.
 mode: subagent
+model: opencode-go/deepseek-v4-flash
+variant: high
 temperature: 0.1
-category: hephaestus
 agent:
   class: W
   owns: Domain models (data classes), Source interface, HtmlSource, SourceRegistry, computeSourceId, and their tests

@@ -114,6 +114,5 @@ Dispatch `reviewer` and `runner` in parallel **only** after W-class changes to:
 - Project config (`build.gradle`, `libs.versions.toml`, `AndroidManifest.xml`, `gradle.properties`, etc.)
 
 **Skip the fan-out** for documentation-only changes:
-- Markdown files (`.md`) — including `CLAUDE.md`, `AGENTS.md`, `architecture.md`
+- Markdown files (`.md`) — including `AGENTS.md`, `architecture.md`
 - Memory bank updates (`memory-bank/`)
-- Agent / orchestration config (`.claude/`)

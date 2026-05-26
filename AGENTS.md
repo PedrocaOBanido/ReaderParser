@@ -341,3 +341,14 @@ The `android-cli` skill is available to all agents. Load it via
 - Use `android layout` to find UI elements, `adb shell input tap/swipe` to
   interact, `android screen capture` for visual verification.
 - Report results as JSON per `journeys/README.md`.
+
+## Repository Map
+
+A full codemap is available at `codemap.md` in the project root.
+
+Before working on any task, read `codemap.md` to understand:
+- Project architecture and entry points
+- Directory responsibilities and design patterns
+- Data flow and integration points between modules
+
+For deep work on a specific folder, also read that folder's `codemap.md`.

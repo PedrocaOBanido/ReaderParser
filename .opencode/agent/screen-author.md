@@ -1,8 +1,9 @@
 ---
 description: Scaffolds Compose screens following the project's strict four-file pattern. Asks for screen purpose before writing state fields.
 mode: subagent
+model: opencode-go/deepseek-v4-flash
+variant: high
 temperature: 0.1
-category: sisyphus-junior
 agent:
   class: W
   owns: New Compose screens following the four-file pattern (*Screen, *Content, *ViewModel, *UiState)
