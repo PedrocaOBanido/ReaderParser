@@ -71,3 +71,7 @@ For each of the 7 screens, add the remaining 2 files (Screen.kt + Content.kt):
 - Git for local ops, `gh` CLI for remote
 - Identity is `(sourceId, url)` — never auto-increment IDs as FKs
 - `fallbackToDestructiveMigration` forbidden in all build configs
+
+## Known blockers
+
+- **androidTest compile failure (pre-existing):** `./gradlew :app:compileDebugAndroidTestKotlin` fails due to unresolved `performLongClick` references in `app/src/androidTest/java/com/opus/readerparser/ui/library/LibraryContentTest.kt`. This is unrelated to any recent source/manhwa work and blocks direct androidTest compilation verification until fixed.
