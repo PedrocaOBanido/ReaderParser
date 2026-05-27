@@ -29,6 +29,17 @@ series to the database via `saveSeries()`. This means browsing implicitly
 caches listing results, so library addition is never a no-op due to a missing
 row.
 
+**Fuzzy search fallback in `search()`.** When a remote search returns empty
+results on page 1 with a non-blank query, `SeriesRepositoryImpl.search()`
+falls back to matching against locally cached series. It fetches all cached
+series for the source via `seriesDao.getBySourceId(sourceId)` and filters
+them using `TitleMatcher.matches(query, title)` from `core/util`. Matched
+results are sorted by title and returned with `hasNextPage = false`. This
+ensures that series already in the database remain discoverable through
+search even when the remote site does not return them (e.g., site search is
+broken or the series was cached from a browse/popular call under a different
+canonical title).
+
 **`saveSeries()` uses upsert-via-update-then-insert.** It first calls
 `seriesDao.updateDetails()` (a targeted UPDATE that preserves `inLibrary` and
 `addedAt`). If the row did not exist (`updated == 0`), it calls

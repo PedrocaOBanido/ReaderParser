@@ -44,8 +44,8 @@ Key design decisions reflected in the catalog:
    not `kapt`. The catalog entry exists to pin the compiler version to the runtime.
 4. **Testing libraries** are enumerated alongside production deps: `turbine`,
    `truth`, `kotlinx-coroutines-test`, `room-testing`, `work-testing`,
-   `ktor-client-cio`/`ktor-client-mock`, `compose-ui-test-junit4`. This avoids
-   version drift between test and production classpaths.
+   `coil-test`, `ktor-client-cio`/`ktor-client-mock`, `compose-ui-test-junit4`.
+   This avoids version drift between test and production classpaths.
 5. **Hilt + WorkManager integration.** `hilt-work` provides `HiltWorkerFactory`
    and `hilt-navigation-compose` provides `hiltViewModel()` in composable nav.
 
