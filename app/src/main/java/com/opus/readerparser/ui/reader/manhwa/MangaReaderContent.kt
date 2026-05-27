@@ -23,10 +23,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.ColorPainter
@@ -48,8 +48,6 @@ fun MangaReaderContent(
     onAction: (MangaReaderAction) -> Unit,
     imageLoader: ImageLoader? = null,
 ) {
-    val currentState by rememberUpdatedState(state)
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -128,13 +126,15 @@ fun MangaReaderContent(
                             snapshotFlow {
                                 val layoutInfo = listState.layoutInfo
                                 val items = layoutInfo.visibleItemsInfo
-                                if (items.isEmpty()) return@snapshotFlow currentState.currentPage
+                                if (items.isEmpty()) return@snapshotFlow null
                                 val viewportCenter =
                                     (layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset) / 2
                                 items.minBy {
                                     abs(it.offset + it.size / 2 - viewportCenter)
                                 }.index
                             }
+                                .filterNotNull()
+                                .distinctUntilChanged()
                                 .collect { page -> onAction(MangaReaderAction.SetPage(page)) }
                         }
 

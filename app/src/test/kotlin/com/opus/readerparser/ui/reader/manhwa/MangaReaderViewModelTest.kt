@@ -116,4 +116,52 @@ class MangaReaderViewModelTest {
             expectNoEvents()
         }
     }
+
+    @Test
+    fun `StateFlow skips duplicate state emission when page value is same`() = runTest {
+        // StateFlow only emits when value changes structurally (data class equality).
+        // SetPage(0) when currentPage is already 0 produces no emission.
+        // This validates that the distinctUntilChanged in the scroll tracking flow
+        // is an optimization that prevents even reaching the ViewModel with duplicates.
+        vm.state.test {
+            awaitItem() // settled state (currentPage = 0)
+            vm.onAction(MangaReaderAction.SetPage(0)) // same page, no emission
+            vm.onAction(MangaReaderAction.SetPage(0)) // same page, no emission
+            vm.onAction(MangaReaderAction.SetPage(1)) // different page -> emission
+            assertThat(awaitItem().currentPage).isEqualTo(1)
+        }
+    }
+
+    @Test
+    fun `NextChapter navigates correctly when preceded by SetPage updates`() = runTest {
+        val next = TestFixtures.testChapter(url = "https://test.invalid/chapter/2", number = 2f)
+        chapterRepo.setChapters(
+            series.url,
+            listOf(
+                ChapterWithState(chapter, read = false, downloaded = false, progress = 0f),
+                ChapterWithState(next, read = false, downloaded = false, progress = 0f),
+            )
+        )
+        val freshVm = MangaReaderViewModel(
+            savedState = SavedStateHandle(
+                mapOf(
+                    "sourceId" to series.sourceId,
+                    "seriesUrl" to series.url,
+                    "chapterUrl" to chapter.url,
+                )
+            ),
+            chapterRepository = chapterRepo,
+        )
+        assertThat(freshVm.state.value.hasNextChapter).isTrue()
+
+        // Simulate the scenario: user scrolls (SetPage) then taps NextChapter
+        freshVm.onAction(MangaReaderAction.SetPage(0))
+        freshVm.onAction(MangaReaderAction.SetPage(1))
+
+        freshVm.effects.test {
+            freshVm.onAction(MangaReaderAction.NextChapter)
+            val effect = awaitItem() as MangaReaderEffect.NavigateToChapter
+            assertThat(effect.chapter).isEqualTo(next)
+        }
+    }
 }
