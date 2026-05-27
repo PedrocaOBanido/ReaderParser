@@ -48,13 +48,24 @@ class SeriesViewModelTest {
     }
 
     @Test
-    fun `chapter list updates reflected in state`() = runTest {
-        val chapterWithState = ChapterWithState(chapter, read = false, downloaded = false, progress = 0f)
+    fun `chapter list is exposed in descending chapter number order`() = runTest {
+        val olderChapter = ChapterWithState(
+            chapter = chapter.copy(url = "https://test.invalid/chapter/1", number = 1f, name = "Chapter 1"),
+            read = false,
+            downloaded = false,
+            progress = 0f,
+        )
+        val newerChapter = ChapterWithState(
+            chapter = chapter.copy(url = "https://test.invalid/chapter/2", number = 2f, name = "Chapter 2"),
+            read = false,
+            downloaded = false,
+            progress = 0f,
+        )
 
         vm.state.test {
             awaitItem() // settled state (series loaded)
-            chapterRepo.setChapters(series.url, listOf(chapterWithState))
-            assertThat(awaitItem().chapters).containsExactly(chapterWithState)
+            chapterRepo.setChapters(series.url, listOf(olderChapter, newerChapter))
+            assertThat(awaitItem().chapters).containsExactly(newerChapter, olderChapter).inOrder()
         }
     }
 

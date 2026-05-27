@@ -75,7 +75,11 @@ class SeriesViewModel @Inject constructor(
     private fun observe() {
         viewModelScope.launch {
             chapterRepository.observeChapters(stubSeries).collect { chapters ->
-                _state.update { it.copy(chapters = chapters) }
+                _state.update {
+                    it.copy(
+                        chapters = chapters.sortedByDescending { chapterWithState -> chapterWithState.chapter.number },
+                    )
+                }
             }
         }
     }
