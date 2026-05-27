@@ -1,8 +1,8 @@
 ---
 description: Read-only code reviewer. Does not edit files. Use before merging or as a sanity check.
 mode: subagent
-model: opencode-go/deepseek-v4-flash
-variant: high
+model: openai/gpt-5.4
+variant: xhigh
 temperature: 0.1
 agent:
   class: R

@@ -1,6 +1,8 @@
 ---
 description: Executes builds, lints, unit tests, and formatters. The verify-and-fix gate. Reads source and gradle output; never authors code. ktlintFormat is the one mass-edit it owns.
 mode: subagent
+model: opencode-go/deepseek-v4-flash
+variant: high
 temperature: 0.1
 agent:
   class: X

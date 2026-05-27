@@ -11,7 +11,14 @@
     "edit": "allow",
     "webfetch": "allow",
     "websearch": "allow",
+    "task": {
+      "*": "ask",
+      "reviewer": "allow",
+      "runner": "allow"
+    },
     "bash": {
+
+      "*":                                  "ask",
 
       "ls *":                               "allow",
       "cat *":                              "allow",
@@ -24,12 +31,12 @@
       "tree *":                             "allow",
       "file *":                             "allow",
 
-      "git status":                         "allow",
+      "git status *":                       "allow",
       "git log *":                          "allow",
       "git diff *":                         "allow",
       "git show *":                         "allow",
       "git branch":                         "allow",
-      "git branch --show-current":          "allow",
+      "git branch --show-current *":        "allow",
       "git add *":                          "allow",
       "git restore *":                      "allow",
       "git stash":                          "allow",
@@ -79,8 +86,7 @@
       "rm -fr *":                           "deny",
       "chmod -R *":                         "deny",
       "chown *":                            "deny",
-      "sudo *":                             "ask",
-      "*":                                  "ask"
+      "sudo *":                             "ask"
 
     }
   },
