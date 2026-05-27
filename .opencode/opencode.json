@@ -12,7 +12,6 @@
     "webfetch": "allow",
     "websearch": "allow",
     "task": {
-      "*": "ask",
       "reviewer": "allow",
       "runner": "allow"
     },
@@ -30,6 +29,7 @@
       "wc *":                               "allow",
       "tree *":                             "allow",
       "file *":                             "allow",
+      "echo *":                             "allow",
 
       "git status *":                       "allow",
       "git log *":                          "allow",
@@ -42,8 +42,8 @@
       "git stash":                          "allow",
       "git stash list":                     "allow",
       "git stash show *":                   "allow",
+      "git commit *":                       "allow",
 
-      "git commit *":                       "ask",
       "git push *":                         "ask",
       "git pull *":                         "ask",
       "git merge *":                        "ask",
