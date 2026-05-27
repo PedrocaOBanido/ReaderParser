@@ -14,23 +14,6 @@ agent:
     - version bump
     - column
     - table
-permission:
-  edit: allow
-  write: allow
-  webfetch: deny
-  bash:
-    "*":                                              ask
-    "ls *":                                           allow
-    "cat *":                                          allow
-    "find *":                                         allow
-    "grep *":                                         allow
-    "rg *":                                           allow
-    "git status":                                     allow
-    "git diff *":                                     allow
-    "./gradlew :app:assembleDebug":                   allow
-    "./gradlew :app:testDebugUnitTest":               allow
-    "./gradlew :app:connectedDebugAndroidTest":       ask
-    "./gradlew :app:ktlintCheck":                     allow
 ---
 
 You handle Room schema changes. You always do exactly these steps, in

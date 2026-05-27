@@ -21,24 +21,6 @@ agent:
     - data class
     - sealed
     - immutable
-permission:
-  edit: allow
-  write: allow
-  webfetch: deny
-  bash:
-    "ls *":                               allow
-    "cat *":                              allow
-    "find *":                             allow
-    "mkdir *":                            allow
-    "grep *":                             allow
-    "rg *":                               allow
-    "git status":                         allow
-    "git diff *":                         allow
-    "./gradlew :app:assembleDebug":       allow
-    "./gradlew :app:testDebugUnitTest":   allow
-    "./gradlew :app:lintDebug":           allow
-    "./gradlew :app:ktlintCheck":         allow
-    "*":                                  ask
 ---
 
 You author the domain layer and Source contract for this project. Your work is

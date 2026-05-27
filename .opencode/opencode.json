@@ -23,7 +23,6 @@
       "wc *":                               "allow",
       "tree *":                             "allow",
       "file *":                             "allow",
-      "w3m *":                              "allow",
 
       "git status":                         "allow",
       "git log *":                          "allow",
@@ -51,17 +50,17 @@
       "git push --force*":                  "deny",
       "git push -f *":                      "deny",
 
-      "./gradlew :app:assembleDebug":       "allow",
-      "./gradlew :app:lintDebug":           "allow",
-      "./gradlew :app:testDebugUnitTest":   "allow",
+      "./gradlew :app:assembleDebug *":       "allow",
+      "./gradlew :app:lintDebug *":           "allow",
+      "./gradlew :app:testDebugUnitTest *":   "allow",
       "./gradlew :app:testDebug*":          "allow",
-      "./gradlew :app:ktlintCheck":         "allow",
-      "./gradlew :app:detekt":              "allow",
+      "./gradlew :app:ktlintCheck *":         "allow",
+      "./gradlew :app:detekt *":              "allow",
       "./gradlew :app:dependencies *":      "allow",
-      "./gradlew :app:tasks":               "allow",
+      "./gradlew :app:tasks *":               "allow",
       "./gradlew help *":                   "allow",
-      "./gradlew tasks":                    "allow",
-      "./gradlew --version":                "allow",
+      "./gradlew tasks *":                    "allow",
+      "./gradlew --version *":                "allow",
 
       "./gradlew :app:ktlintFormat":        "ask",
       "./gradlew :app:installDebug":        "ask",
@@ -71,18 +70,16 @@
       "./gradlew clean":                    "ask",
 
       "android *":                          "allow",
-      "adb *":                              "ask",
       "adb devices":                        "allow",
       "adb logcat *":                       "allow",
       "adb shell am *":                     "ask",
-      "adb install *":                      "deny",
-      "adb uninstall *":                    "deny",
+      "adb *":                              "ask",
 
       "rm -rf *":                           "deny",
       "rm -fr *":                           "deny",
-      "sudo *":                             "deny",
       "chmod -R *":                         "deny",
       "chown *":                            "deny",
+      "sudo *":                             "ask",
       "*":                                  "ask"
 
     }

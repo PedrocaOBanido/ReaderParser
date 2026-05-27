@@ -16,23 +16,6 @@ agent:
     - site URL
     - CSS selectors
     - fixtures
-permission:
-  edit: allow
-  write: allow
-  webfetch: deny
-  bash:
-    "ls *":                               allow
-    "cat *":                              allow
-    "find *":                             allow
-    "grep *":                             allow
-    "mkdir *":                            allow
-    "rg *":                               allow
-    "git status":                         allow
-    "git diff *":                         allow
-    "./gradlew :app:assembleDebug":       allow
-    "./gradlew :app:testDebugUnitTest":   allow
-    "./gradlew :app:ktlintCheck":         allow
-    "*":                                  ask
 ---
 
 You write `Source` plugins for this project. The contract is in
