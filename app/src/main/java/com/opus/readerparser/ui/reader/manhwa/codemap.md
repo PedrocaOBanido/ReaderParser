@@ -18,9 +18,13 @@ Four files implementing the standard 4-file screen pattern:
   layout). Pages are loaded via Coil 3 `AsyncImage` with `ColorPainter`
   placeholders and error fallbacks. The page count drives `rememberPagerState`.
 - **Page tracking** — A `LaunchedEffect` observes `snapshotFlow { pagerState.currentPage }`
-  and emits `MangaReaderAction.SetPage` on each swipe. The ViewModel updates
-  `currentPage` in UiState and marks read when `currentPage == pages.lastIndex`.
-  This is the reader's equivalent of progress.
+   which returns `null` when no items are visible (avoiding stale reads). The flow
+   pipeline filters with `.filterNotNull()` and `.distinctUntilChanged()` before
+   emitting `MangaReaderAction.SetPage` on each swipe. No `rememberUpdatedState(state)`
+   wrapper — the `snapshotFlow` directly reads pager state, eliminating redundant
+   `SetPage` emissions during scroll. The ViewModel updates `currentPage` in UiState
+   and marks read when `currentPage == pages.lastIndex`. This is the reader's
+   equivalent of progress.
 - **No progress persistence** — Unlike the novel reader which persists scroll
   fraction via `setProgress()`, the manhwa reader currently does not persist
   page position beyond the viewmodel's in-memory `currentPage`. The
@@ -69,9 +73,10 @@ MangaReaderContent
  ├── Error state   → error text + retry button
  ├── No pages      → "No pages available" text
  └── Pages loaded  → HorizontalPager
-     ├── rememberPagerState(initialPage = state.currentPage)
-     ├── LaunchedEffect: snapshotFlow{currentPage} → SetPage action
-     └── Per page: AsyncImage with ColorPainter placeholder/error
+      ├── rememberPagerState(initialPage = state.currentPage)
+      ├── LaunchedEffect: snapshotFlow { currentPage }
+      │     .filterNotNull().distinctUntilChanged() → SetPage action
+      └── Per page: AsyncImage with ColorPainter placeholder/error
          (ContentScale.FillWidth, full-width modifier)
 ```
 

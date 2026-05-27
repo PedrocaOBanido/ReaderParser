@@ -17,7 +17,7 @@ and dispatches chapter taps to the correct reader (novel or manhwa).
 | `SeriesUiState.kt` | Types | `SeriesUiState` data class, `SeriesAction` sealed interface, `SeriesEffect` sealed interface. |
 
 ### State / Action / Effect
-- **UiState** — `series: Series?` (full details after fetch), `chapters: List<ChapterWithState>`, `isLoading`, `error`, `inLibrary`.
+- **UiState** — `series: Series?` (full details after fetch), `chapters: List<ChapterWithState>` (sorted newest-first, i.e. descending by chapter number), `isLoading`, `error`, `inLibrary`.
 - **Action** — `Refresh` → re-fetch details + chapters; `ToggleLibrary(inLibrary)` → add/remove, updates `inLibrary` optimistically; `OpenChapter(chapter)` → navigate to reader.
 - **Effect** — `NavigateToReader(chapter, type: ContentType)` → dispatches to novel or manhwa reader in `SeriesScreen`; `ShowError(message)` → snackbar (TODO).
 
@@ -26,6 +26,9 @@ The ViewModel constructs a minimal `Series` stub from `sourceId` + `seriesUrl` b
 
 ### Reader navigation dispatch
 `SeriesScreen` receives two navigation callbacks (one per `ContentType`) and branches on `effect.type` inside the `LaunchedEffect` collector. This keeps reader-specific routing out of the ViewModel.
+
+### Chapter order
+Chapters are sorted newest-first (descending by `chapter.number`) in the ViewModel via `sortedByDescending { chapter.number }` applied inside the `collect` block of `observeChapters`. This means the latest chapter appears at the top of the list regardless of the order Room returns them. The sorted order is updated reactively whenever the underlying Room flow emits a new list (e.g. after `refreshChapters`).
 
 ## Flow
 
@@ -51,7 +54,7 @@ SeriesScreen.effects collector:
 
 Background data flow (init):
 ```
-chapterRepository.observeChapters(stubSeries)  ──collect──►  _state.update { chapters = it }
+chapterRepository.observeChapters(stubSeries)  ──collect──►  sortedByDescending { chapter.number } ──►  _state.update { chapters = it }
 seriesRepository.refreshDetails(stubSeries)    ──then───►  _state.update { series = updated }
 chapterRepository.refreshChapters(updated)      ──then───►  triggers observeChapters re-collect
 seriesRepository.isInLibrary(...)                ──then───►  _state.update { inLibrary = true/false }

@@ -16,20 +16,23 @@ This is the app's home screen — the first thing the user sees.
 | `LibraryUiState.kt` | Types | `LibraryUiState` data class, `LibraryAction` sealed interface, `LibraryEffect` sealed interface, plus `LibrarySortBy` enum. |
 
 ### State / Action / Effect
-- **UiState** — `series: List<Series>` (already sorted locally), `isLoading`, `error`, `sortBy`, `filterUnreadOnly`.
-- **Action** — `OpenSeries` → navigates away; `RemoveFromLibrary` → repo call; `SetSortBy` / `SetFilterUnreadOnly` → local state update.
+- **UiState** — `series: List<Series>` (already sorted locally), `isLoading`, `error`, `sortBy`, `filterUnreadOnly`, `searchQuery: String = ""`.
+- **Action** — `OpenSeries` → navigates away; `RemoveFromLibrary` → repo call; `SetSortBy` / `SetFilterUnreadOnly` → local state update; `SetSearchQuery` → filters series list in-memory.
 - **Effect** — `NavigateToSeries(series)` → navigation callbacks fired in `LibraryScreen`; `ShowError(message)` → snackbar (TODO placeholder).
 
 ### State handling
 - Loading: centered `CircularProgressIndicator`.
 - Error: centered error text.
-- Empty: informative placeholder text ("Your library is empty…").
+- Empty (no search): informative placeholder text ("Your library is empty…").
+- Empty (with search): placeholder text changes to "No series match \"{query}\"." when searchQuery is non-empty.
 - Populated: 2-column `LazyVerticalGrid` of `LibrarySeriesCard` composables.
 - Cards show cover (Coil `AsyncImage`, 2:3 aspect ratio) + title. Long-press removes from library.
+- Search bar (`OutlinedTextField` with leading search icon, trailing clear button) sits above the grid. Configures IME search action. Only visible when library has items (otherwise the empty-state messaging is sufficient).
 
-### Sort / filter
+### Sort / filter / search
 - `LibrarySortBy.DEFAULT` (insertion order) or `TITLE` (alphabetical). Both operate on the in-memory list — no DB re-query.
 - Unread filter chip toggles `filterUnreadOnly` in UI state (actual filtering is a TODO; `series` list is currently unfiltered).
+- **Search**: `SetSearchQuery` action → `filterAndSort(allLibrarySeries, query, sortBy)` re-applies `TitleMatcher.matches()` against each series title. Empty query returns the full list. The ViewModel holds an `allLibrarySeries: List<Series>` field that the reactive `observeLibrary()` flow populates; filtering and sorting always derive from this master list.
 
 ## Flow
 
@@ -42,10 +45,11 @@ LibraryContent (stateless composable)
      ▼
 LibraryViewModel.onAction(action)
      │
-     ├── SetSortBy / SetFilterUnreadOnly → _state.update { ... }
-     ├── RemoveFromLibrary → seriesRepository.removeFromLibrary(...) → _effects.send(ShowError?) on failure
-     ├── OpenSeries → _effects.send(NavigateToSeries)
-     │
+      ├── SetSearchQuery → filterAndSort(allLibrarySeries, query, sortBy) → _state.update
+      ├── SetSortBy / SetFilterUnreadOnly → filterAndSort(allLibrarySeries, searchQuery, sortBy) → _state.update
+      ├── RemoveFromLibrary → seriesRepository.removeFromLibrary(...) → _effects.send(ShowError?) on failure
+      ├── OpenSeries → _effects.send(NavigateToSeries)
+      │
      ▼
 StateFlow<LibraryUiState>  ──collectAsStateWithLifecycle──►  LibraryContent re-render
 Channel<LibraryEffect>     ──LaunchedEffect collect──────►  LibraryScreen (nav / snackbar)
@@ -53,7 +57,7 @@ Channel<LibraryEffect>     ──LaunchedEffect collect──────►  Li
 
 Background data flow (init):
 ```
-seriesRepository.observeLibrary()  ──collect──►  _state.update { series = it.sorted(sortBy) }
+seriesRepository.observeLibrary()  ──collect──►  allLibrarySeries = it; filterAndSort(allLibrarySeries, searchQuery, sortBy) → _state.update
 ```
 
 ## Integration
