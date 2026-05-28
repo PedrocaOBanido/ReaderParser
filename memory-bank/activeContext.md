@@ -4,18 +4,27 @@ Last updated: 2026-05-27
 
 ## Current objective
 
-Keep the documentation split stable: `architecture.md` is the normative
-architecture guide and `codemap.md` is the live repository atlas.
-Keep the release workflow from publishing empty releases when signing secrets
-are absent, while preserving the lean memory-bank startup flow.
+Finish the `freewebnovel.com` source-onboarding task with the new source,
+fixtures, and tests in place, then hand off for any optional broader QA.
 
 ## Current state
 
-- Core app structure is already in place: source plugins, repositories, Room
-  persistence, ViewModels, Compose screens/content, workers, and journey
-  tooling all exist in the repo.
-- The memory-bank workflow remains lean: `activeContext.md` and `progress.md`
-  are still the core task-start files.
+- `FreeWebNovel` was implemented as a new `HtmlSource` novel plugin under
+  `app/src/main/java/com/opus/readerparser/sources/freewebnovel/FreeWebNovel.kt`.
+- `SourceModule.kt` now registers `FreeWebNovel(client)`.
+- Live-backed fixtures were added for popular, latest, search, series, and
+  chapter flows under `app/src/test/resources/fixtures/freewebnovel/`.
+- Reviewer follow-up fixes are in place:
+  - detail-page status parsing now matches both ongoing and completed markup
+  - terminal latest-page pagination ignores disabled `javascript:void(0)` `>>`
+  - live-backed regression fixtures/tests were added for both cases
+- `FreeWebNovelTest` was added with parser coverage for identity, popular,
+  latest, terminal latest pagination, search, series details, completed detail
+  status, chapter list, chapter content cleaning, and failure paths.
+- Verification completed successfully for:
+  - `./gradlew :app:testDebugUnitTest --tests "*FreeWebNovelTest"`
+  - `./gradlew :app:assembleDebug`
+  - reviewer re-check on the current uncommitted diff
 - The documentation split plan in
   `plans/2026-05-27-architecture-codemap-doc-split.md` has been implemented.
 - `architecture.md` now focuses on durable rules, contracts, invariants, and
@@ -23,15 +32,18 @@ are absent, while preserving the lean memory-bank startup flow.
 - `.github/workflows/release.yml` now records whether the build is signed or
   unsigned, prefers a signed APK when present, falls back to an unsigned APK,
   and fails the workflow if no release APK is produced.
-- The memory bank was normalized on 2026-05-27:
-  - `active-context.md` was renamed to `activeContext.md`
-  - duplicated guidance was folded into `projectbrief.md`,
-    `productContext.md`, `systemPatterns.md`, and `techContext.md`
-  - startup workflow docs now point to the two-file core memory flow
-  - historical investigation notes were moved out of `memory-bank/`
 
 ## Active decisions
 
+- `freewebnovel.com` is onboarded as a novel source with
+  `ContentType.NOVEL` and `chapterTextParse` only.
+- Search uses the site's GET-compatible route
+  `/search?searchkey={encodedQuery}`.
+- Popular uses `/sort/most-popular` without pagination; latest uses
+  `/sort/latest-release` with page-number routes, and `hasNextPage` must ignore
+  disabled `javascript:void(0)` pager links.
+- Chapter HTML is parsed from `#article` and cleaned of inline ad and
+  watermark nodes before returning `ChapterContent.Text` HTML.
 - Release publication must never proceed with an empty APK path.
 - The release workflow should publish a signed APK when available and fall back
   to the unsigned APK only when that is the artifact actually produced.
@@ -54,21 +66,25 @@ are absent, while preserving the lean memory-bank startup flow.
 - Update `activeContext.md` and `progress.md` before ending a task.
 - Update the stable memory files only when durable product, architecture, or
   tooling knowledge changed.
+- The source selectors were derived from live HTML fixtures; refresh fixtures if
+  FreeWebNovel changes its markup.
 
 ## Relevant files
 
 - `AGENTS.md`
 - `architecture.md`
 - `codemap.md`
-- `plans/2026-05-27-architecture-codemap-doc-split.md`
 - `memory-bank/activeContext.md`
 - `memory-bank/progress.md`
+- `app/src/main/java/com/opus/readerparser/sources/AGENTS.md`
+- `app/src/main/java/com/opus/readerparser/sources/freewebnovel/FreeWebNovel.kt`
+- `app/src/test/kotlin/com/opus/readerparser/sources/freewebnovel/FreeWebNovelTest.kt`
+- `app/src/test/resources/fixtures/freewebnovel/`
+- `app/src/main/java/com/opus/readerparser/core/di/SourceModule.kt`
+- `plans/2026-05-27-freewebnovel-source-onboarding.md`
 
 ## Next safe action
 
-On future documentation updates, change only the owning document: structural
-navigation in `codemap.md`, architectural rules and decisions in
-`architecture.md`.
-On the next release-related task, verify the workflow against a tagged build or
-manual dispatch path, then continue using the two-file core memory startup flow
-for normal work.
+Optionally run broader static-analysis verification (`lintDebug`, `detekt`,
+`ktlintCheck`) or perform a manual in-app smoke test of latest pagination,
+completed-series details, and search.

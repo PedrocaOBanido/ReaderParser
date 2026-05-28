@@ -30,6 +30,21 @@ Last updated: 2026-05-27
   - `architecture.md` is a shorter normative guide focused on rules and
     contracts
   - `codemap.md` explicitly owns repository navigation and implementation maps
+- FreeWebNovel source-onboarding planning context was reviewed and a plan was
+  saved at `plans/2026-05-27-freewebnovel-source-onboarding.md`.
+- FreeWebNovel source onboarding was implemented:
+  - added `sources/freewebnovel/FreeWebNovel.kt`
+  - registered the source in `core/di/SourceModule.kt`
+  - added live-backed fixtures under `fixtures/freewebnovel/`
+  - added `FreeWebNovelTest` covering parser flows and failure cases
+- Reviewer findings on FreeWebNovel were fixed:
+  - detail-page status parsing now handles completed-series markup
+  - latest pagination now stops on terminal pages with disabled `>>` links
+  - regression tests/fixtures were added for both behaviors
+- Verification passed for:
+  - `./gradlew :app:testDebugUnitTest --tests "*FreeWebNovelTest"`
+  - `./gradlew :app:assembleDebug`
+  - reviewer re-check of the current FreeWebNovel diff
 
 ## In progress
 
@@ -43,6 +58,9 @@ Last updated: 2026-05-27
 
 - Build/test health should be re-verified on demand when code changes resume;
   stale blocker notes should not be carried forward without revalidation.
+- Pre-existing environment warnings remain during Gradle runs:
+  - Kotlin JDK 25 fallback to JVM 24 target
+  - Gradle deprecation warnings for Gradle 10 compatibility
 - The release workflow fix was validated by inspection and should be exercised
   on the next release run to confirm end-to-end asset upload behavior.
 
@@ -60,6 +78,7 @@ Last updated: 2026-05-27
 - Release workflow:
   - inspect `.github/workflows/release.yml`
 - App verification when source or build files change:
+  - `./gradlew :app:testDebugUnitTest --tests "*FreeWebNovelTest"`
   - `./gradlew :app:assembleDebug`
   - `./gradlew :app:lintDebug`
   - `./gradlew :app:testDebugUnitTest`

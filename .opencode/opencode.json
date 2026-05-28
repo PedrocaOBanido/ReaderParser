@@ -34,6 +34,7 @@
       "wc *":                               "allow",
       "tree *":                             "allow",
       "file *":                             "allow",
+      "echo *":                             "allow",
 
       "git status *":                       "allow",
       "git log *":                          "allow",
