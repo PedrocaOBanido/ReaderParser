@@ -4,6 +4,9 @@ Last updated: 2026-05-27
 
 ## Completed
 
+- Fixed `.github/workflows/release.yml` so release publication now prefers a
+  signed APK, falls back to the unsigned APK when signing secrets are absent,
+  and fails clearly if no APK artifact is produced.
 - Historical build-out phases 0–8 are materially present in the repo: test
   infrastructure, source contract, first source plugin, repository layer,
   ViewModels, Compose screens/content, worker flows, edge-case coverage, and
@@ -33,6 +36,8 @@ Last updated: 2026-05-27
 - No active memory-workflow blockers are tracked.
 - Build/test health should be re-verified on demand when code changes resume;
   stale blocker notes should not be carried forward without revalidation.
+- The release workflow fix was validated by inspection and should be exercised
+  on the next release run to confirm end-to-end asset upload behavior.
 
 ## Verification commands
 
@@ -42,6 +47,8 @@ Last updated: 2026-05-27
   - inspect `.opencode/command/light-start.md`
   - inspect `.opencode/opencode.json`
   - inspect `memory-bank/`
+- Release workflow:
+  - inspect `.github/workflows/release.yml`
 - App verification when source or build files change:
   - `./gradlew :app:assembleDebug`
   - `./gradlew :app:lintDebug`
