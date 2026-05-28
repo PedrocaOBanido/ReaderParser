@@ -2,9 +2,8 @@
   "$schema": "https://opencode.ai/config.json",
 
   "instructions": [
-    "app/src/main/**/AGENTS.md",
-    "memory-bank/active-context.md",
-    "memory-bank/conventions.md"
+    "memory-bank/activeContext.md",
+    "memory-bank/progress.md"
   ],
 
   "permission": {
@@ -13,8 +12,13 @@
     "websearch": "allow",
     "task": {
       "*": "ask",
+      "domain-author": "allow",
+      "journey-runner": "allow",
+      "room-migration": "allow",
       "reviewer": "allow",
-      "runner": "allow"
+      "runner": "allow",
+      "screen-author": "allow",
+      "source-author": "allow"
     },
     "bash": {
 
@@ -104,6 +108,10 @@
       "**/build/**",
       ".gradle/**",
       ".idea/**",
+      ".opencode/node_modules/**",
+      ".opencode/package-lock.json",
+      ".opencode/package.json",
+      ".opencode/project-structure.md",
       ".kotlin/**",
       ".cxx/**",
       ".externalNativeBuild/**",

@@ -1,5 +1,6 @@
 ---
 description: Run the full verification suite before declaring a task done.
+agent: runner
 ---
 
 Run, in order, and report each result:

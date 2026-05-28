@@ -4,6 +4,10 @@ mode: subagent
 model: opencode-go/deepseek-v4-flash
 variant: high
 temperature: 0.1
+permission:
+  edit: deny
+  skill: deny
+  task: deny
 agent:
   class: X
   owns: Builds, lint, unit tests, ktlintFormat, scripts/ci-check
@@ -168,4 +172,4 @@ If the request is ambiguous (e.g., "check the branch"), restate it as
 the concrete task list you intend to run, then proceed. If it's
 specific ("run ktlintCheck"), just run it. No long preamble.
 
-Reference root `AGENTS.md` §11 for the project's verify expectations.
+Reference root `AGENTS.md` for the project's verify expectations.

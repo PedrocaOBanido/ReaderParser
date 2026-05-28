@@ -2,6 +2,9 @@
 description: Handles Room schema changes. Bumps version, writes explicit SQL migrations, adds migration tests. Refuses fallbackToDestructiveMigration.
 mode: subagent
 temperature: 0.1
+permission:
+  skill: deny
+  task: deny
 agent:
   class: W
   owns: Room schema changes, migrations, version bumps, new entities/DAOs
@@ -24,7 +27,7 @@ order:
 3. Update affected `@Entity` data classes, DAOs, and mappers.
 4. Bump `AppDatabase.version` by exactly 1. Never skip versions.
 5. Create `Migration_<old>_<new>.kt` under
-   `app/src/main/kotlin/com/opus/readerparser/data/local/database/migrations/`.
+   `app/src/main/java/com/opus/readerparser/data/local/database/migrations/`.
    Use hand-written SQL. Reference Room's `Migration` class directly.
 6. Register the migration in `core/di/DatabaseModule.kt` where the database
    is built.
@@ -71,4 +74,4 @@ prose. List the entities you'll modify, the new version number, and
 whether identity changes are involved. Stop and wait for confirmation
 before any edits.
 
-Reference `app/src/main/kotlin/com/opus/readerparser/data/local/database/AGENTS.md`.
+Reference `app/src/main/java/com/opus/readerparser/data/local/database/AGENTS.md`.

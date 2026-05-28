@@ -4,10 +4,14 @@ mode: subagent
 model: openai/gpt-5.4
 variant: xhigh
 temperature: 0.1
+permission:
+  edit: deny
+  skill: deny
+  task: deny
 agent:
   class: R
   owns: Read-only diff review and repository policy checks
-  reads: root AGENTS.md, nearest nested AGENTS.md, memory-bank/conventions.md, git diff
+  reads: root AGENTS.md, nearest nested AGENTS.md, git diff
   routing:
     - review
     - reviewer
@@ -34,8 +38,8 @@ Review the active change set:
 Before reviewing:
 1. Read `AGENTS.md` at the repo root.
 2. Read the nearest nested `AGENTS.md` files for the changed areas.
-3. Read `memory-bank/conventions.md` if the task spans multiple layers.
-4. Inspect `git diff` / `git status` to understand what changed.
+3. Inspect `git diff` / `git status` to understand what changed.
+4. Read directly related tests only when needed to confirm a finding.
 
 Focus on changed files first. Read adjacent code only as needed to confirm a
 finding.
