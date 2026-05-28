@@ -4,25 +4,14 @@ Last updated: 2026-05-27
 
 ## Completed
 
-- Added global OpenCode skill `~/.config/opencode/skills/git-sync-pr-watch/` so
-  commit/PR tasks bias toward pushing requested commits to `origin` and
-  watching initial PR CI/check results.
-- Added global OpenCode skill
-  `~/.config/opencode/skills/android-command-routing/` so Android command tasks can
-  choose more intentionally between `android`, `adb`, and `./gradlew`.
-- Created and pushed release tag `v1.0.0` from the latest merged PR on `main`
-  (`8c948d9`, PR #13).
-- Fixed `.github/workflows/release.yml` so release publication now prefers a
-  signed APK, falls back to the unsigned APK when signing secrets are absent,
-  and fails clearly if no APK artifact is produced.
-- Configured GitHub repository secrets for release APK signing:
-  `KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`.
-- Simplified the release workflow signing step to reference secrets directly
-  via `${{ secrets.* }}` instead of an indirect env-var chain.
-- Removed the unused `workflow_dispatch` `signed` input; signing is now
-  automatic when secrets are present.
-- Moved `v1.0.0` tag to merge commit `0d6d47d` (PR #14, signing fix) and the
-  release workflow produced a signed `app-release.apk` (13.8 MB).
+- v1.0.0 GitHub release created and published at merge commit `4b97e8a`
+  (PR #15, app icon). Full release notes cover sources, screens, core features,
+  and technical architecture.
+- `feature/app-icon` branch deleted after merge into main.
+- Added global OpenCode skill `~/.config/opencode/skills/git-sync-pr-watch/`.
+- Added global OpenCode skill `~/.config/opencode/skills/android-command-routing/`.
+- Fixed `.github/workflows/release.yml` for signed APK publication.
+- Configured GitHub repository secrets for release APK signing.
 - Historical build-out phases 0–8 are materially present in the repo: test
   infrastructure, source contract, first source plugin, repository layer,
   ViewModels, Compose screens/content, worker flows, edge-case coverage, and

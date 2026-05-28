@@ -4,43 +4,19 @@ Last updated: 2026-05-27
 
 ## Current objective
 
-Release signing is now functional. No immediate action required.
+v1.0.0 has been released. No immediate action required.
 
 ## Current state
 
-- Added two global OpenCode skills under `~/.config/opencode/skills/`:
-  - `git-sync-pr-watch` for commit→origin sync and PR CI/watch follow-through
-  - `android-command-routing` for choosing between `android`, `adb`, and
-    `./gradlew` during Android command workflows
-- `FreeWebNovel` was implemented as a new `HtmlSource` novel plugin under
-  `app/src/main/java/com/opus/readerparser/sources/freewebnovel/FreeWebNovel.kt`.
-- `SourceModule.kt` now registers `FreeWebNovel(client)`.
-- Live-backed fixtures were added for popular, latest, search, series, and
-  chapter flows under `app/src/test/resources/fixtures/freewebnovel/`.
-- Reviewer follow-up fixes are in place:
-  - detail-page status parsing now matches both ongoing and completed markup
-  - terminal latest-page pagination ignores disabled `javascript:void(0)` `>>`
-  - live-backed regression fixtures/tests were added for both cases
-- `FreeWebNovelTest` was added with parser coverage for identity, popular,
-  latest, terminal latest pagination, search, series details, completed detail
-  status, chapter list, chapter content cleaning, and failure paths.
-- Verification completed successfully for:
-  - `./gradlew :app:testDebugUnitTest --tests "*FreeWebNovelTest"`
-  - `./gradlew :app:assembleDebug`
-  - reviewer re-check on the current uncommitted diff
-- Release tag `v1.0.0` was created from the latest merged PR on `main`
-  (`8c948d9`, PR #13) and pushed to `origin`.
-- The documentation split plan in
-  `plans/2026-05-27-architecture-codemap-doc-split.md` has been implemented.
-- `architecture.md` now focuses on durable rules, contracts, invariants, and
-  decisions while `codemap.md` owns live structure and implementation mapping.
-- `.github/workflows/release.yml` now decodes the keystore from secrets and
-  sets `KEYSTORE_PATH` + password env vars so Gradle picks up the `ciRelease`
-  signing config and produces a properly signed APK.
-- The release workflow no longer has an unused `workflow_dispatch` `signed`
-  input; signing is automatic when secrets are present.
-- `v1.0.0` was moved to merge commit `0d6d47d` (PR #14, signing fix) and the
-  release workflow produced a signed `app-release.apk` (13.8 MB).
+- `v1.0.0` release tag is published on GitHub at merge commit `4b97e8a`
+  (PR #15, app icon merged). The GitHub release includes full release notes
+  covering sources, screens, core features, and technical architecture.
+- `feature/app-icon` branch has been deleted (merged into main).
+- Local `main` is synced to `origin/main`.
+- All previous infrastructure is intact: two source plugins (AsuraScans,
+  FreeWebNovel), full UI screen set, background workers, and release CI.
+- Release workflow produces a signed `app-release.apk` when secrets are
+  present.
 
 ## Active decisions
 
@@ -63,7 +39,7 @@ Release signing is now functional. No immediate action required.
 - Release publication must never proceed with an empty APK path.
 - The release workflow should publish a signed APK when available and fall back
   to the unsigned APK only when that is the artifact actually produced.
-- `v1.0.0` points at merge commit `0d6d47d` (`Merge pull request #14 ...`).
+- `v1.0.0` points at merge commit `4b97e8a` (`Merge pull request #15 ...`).
 - `activeContext.md` and `progress.md` are the only core task-start memory
   files.
 - `projectbrief.md`, `productContext.md`, `systemPatterns.md`, and
@@ -104,7 +80,4 @@ Release signing is now functional. No immediate action required.
 
 ## Next safe action
 
-Restart OpenCode to load the new project-local skills, then optionally confirm
-they surface in the intended commit/PR and Android command situations.
-
-- A new wuxia-themed app icon has been generated and integrated into the project.
+None — v1.0.0 is released. Open new features or improvements as needed.
