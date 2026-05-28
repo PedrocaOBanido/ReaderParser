@@ -1,14 +1,27 @@
 # Memory bank
 
-Index of project-context files. Agents should consult the file relevant to their question.
+Core task-start memory is intentionally small.
 
-| File | Read when you need to know... |
-|---|---|
-| [`active-context.md`](active-context.md) | What phase we're in, what just finished, what's next. **Read this first.** |
-| [`decision-log.md`](decision-log.md) | Why something was done a certain way (tool choices, naming, patterns). |
-| [`progress.md`](progress.md) | What's been implemented and what remains, phase by phase. |
-| [`test-strategy.md`](test-strategy.md) | How testing works: phased plan, available utilities, fake/mock policies. |
-| [`conventions.md`](conventions.md) | Coding rules distilled from `AGENTS.md`: state, screens, errors, coroutines. |
-| [`directory-map.md`](directory-map.md) | Package layout: what goes where, test source-set mapping. |
+## Read at task start
 
-These files are kept up to date as the project evolves. If a file looks stale, flag it.
+- [`activeContext.md`](activeContext.md)
+- [`progress.md`](progress.md)
+
+## Lazy-load only when relevant
+
+- [`projectbrief.md`](projectbrief.md) — app purpose, goals, and scope
+- [`productContext.md`](productContext.md) — user-facing flows and UX
+- [`systemPatterns.md`](systemPatterns.md) — architecture, invariants, and
+  placement patterns
+- [`techContext.md`](techContext.md) — stack, testing, verification, and
+  tooling
+
+## Reference only
+
+- [`decision-log.md`](decision-log.md) — durable active decisions
+- [`commit-conventions.md`](commit-conventions.md) — commit prefix rules
+
+## Outside the core memory flow
+
+- Historical investigations and archives live under `plans/`.
+- Retired pointer files may remain only to redirect older references.

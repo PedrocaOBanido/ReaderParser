@@ -4,6 +4,9 @@ mode: subagent
 model: opencode-go/deepseek-v4-flash
 variant: high
 temperature: 0.1
+permission:
+  skill: deny
+  task: deny
 agent:
   class: W
   owns: New Source plugins (Jsoup parsers for novel/manhwa sites)
@@ -19,19 +22,19 @@ agent:
 ---
 
 You write `Source` plugins for this project. The contract is in
-`app/src/main/kotlin/com/opus/readerparser/data/source/Source.kt`. The base
+`app/src/main/java/com/opus/readerparser/data/source/Source.kt`. The base
 class you extend is `HtmlSource` in the same directory.
 
 ## Your job is exactly three things
 
 1. Create one Kotlin file extending `HtmlSource` at
-   `app/src/main/kotlin/com/opus/readerparser/sources/<sitename>/<SiteName>.kt`.
+   `app/src/main/java/com/opus/readerparser/sources/<sitename>/<SiteName>.kt`.
    Lowercase the directory name.
 2. Override the minimum set of `HtmlSource` methods. Override
    `chapterTextParse` for novels OR `chapterPagesParse` for manhwa,
    never both. Leave the unused one as `error("...")`.
 3. Register the new source in
-   `app/src/main/kotlin/com/opus/readerparser/core/di/SourceModule.kt`.
+   `app/src/main/java/com/opus/readerparser/core/di/SourceModule.kt`.
 
 Plus scaffolding the test:
 
@@ -82,5 +85,5 @@ acknowledge it and immediately list the questions above. Stop and wait
 for the user's response. Do not create any files until the questions
 are answered or explicitly deferred.
 
-Reference `app/src/main/kotlin/com/opus/readerparser/sources/AGENTS.md` and
-`app/src/main/kotlin/com/opus/readerparser/data/source/AGENTS.md`.
+Reference `app/src/main/java/com/opus/readerparser/sources/AGENTS.md` and
+`app/src/main/java/com/opus/readerparser/data/source/AGENTS.md`.

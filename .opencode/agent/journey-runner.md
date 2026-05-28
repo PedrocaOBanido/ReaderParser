@@ -4,6 +4,10 @@ mode: subagent
 model: opencode-go/deepseek-v4-flash
 variant: high
 temperature: 0.1
+permission:
+  edit: deny
+  skill: allow
+  task: deny
 agent:
   class: X
   owns: Emulator lifecycle, APK install, journey XML execution
@@ -194,5 +198,5 @@ When invoked, restate the request in one line:
 Then start the inventory step. Do not produce a plan section before
 running — the journey XML is the plan.
 
-Reference `journeys/README.md` for the report shape and root
-`AGENTS.md` §15 for the android-cli integration rules.
+Reference `journeys/README.md` for the report shape. Use the `android-cli`
+skill as the source of truth for CLI details.

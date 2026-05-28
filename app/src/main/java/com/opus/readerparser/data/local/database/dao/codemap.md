@@ -42,6 +42,7 @@ maps the raw SQL columns to the data class constructor automatically.
 |---|---|---|
 | SeriesDao | Observe library | `Flow<List<SeriesEntity>>` ordered by `addedAt DESC` |
 | SeriesDao | Update details only | `suspend updateDetails(...): Int` — returns rows affected |
+| SeriesDao | Get by sourceId | `suspend getBySourceId(sourceId: Long): List<SeriesEntity>` — fallback for remote search returning empty; caller applies `TitleMatcher.matches()` |
 | ChapterDao | Observe chapters for a series | `Flow<List<ChapterEntity>>` ordered by `number ASC` |
 | ChapterDao | Upsert from remote fetch | `suspend upsertAll(List<ChapterEntity>)` — REPLACE strategy |
 | DownloadQueueDao | Observe queue with names | `Flow<List<DownloadQueueWithDetails>>` via LEFT JOIN |

@@ -8,12 +8,13 @@ dependencies — they compile against plain Kotlin/JVM.
 
 ## Design
 
-Two standalone files, each containing a single top‑level function:
+Three standalone files, each exposing a single top‑level utility (one is an `object` with two public methods):
 
-| File | Function | Signature | Purpose |
-|------|----------|-----------|---------|
+| File | Function / Object | Signature | Purpose |
+|------|-------------------|-----------|---------|
 | `ComputeSourceId.kt` | `computeSourceId` | `(name: String, lang: String, type: ContentType) -> Long` | Deterministic source identity for database foreign keys |
 | `Hashing.kt` | `hashUrl` | `(url: String) -> String` | Stable, filesystem‑safe path component for downloads |
+| `TitleMatcher.kt` | `TitleMatcher` (object) | `matches(query, title): Boolean` + `editDistance(a, b): Int` | Fuzzy series‑title search for in‑memory filtering |
 
 ### `computeSourceId`
 
@@ -34,6 +35,23 @@ Two standalone files, each containing a single top‑level function:
   single series/chapter namespace.
 - Used exclusively by `DownloadStoreImpl` for path derivation.
 
+### `TitleMatcher`
+
+- **`matches(query, title)`**: Returns `true` when `query` matches `title` via
+  exact substring match or fuzzy substring match (edit distance ≤ 1).
+  - Case‑insensitive (`lowercase()`) with leading/trailing whitespace stripped
+    and internal whitespace collapsed to single spaces.
+  - Empty query matches everything.
+  - Fuzzy pass uses a sliding‑window approach: for every window of length
+    `qLen‑1`, `qLen`, or `qLen+1` in the title, checks `editDistance ≤ 1`.
+- **`editDistance(a, b)`**: Levenshtein edit distance capped at 2, designed to
+  short‑circuit as soon as distance ≥ 2 is detected. Optimised for the
+  common case of strings that differ by at most one character.
+- JVM‑testable without any Android dependencies.
+- Used as a lightweight fallback when remote search returns empty results
+  (`SeriesRepositoryImpl.search()`) and for client‑side filtering within the
+  library (`LibraryViewModel.filterAndSort()`).
+
 ## Flow
 
 ```
@@ -46,14 +64,26 @@ DownloadStore.writeManhwa / writeNovel
   └─ calls hashUrl(seriesUrl) → directory name for series
   └─ calls hashUrl(chapterUrl) → directory name for chapter
   └─ combined path: downloads/{sourceId}/{seriesHash}/{chapterHash}/
+
+SeriesRepositoryImpl.search(query, sourceId)
+  └─ delegates to Source.search(query) on the network
+  └─ if results are empty, fallback to in‑memory:
+       TitleMatcher.matches(query, each local series from DB)
+
+LibraryViewModel.filterAndSort(query, sortOrder)
+  └─ applies TitleMatcher.matches(query, series.title) for client‑side filter
+  └─ matches is a pure function — runs on any dispatcher
 ```
 
 ## Integration
 
 - **Consumed by**: Every `Source` implementation (calls `computeSourceId` in its
-  `id` property); `DownloadStoreImpl` (calls `hashUrl`); any test or fixture
-  that needs to compute stable identifiers.
+  `id` property); `DownloadStoreImpl` (calls `hashUrl`); `SeriesRepositoryImpl`
+  (calls `TitleMatcher.matches` as search fallback); `LibraryViewModel` (calls
+  `TitleMatcher.matches` for in‑library filtering); any test or fixture that
+  needs to compute stable identifiers or fuzzy‑match titles.
 - **Dependencies on**: `ContentType` enum from `domain/model/` (only
   `ComputeSourceId.kt`); standard library only.
 - **Does not depend on**: Android SDK, Ktor, Room, or any other framework.
-  Both files are fully JVM‑testable without Robolectric or Android test rules.
+  All three files are fully JVM‑testable without Robolectric or Android test
+  rules.

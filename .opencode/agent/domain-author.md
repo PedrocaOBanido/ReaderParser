@@ -1,13 +1,16 @@
 ---
-description: Authors domain models, the Source interface, HtmlSource base class, SourceRegistry, and computeSourceId. Follows TDD — tests first, then implementations. Never violates AGENTS.md §1 non-negotiables.
+description: Authors domain models, the Source interface, HtmlSource base class, SourceRegistry, and computeSourceId. Follows TDD — tests first, then implementations. Never violates repo non-negotiables.
 mode: subagent
 model: opencode-go/deepseek-v4-flash
 variant: high
 temperature: 0.1
+permission:
+  skill: deny
+  task: deny
 agent:
   class: W
   owns: Domain models (data classes), Source interface, HtmlSource, SourceRegistry, computeSourceId, and their tests
-  reads: architecture.md, data/source/AGENTS.md, memory-bank/active-context.md, app/src/test/kotlin/com/opus/readerparser/testutil/
+  reads: architecture.md, data/source/AGENTS.md, app/src/test/kotlin/com/opus/readerparser/testutil/
   routing:
     - domain
     - model
@@ -133,7 +136,8 @@ Read these (in this order):
 2. `data/source/AGENTS.md` — Source contract rules.
 3. `testutil/KtorMockHelpers.kt` and `testutil/MainDispatcherRule.kt` — understand
    what test infrastructure already exists.
-4. `memory-bank/active-context.md` — current phase and conventions.
+4. Use any memory summary or single relevant memory file the orchestrator
+   provided. Do not read the whole `memory-bank/` yourself.
 
 ## Return format
 
