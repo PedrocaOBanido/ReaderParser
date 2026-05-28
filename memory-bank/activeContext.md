@@ -25,6 +25,13 @@ fixtures, and tests in place, then hand off for any optional broader QA.
   - `./gradlew :app:testDebugUnitTest --tests "*FreeWebNovelTest"`
   - `./gradlew :app:assembleDebug`
   - reviewer re-check on the current uncommitted diff
+- The documentation split plan in
+  `plans/2026-05-27-architecture-codemap-doc-split.md` has been implemented.
+- `architecture.md` now focuses on durable rules, contracts, invariants, and
+  decisions while `codemap.md` owns live structure and implementation mapping.
+- `.github/workflows/release.yml` now records whether the build is signed or
+  unsigned, prefers a signed APK when present, falls back to an unsigned APK,
+  and fails the workflow if no release APK is produced.
 
 ## Active decisions
 
@@ -37,7 +44,19 @@ fixtures, and tests in place, then hand off for any optional broader QA.
   disabled `javascript:void(0)` pager links.
 - Chapter HTML is parsed from `#article` and cleaned of inline ad and
   watermark nodes before returning `ChapterContent.Text` HTML.
-- The parent/orchestrator continues to own memory-bank reads and writes.
+- Release publication must never proceed with an empty APK path.
+- The release workflow should publish a signed APK when available and fall back
+  to the unsigned APK only when that is the artifact actually produced.
+- `activeContext.md` and `progress.md` are the only core task-start memory
+  files.
+- `projectbrief.md`, `productContext.md`, `systemPatterns.md`, and
+  `techContext.md` are lazy-load references.
+- The parent/orchestrator owns memory-bank reads and writes.
+- Specialists should receive a short summary and only the single relevant
+  memory file when needed.
+- `architecture.md` is the normative architecture document.
+- `codemap.md` is the descriptive repository atlas.
+- `AGENTS.md` routes humans and agents to the right document by need.
 
 ## Known constraints
 
@@ -53,6 +72,8 @@ fixtures, and tests in place, then hand off for any optional broader QA.
 ## Relevant files
 
 - `AGENTS.md`
+- `architecture.md`
+- `codemap.md`
 - `memory-bank/activeContext.md`
 - `memory-bank/progress.md`
 - `app/src/main/java/com/opus/readerparser/sources/AGENTS.md`

@@ -5,8 +5,14 @@ through site-specific `Source` plugins. UI is Jetpack Compose; networking is
 Ktor.
 
 Use this file for repo-specific rules and routing only. The global persona owns
-delegation/tool discipline. Read `architecture.md` when changing layering or
-contracts. Read `codemap.md` only for unfamiliar or multi-layer work.
+delegation/tool discipline.
+
+- Read `architecture.md` for layer rules, contracts, invariants, and
+  architectural decisions.
+- Read `codemap.md` for current repository structure, entry points, and
+  directory maps.
+- Read a folder's `codemap.md` for local implementation details inside that
+  area.
 
 ## Non-negotiables
 
@@ -156,7 +162,10 @@ Task end:
 - Read `memory-bank/projectbrief.md`, `memory-bank/productContext.md`,
   `memory-bank/systemPatterns.md`, or `memory-bank/techContext.md` only when
   task-relevant.
-- Read `architecture.md` when changing layers, contracts, or core data flow.
-- Read `codemap.md` only for unfamiliar or multi-layer work.
+- Read `architecture.md` when changing layers, contracts, invariants, or core
+  data flow.
+- Read `codemap.md` when you need the current structure, entry points, or a
+  repository-wide navigation map.
+- Read the nearest folder `codemap.md` before broad edits inside that area.
 - Do not load the whole `memory-bank/` by default.
 - Do not load whole-repo docs by default.
