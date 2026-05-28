@@ -4,6 +4,8 @@ Last updated: 2026-05-27
 
 ## Completed
 
+- Created and pushed release tag `v1.0.0` from the latest merged PR on `main`
+  (`8c948d9`, PR #13).
 - Fixed `.github/workflows/release.yml` so release publication now prefers a
   signed APK, falls back to the unsigned APK when signing secrets are absent,
   and fails clearly if no APK artifact is produced.

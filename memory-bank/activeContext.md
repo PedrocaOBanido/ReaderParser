@@ -4,8 +4,8 @@ Last updated: 2026-05-27
 
 ## Current objective
 
-Finish the `freewebnovel.com` source-onboarding task with the new source,
-fixtures, and tests in place, then hand off for any optional broader QA.
+Track the freshly created `v1.0.0` release tag and hand off for any optional
+release-workflow monitoring or broader QA.
 
 ## Current state
 
@@ -25,6 +25,8 @@ fixtures, and tests in place, then hand off for any optional broader QA.
   - `./gradlew :app:testDebugUnitTest --tests "*FreeWebNovelTest"`
   - `./gradlew :app:assembleDebug`
   - reviewer re-check on the current uncommitted diff
+- Release tag `v1.0.0` was created from the latest merged PR on `main`
+  (`8c948d9`, PR #13) and pushed to `origin`.
 - The documentation split plan in
   `plans/2026-05-27-architecture-codemap-doc-split.md` has been implemented.
 - `architecture.md` now focuses on durable rules, contracts, invariants, and
@@ -47,6 +49,7 @@ fixtures, and tests in place, then hand off for any optional broader QA.
 - Release publication must never proceed with an empty APK path.
 - The release workflow should publish a signed APK when available and fall back
   to the unsigned APK only when that is the artifact actually produced.
+- `v1.0.0` points at merge commit `8c948d9` (`Merge pull request #13 ...`).
 - `activeContext.md` and `progress.md` are the only core task-start memory
   files.
 - `projectbrief.md`, `productContext.md`, `systemPatterns.md`, and
@@ -85,6 +88,7 @@ fixtures, and tests in place, then hand off for any optional broader QA.
 
 ## Next safe action
 
-Optionally run broader static-analysis verification (`lintDebug`, `detekt`,
-`ktlintCheck`) or perform a manual in-app smoke test of latest pagination,
-completed-series details, and search.
+Optionally monitor the release workflow triggered by `v1.0.0`, or run broader
+static-analysis verification (`lintDebug`, `detekt`, `ktlintCheck`) and a
+manual in-app smoke test of latest pagination, completed-series details, and
+search.

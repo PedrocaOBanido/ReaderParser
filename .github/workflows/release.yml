@@ -4,11 +4,6 @@ on:
   push:
     tags: ["v*"]
   workflow_dispatch:
-    inputs:
-      signed:
-        description: "Use signing keystore (requires secrets)"
-        type: boolean
-        default: false
 
 permissions:
   contents: write
@@ -41,16 +36,13 @@ jobs:
         id: signing
         env:
           KEYSTORE_B64: ${{ secrets.KEYSTORE_BASE64 }}
-          KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEYSTORE_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEYSTORE_KEYPASS: ${{ secrets.KEY_PASSWORD }}
         run: |
           if [ -n "$KEYSTORE_B64" ]; then
             echo "$KEYSTORE_B64" | base64 -d > app/ci-release.keystore
             echo "KEYSTORE_PATH=$PWD/app/ci-release.keystore" >> "$GITHUB_ENV"
-            echo "KEYSTORE_PASSWORD=$KEYSTORE_PASS" >> "$GITHUB_ENV"
-            echo "KEY_ALIAS=$KEYSTORE_ALIAS" >> "$GITHUB_ENV"
-            echo "KEY_PASSWORD=$KEYSTORE_KEYPASS" >> "$GITHUB_ENV"
+            echo "KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}" >> "$GITHUB_ENV"
+            echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> "$GITHUB_ENV"
+            echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> "$GITHUB_ENV"
             echo "mode=signed" >> "$GITHUB_OUTPUT"
             echo "Signing enabled"
           else
