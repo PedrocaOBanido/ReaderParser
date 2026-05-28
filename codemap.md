@@ -1,5 +1,10 @@
 # Repository Atlas: ReaderParser
 
+This document is the **descriptive repository atlas**. It owns current
+structure, entry points, directory responsibilities, and implementation
+locations. Use `architecture.md` for normative layer rules, contracts,
+invariants, and architectural decisions.
+
 ## Project Responsibility
 
 ReaderParser is a single-module Android application for reading webnovel and manhwa content from
@@ -12,8 +17,8 @@ Ktor + Jsoup to fetch and parse remote content.
 
 | Path | Role |
 |---|---|
-| `AGENTS.md` | Repository operating rules for coding agents; pairs with this atlas for navigation. |
-| `architecture.md` | Source-of-truth architecture spec for layers, models, source plugins, and storage. |
+| `AGENTS.md` | Repository operating rules and doc-routing policy for coding agents. |
+| `architecture.md` | Normative architecture guide for layer rules, contracts, invariants, and decisions. |
 | `README.md` | Human-facing project overview and setup notes. |
 | `app/` | The only Gradle module; contains all production Android code, tests, resources, and schemas. |
 | `build.gradle.kts` | Root plugin declarations and shared build entry point. |
@@ -106,9 +111,9 @@ Ktor + Jsoup to fetch and parse remote content.
 
 ## How To Use This Atlas
 
-- Start with this file for project purpose, entry points, and the directory index.
-- Read `architecture.md` for the normative layer rules and source/plugin contracts.
-- Before editing a feature area, open that folder's `codemap.md` for local design and flow details.
+- Start here for codebase navigation, current structure, entry points, and the directory index.
+- Read `architecture.md` for layer rules, contracts, invariants, and architectural decisions.
+- Before editing a feature area, open that folder's `codemap.md` for local implementation details.
 - For app-wide work, the most important sub-maps are `app/src/main/java/com/opus/readerparser/codemap.md`,
   `app/src/main/java/com/opus/readerparser/ui/codemap.md`,
   `app/src/main/java/com/opus/readerparser/data/codemap.md`, and
