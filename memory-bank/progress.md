@@ -4,11 +4,25 @@ Last updated: 2026-05-27
 
 ## Completed
 
+- Added global OpenCode skill `~/.config/opencode/skills/git-sync-pr-watch/` so
+  commit/PR tasks bias toward pushing requested commits to `origin` and
+  watching initial PR CI/check results.
+- Added global OpenCode skill
+  `~/.config/opencode/skills/android-command-routing/` so Android command tasks can
+  choose more intentionally between `android`, `adb`, and `./gradlew`.
 - Created and pushed release tag `v1.0.0` from the latest merged PR on `main`
   (`8c948d9`, PR #13).
 - Fixed `.github/workflows/release.yml` so release publication now prefers a
   signed APK, falls back to the unsigned APK when signing secrets are absent,
   and fails clearly if no APK artifact is produced.
+- Configured GitHub repository secrets for release APK signing:
+  `KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`.
+- Simplified the release workflow signing step to reference secrets directly
+  via `${{ secrets.* }}` instead of an indirect env-var chain.
+- Removed the unused `workflow_dispatch` `signed` input; signing is now
+  automatic when secrets are present.
+- Moved `v1.0.0` tag to merge commit `0d6d47d` (PR #14, signing fix) and the
+  release workflow produced a signed `app-release.apk` (13.8 MB).
 - Historical build-out phases 0–8 are materially present in the repo: test
   infrastructure, source contract, first source plugin, repository layer,
   ViewModels, Compose screens/content, worker flows, edge-case coverage, and
@@ -58,16 +72,21 @@ Last updated: 2026-05-27
 
 ## Known issues
 
+- OpenCode must be restarted before newly added skills are available in future
+  sessions.
 - Build/test health should be re-verified on demand when code changes resume;
   stale blocker notes should not be carried forward without revalidation.
 - Pre-existing environment warnings remain during Gradle runs:
   - Kotlin JDK 25 fallback to JVM 24 target
   - Gradle deprecation warnings for Gradle 10 compatibility
-- The release workflow fix was validated by inspection and should be exercised
-  on the next release run to confirm end-to-end asset upload behavior.
+- The release workflow fix was validated end-to-end: the `v1.0.0` release
+  produced a signed `app-release.apk` (13.8 MB) after secrets were configured.
 
 ## Verification commands
 
+- Skills/config-time files:
+  - inspect `~/.config/opencode/skills/git-sync-pr-watch/SKILL.md`
+  - inspect `~/.config/opencode/skills/android-command-routing/SKILL.md`
 - Docs/workflow consistency:
   - inspect `AGENTS.md`
   - inspect `architecture.md`
@@ -86,3 +105,6 @@ Last updated: 2026-05-27
   - `./gradlew :app:testDebugUnitTest`
   - `./gradlew :app:detekt`
   - `./gradlew :app:ktlintCheck`
+
+- Generated and integrated a new wuxia-themed app icon using `@canvas-drawer`.
+- Replaced default Android Studio vector icons with adaptive PNG layers and raster fallbacks.

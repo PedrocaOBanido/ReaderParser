@@ -42,4 +42,8 @@
 - Use `git` for local history and staging.
 - Use `gh` for GitHub-side operations.
 - Load `android-cli` only for emulator, device, APK, or journey work.
+- Global skill `git-sync-pr-watch` covers commit→push and PR CI-watch
+  follow-through.
+- Global skill `android-command-routing` helps choose between `android`,
+  `adb`, and `./gradlew` for Android command workflows.
 - See `memory-bank/commit-conventions.md` for commit prefixes.

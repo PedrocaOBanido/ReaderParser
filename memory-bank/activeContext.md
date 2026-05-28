@@ -4,11 +4,14 @@ Last updated: 2026-05-27
 
 ## Current objective
 
-Track the freshly created `v1.0.0` release tag and hand off for any optional
-release-workflow monitoring or broader QA.
+Release signing is now functional. No immediate action required.
 
 ## Current state
 
+- Added two global OpenCode skills under `~/.config/opencode/skills/`:
+  - `git-sync-pr-watch` for commit→origin sync and PR CI/watch follow-through
+  - `android-command-routing` for choosing between `android`, `adb`, and
+    `./gradlew` during Android command workflows
 - `FreeWebNovel` was implemented as a new `HtmlSource` novel plugin under
   `app/src/main/java/com/opus/readerparser/sources/freewebnovel/FreeWebNovel.kt`.
 - `SourceModule.kt` now registers `FreeWebNovel(client)`.
@@ -31,12 +34,23 @@ release-workflow monitoring or broader QA.
   `plans/2026-05-27-architecture-codemap-doc-split.md` has been implemented.
 - `architecture.md` now focuses on durable rules, contracts, invariants, and
   decisions while `codemap.md` owns live structure and implementation mapping.
-- `.github/workflows/release.yml` now records whether the build is signed or
-  unsigned, prefers a signed APK when present, falls back to an unsigned APK,
-  and fails the workflow if no release APK is produced.
+- `.github/workflows/release.yml` now decodes the keystore from secrets and
+  sets `KEYSTORE_PATH` + password env vars so Gradle picks up the `ciRelease`
+  signing config and produces a properly signed APK.
+- The release workflow no longer has an unused `workflow_dispatch` `signed`
+  input; signing is automatic when secrets are present.
+- `v1.0.0` was moved to merge commit `0d6d47d` (PR #14, signing fix) and the
+  release workflow produced a signed `app-release.apk` (13.8 MB).
 
 ## Active decisions
 
+- Git/GitHub tasks that cross into commit or PR creation should prefer the
+  `git-sync-pr-watch` skill so requested commits are pushed to `origin` and PRs
+  are checked/watched for initial CI outcomes.
+- Android command-line tasks that mention `adb`, emulator/device control, APK
+  install/run, or Gradle install-style workflows should prefer the
+  `android-command-routing` skill to decide between `android`, `adb`, and
+  `./gradlew`.
 - `freewebnovel.com` is onboarded as a novel source with
   `ContentType.NOVEL` and `chapterTextParse` only.
 - Search uses the site's GET-compatible route
@@ -49,7 +63,7 @@ release-workflow monitoring or broader QA.
 - Release publication must never proceed with an empty APK path.
 - The release workflow should publish a signed APK when available and fall back
   to the unsigned APK only when that is the artifact actually produced.
-- `v1.0.0` points at merge commit `8c948d9` (`Merge pull request #13 ...`).
+- `v1.0.0` points at merge commit `0d6d47d` (`Merge pull request #14 ...`).
 - `activeContext.md` and `progress.md` are the only core task-start memory
   files.
 - `projectbrief.md`, `productContext.md`, `systemPatterns.md`, and
@@ -77,6 +91,8 @@ release-workflow monitoring or broader QA.
 - `AGENTS.md`
 - `architecture.md`
 - `codemap.md`
+- `~/.config/opencode/skills/git-sync-pr-watch/SKILL.md`
+- `~/.config/opencode/skills/android-command-routing/SKILL.md`
 - `memory-bank/activeContext.md`
 - `memory-bank/progress.md`
 - `app/src/main/java/com/opus/readerparser/sources/AGENTS.md`
@@ -88,7 +104,7 @@ release-workflow monitoring or broader QA.
 
 ## Next safe action
 
-Optionally monitor the release workflow triggered by `v1.0.0`, or run broader
-static-analysis verification (`lintDebug`, `detekt`, `ktlintCheck`) and a
-manual in-app smoke test of latest pagination, completed-series details, and
-search.
+Restart OpenCode to load the new project-local skills, then optionally confirm
+they surface in the intended commit/PR and Android command situations.
+
+- A new wuxia-themed app icon has been generated and integrated into the project.
