@@ -19,10 +19,25 @@ Last updated: 2026-05-27
     route through the lean memory flow
 - Historical debug notes were moved out of `memory-bank/`, and duplicated rule
   files were retired from the core workflow.
+- FreeWebNovel source-onboarding planning context was reviewed and a plan was
+  saved at `plans/2026-05-27-freewebnovel-source-onboarding.md`.
+- FreeWebNovel source onboarding was implemented:
+  - added `sources/freewebnovel/FreeWebNovel.kt`
+  - registered the source in `core/di/SourceModule.kt`
+  - added live-backed fixtures under `fixtures/freewebnovel/`
+  - added `FreeWebNovelTest` covering parser flows and failure cases
+- Reviewer findings on FreeWebNovel were fixed:
+  - detail-page status parsing now handles completed-series markup
+  - latest pagination now stops on terminal pages with disabled `>>` links
+  - regression tests/fixtures were added for both behaviors
+- Verification passed for:
+  - `./gradlew :app:testDebugUnitTest --tests "*FreeWebNovelTest"`
+  - `./gradlew :app:assembleDebug`
+  - reviewer re-check of the current FreeWebNovel diff
 
 ## In progress
 
-- No active implementation work is currently tracked in memory.
+- None.
 
 ## Blocked
 
@@ -33,6 +48,9 @@ Last updated: 2026-05-27
 - No active memory-workflow blockers are tracked.
 - Build/test health should be re-verified on demand when code changes resume;
   stale blocker notes should not be carried forward without revalidation.
+- Pre-existing environment warnings remain during Gradle runs:
+  - Kotlin JDK 25 fallback to JVM 24 target
+  - Gradle deprecation warnings for Gradle 10 compatibility
 
 ## Verification commands
 
@@ -43,6 +61,7 @@ Last updated: 2026-05-27
   - inspect `.opencode/opencode.json`
   - inspect `memory-bank/`
 - App verification when source or build files change:
+  - `./gradlew :app:testDebugUnitTest --tests "*FreeWebNovelTest"`
   - `./gradlew :app:assembleDebug`
   - `./gradlew :app:lintDebug`
   - `./gradlew :app:testDebugUnitTest`

@@ -2,6 +2,7 @@ package com.opus.readerparser.core.di
 
 import com.opus.readerparser.data.source.SourceRegistry
 import com.opus.readerparser.sources.asurascans.AsuraScans
+import com.opus.readerparser.sources.freewebnovel.FreeWebNovel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,6 +25,7 @@ object SourceModule {
     fun registry(client: HttpClient): SourceRegistry = SourceRegistry(
         listOf(
             AsuraScans(client),
+            FreeWebNovel(client),
         ).associateBy { it.id },
     )
 }
