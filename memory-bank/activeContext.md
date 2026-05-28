@@ -4,21 +4,20 @@ Last updated: 2026-05-27
 
 ## Current objective
 
-Keep the memory-bank workflow lean and authoritative. A task should start with
-`AGENTS.md`, `memory-bank/activeContext.md`, and `memory-bank/progress.md`,
-then load deeper memory only when it is directly relevant.
+Keep the documentation split stable: `architecture.md` is the normative
+architecture guide and `codemap.md` is the live repository atlas.
 
 ## Current state
 
 - Core app structure is already in place: source plugins, repositories, Room
   persistence, ViewModels, Compose screens/content, workers, and journey
   tooling all exist in the repo.
-- The memory bank was normalized on 2026-05-27:
-  - `active-context.md` was renamed to `activeContext.md`
-  - duplicated guidance was folded into `projectbrief.md`,
-    `productContext.md`, `systemPatterns.md`, and `techContext.md`
-  - startup workflow docs now point to the two-file core memory flow
-  - historical investigation notes were moved out of `memory-bank/`
+- The memory-bank workflow remains lean: `activeContext.md` and `progress.md`
+  are still the core task-start files.
+- The documentation split plan in
+  `plans/2026-05-27-architecture-codemap-doc-split.md` has been implemented.
+- `architecture.md` now focuses on durable rules, contracts, invariants, and
+  decisions while `codemap.md` owns live structure and implementation mapping.
 
 ## Active decisions
 
@@ -29,6 +28,9 @@ then load deeper memory only when it is directly relevant.
 - The parent/orchestrator owns memory-bank reads and writes.
 - Specialists should receive a short summary and only the single relevant
   memory file when needed.
+- `architecture.md` is the normative architecture document.
+- `codemap.md` is the descriptive repository atlas.
+- `AGENTS.md` routes humans and agents to the right document by need.
 
 ## Known constraints
 
@@ -42,18 +44,14 @@ then load deeper memory only when it is directly relevant.
 ## Relevant files
 
 - `AGENTS.md`
-- `.opencode/command/start.md`
-- `.opencode/command/light-start.md`
-- `.opencode/opencode.json`
+- `architecture.md`
+- `codemap.md`
+- `plans/2026-05-27-architecture-codemap-doc-split.md`
 - `memory-bank/activeContext.md`
 - `memory-bank/progress.md`
-- `memory-bank/projectbrief.md`
-- `memory-bank/productContext.md`
-- `memory-bank/systemPatterns.md`
-- `memory-bank/techContext.md`
 
 ## Next safe action
 
-On the next task, read `AGENTS.md`, `memory-bank/activeContext.md`, and
-`memory-bank/progress.md`; lazy-load the other memory files only if the task
-needs them, then update the two core memory files before ending the session.
+On future documentation updates, change only the owning document: structural
+navigation in `codemap.md`, architectural rules and decisions in
+`architecture.md`.

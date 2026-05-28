@@ -19,10 +19,18 @@ Last updated: 2026-05-27
     route through the lean memory flow
 - Historical debug notes were moved out of `memory-bank/`, and duplicated rule
   files were retired from the core workflow.
+- A concrete plan for splitting architecture documentation from codemap
+  responsibilities was saved to
+  `plans/2026-05-27-architecture-codemap-doc-split.md`.
+- The documentation split is now implemented:
+  - `AGENTS.md` explicitly routes doc usage by responsibility
+  - `architecture.md` is a shorter normative guide focused on rules and
+    contracts
+  - `codemap.md` explicitly owns repository navigation and implementation maps
 
 ## In progress
 
-- No active implementation work is currently tracked in memory.
+- None.
 
 ## Blocked
 
@@ -30,7 +38,6 @@ Last updated: 2026-05-27
 
 ## Known issues
 
-- No active memory-workflow blockers are tracked.
 - Build/test health should be re-verified on demand when code changes resume;
   stale blocker notes should not be carried forward without revalidation.
 
@@ -38,6 +45,9 @@ Last updated: 2026-05-27
 
 - Docs/workflow consistency:
   - inspect `AGENTS.md`
+  - inspect `architecture.md`
+  - inspect `codemap.md`
+  - inspect `plans/2026-05-27-architecture-codemap-doc-split.md`
   - inspect `.opencode/command/start.md`
   - inspect `.opencode/command/light-start.md`
   - inspect `.opencode/opencode.json`
