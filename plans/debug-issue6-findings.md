@@ -1,5 +1,8 @@
 # Debug Findings: Issue #6 — "Unexpected content type" (ongoing)
 
+> Archived from `memory-bank/` on 2026-05-27. This is a historical
+> investigation note, not core task-start memory.
+
 **Date**: 2026-05-10  
 **Status**: Partially fixed. Remaining bugs identified. Root cause of continued
 user report unresolved via static analysis alone.

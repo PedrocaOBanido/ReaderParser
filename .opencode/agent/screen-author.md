@@ -4,6 +4,9 @@ mode: subagent
 model: opencode-go/deepseek-v4-flash
 variant: high
 temperature: 0.1
+permission:
+  skill: deny
+  task: deny
 agent:
   class: W
   owns: New Compose screens following the four-file pattern (*Screen, *Content, *ViewModel, *UiState)
@@ -18,7 +21,7 @@ agent:
 ---
 
 You scaffold Compose screens for this project. Every screen is exactly
-four files in `app/src/main/kotlin/com/opus/readerparser/ui/<screenname>/`:
+four files in `app/src/main/java/com/opus/readerparser/ui/<screenname>/`:
 
 1. `<Name>Screen.kt`
 2. `<Name>Content.kt`
@@ -78,4 +81,4 @@ After creating the four files, add:
 
 Restate what you understand the screen's purpose to be, list the state
 fields you intend to define, and stop. Wait for the user to confirm
-before creating any files. Reference `app/src/main/kotlin/com/opus/readerparser/ui/AGENTS.md`.
+before creating any files. Reference `app/src/main/java/com/opus/readerparser/ui/AGENTS.md`.

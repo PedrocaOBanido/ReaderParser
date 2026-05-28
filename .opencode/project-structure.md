@@ -1,5 +1,9 @@
 # Project structure
 
+> Reference only. This file is not part of the always-loaded instruction set
+> and may lag behind the live repo. Treat `AGENTS.md`, the nearest nested
+> `AGENTS.md`, and the actual tree as authoritative.
+
 Layout for the reader app, combining the standard Android/Gradle layout with
 opencode's project-local configuration conventions (`.opencode/`,
 `opencode.json`, nested `AGENTS.md` files).
