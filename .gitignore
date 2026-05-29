@@ -24,3 +24,4 @@ captures/
 .vscode/
 gradle/gradle-daemon-jvm.properties
 session-ses_*.md
+plans/
