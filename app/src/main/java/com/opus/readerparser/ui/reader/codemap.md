@@ -10,10 +10,10 @@ The navigation graph dispatching to `novel/` or `manhwa/` is driven by
 
 ## Design
 
-- **Strictly separate readers** — `novel/` and `manhwa/` share no composable
-  code, no ViewModel logic, and no UiState type. The only shared types across
-  both are the domain models (`Chapter`, `ChapterContent`, `ContentType`) and
-  the `ChapterRepository` interface.
+- **Mostly separate readers** — `novel/` and `manhwa/` keep separate screen,
+  ViewModel, and UiState types. The only shared reader-specific composable is
+  `ui/components/ReaderChapterListSheet.kt`; all other reader behavior stays
+  split by content type.
 - **4-file screen convention** enforced in both subpackages:
   `*Screen.kt`, `*Content.kt`, `*ViewModel.kt`, `*UiState.kt`.
   UiState files also contain the sealed `Action` and `Effect` interfaces.
@@ -58,7 +58,7 @@ Within each reader:
    `OpenChapterList`) flow through `onAction()`.
 5. Effects (`NavigateToChapter`, `ShowChapterList`, `ShowError`) are sent via
    `Channel<Effect>(BUFFERED)` and collected by `*Screen` for one-shot side
-   effects.
+   effects. `ShowChapterList` opens the shared `ReaderChapterListSheet`.
 6. The navigation layer handles chapter-to-chapter transitions by
    `popUpTo(route, inclusive=true)` + navigate — each chapter load is a new
    composable instance.

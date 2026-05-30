@@ -4,6 +4,7 @@ import com.opus.readerparser.domain.model.Chapter
 
 data class MangaReaderUiState(
     val chapter: Chapter? = null,
+    val seriesChapters: List<Chapter> = emptyList(),
     val pages: List<String> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
@@ -14,6 +15,7 @@ data class MangaReaderUiState(
 
 sealed interface MangaReaderAction {
     data class Load(val chapter: Chapter) : MangaReaderAction
+    data class SelectChapter(val chapter: Chapter) : MangaReaderAction
     data class SetPage(val page: Int) : MangaReaderAction
     data object PreviousChapter : MangaReaderAction
     data object NextChapter : MangaReaderAction
