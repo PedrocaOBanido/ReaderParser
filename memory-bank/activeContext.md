@@ -1,25 +1,55 @@
 # Active context
 
-Last updated: 2026-05-27
+Last updated: 2026-05-29
 
 ## Current objective
 
-v1.0.0 has been released. No immediate action required.
+The shared reader chapter-list fix is implemented; only device-backed
+instrumentation execution remains when an emulator or physical device is
+available.
 
 ## Current state
 
 - `v1.0.0` release tag is published on GitHub at merge commit `4b97e8a`
   (PR #15, app icon merged). The GitHub release includes full release notes
   covering sources, screens, core features, and technical architecture.
+- An implementation plan for the shared reader chapter-list fix was saved at
+  `plans/2026-05-29-reader-shared-chapter-list-fix.md`.
+- A repository knowledge graph has been generated at
+  `.understand-anything/knowledge-graph.json` for commit
+  `b7852189a3bff5e1165f195ac4fd5a565e1c9794`.
+- `.understand-anything/meta.json` and `.understand-anything/fingerprints.json`
+  were refreshed alongside the graph; the fingerprint baseline covers 277
+  text-readable files.
 - `feature/app-icon` branch has been deleted (merged into main).
 - Local `main` is synced to `origin/main`.
 - All previous infrastructure is intact: two source plugins (AsuraScans,
   FreeWebNovel), full UI screen set, background workers, and release CI.
 - Release workflow produces a signed `app-release.apk` when secrets are
   present.
+- Project-local OpenCode command flow now uses a plan-first `/start` plus an
+  isolated `/run-plan` handoff for approved plan execution.
+- The manga and novel readers now share `ui/components/ReaderChapterListSheet.kt`
+  for chapter-list UI while keeping separate screens, ViewModels, and UiState
+  types.
+- Both reader ViewModels now retain the current series chapter list in UiState,
+  and chapter selection routes back through the existing
+  `NavigateToChapter` effect flow.
+- Targeted reader ViewModel tests passed, and both the debug app APK and debug
+  androidTest APK now build successfully.
 
 ## Active decisions
 
+- The reader chapter-list UI should be reusable only between the manga reader
+  and novel reader.
+- The chapter list must show the chapters of the series currently being read.
+- The shared reader sheet should stay limited to the manga and novel readers;
+  no broader reader composable consolidation is planned.
+- Reader chapter selection should dismiss the sheet locally in `*Screen` and
+  navigate through the existing ViewModel effect channel.
+- `.understand-anything/` is now excluded inside
+  `.understand-anything/.understandignore` so future `/understand` runs do not
+  analyze their own generated artifacts.
 - Git/GitHub tasks that cross into commit or PR creation should prefer the
   `git-sync-pr-watch` skill so requested commits are pushed to `origin` and PRs
   are checked/watched for initial CI outcomes.
@@ -50,6 +80,8 @@ v1.0.0 has been released. No immediate action required.
 - `architecture.md` is the normative architecture document.
 - `codemap.md` is the descriptive repository atlas.
 - `AGENTS.md` routes humans and agents to the right document by need.
+- Use `/start` to draft and approve a plan, save it under `plans/`, then use
+  `/run-plan <plan-path>` to execute that approved plan in an isolated session.
 
 ## Known constraints
 
@@ -65,19 +97,34 @@ v1.0.0 has been released. No immediate action required.
 ## Relevant files
 
 - `AGENTS.md`
+- `plans/2026-05-29-reader-shared-chapter-list-fix.md`
 - `architecture.md`
 - `codemap.md`
+- `.understand-anything/knowledge-graph.json`
+- `.understand-anything/meta.json`
+- `.understand-anything/fingerprints.json`
+- `.understand-anything/.understandignore`
 - `~/.config/opencode/skills/git-sync-pr-watch/SKILL.md`
 - `~/.config/opencode/skills/android-command-routing/SKILL.md`
 - `memory-bank/activeContext.md`
 - `memory-bank/progress.md`
+- `.opencode/command/start.md`
+- `.opencode/command/run-plan.md`
 - `app/src/main/java/com/opus/readerparser/sources/AGENTS.md`
 - `app/src/main/java/com/opus/readerparser/sources/freewebnovel/FreeWebNovel.kt`
 - `app/src/test/kotlin/com/opus/readerparser/sources/freewebnovel/FreeWebNovelTest.kt`
 - `app/src/test/resources/fixtures/freewebnovel/`
 - `app/src/main/java/com/opus/readerparser/core/di/SourceModule.kt`
 - `plans/2026-05-27-freewebnovel-source-onboarding.md`
+- `app/src/main/java/com/opus/readerparser/ui/components/ReaderChapterListSheet.kt`
+- `app/src/main/java/com/opus/readerparser/ui/reader/manhwa/MangaReaderScreen.kt`
+- `app/src/main/java/com/opus/readerparser/ui/reader/manhwa/MangaReaderViewModel.kt`
+- `app/src/main/java/com/opus/readerparser/ui/reader/novel/NovelReaderScreen.kt`
+- `app/src/main/java/com/opus/readerparser/ui/reader/novel/NovelReaderViewModel.kt`
+- `app/src/androidTest/java/com/opus/readerparser/ui/reader/manhwa/MangaReaderContentTest.kt`
+- `app/src/androidTest/java/com/opus/readerparser/ui/reader/novel/NovelReaderContentTest.kt`
 
 ## Next safe action
 
-None — v1.0.0 is released. Open new features or improvements as needed.
+Start an emulator or connect a device, then run the two targeted
+`connectedDebugAndroidTest` reader test classes.
