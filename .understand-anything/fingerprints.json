@@ -1,0 +1,2784 @@
+{
+  "version": "1.0.0",
+  "gitCommitHash": "b7852189a3bff5e1165f195ac4fd5a565e1c9794",
+  "generatedAt": "2026-05-29T04:52:32.834Z",
+  "files": {
+    ".github/workflows/alert-to-issue.yml": {
+      "filePath": ".github/workflows/alert-to-issue.yml",
+      "contentHash": "6bc0625999dc05ff848b79fe55f0ee7a2a1ab9dba74e7dc4ce883ed074898813",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 75,
+      "hasStructuralAnalysis": true
+    },
+    ".github/workflows/ci.yml": {
+      "filePath": ".github/workflows/ci.yml",
+      "contentHash": "62a04893e327c64edc020cb51a474ab6fc38e76f04dcc6de26cdb38dde3289d6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 67,
+      "hasStructuralAnalysis": true
+    },
+    ".github/workflows/detekt.yml": {
+      "filePath": ".github/workflows/detekt.yml",
+      "contentHash": "bd46775820abc9d227f61fa1d862094801773597cb6a4359f5672e4e7c0d2d5f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 50,
+      "hasStructuralAnalysis": true
+    },
+    ".github/workflows/journey.yml": {
+      "filePath": ".github/workflows/journey.yml",
+      "contentHash": "4d10096985d5559a78e67f544f09bfbd6fc85b0f766776be982e46cc7c3ac624",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 75,
+      "hasStructuralAnalysis": true
+    },
+    ".github/workflows/opencode.yml": {
+      "filePath": ".github/workflows/opencode.yml",
+      "contentHash": "5a984f2591bf9f1445d58a232b566e83b4da6bb9318f1a20496bd0fe2f3f51e7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 33,
+      "hasStructuralAnalysis": true
+    },
+    ".github/workflows/release.yml": {
+      "filePath": ".github/workflows/release.yml",
+      "contentHash": "5b48794cf9b23ef5163a236bbc2aad09ba8d34d94d27c45dd4db9e5706aabc5a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 82,
+      "hasStructuralAnalysis": true
+    },
+    ".opencode/agent/domain-author.md": {
+      "filePath": ".opencode/agent/domain-author.md",
+      "contentHash": "d73b1b6aa665019893da095d0e9e44ec66c2110e5457b180f80119e31b64cd51",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 155,
+      "hasStructuralAnalysis": true
+    },
+    ".opencode/agent/journey-runner.md": {
+      "filePath": ".opencode/agent/journey-runner.md",
+      "contentHash": "a39784f1b536c47cf20b5de8260c731c382f40156b05a8bc0aeebcfd6093b1cd",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 203,
+      "hasStructuralAnalysis": true
+    },
+    ".opencode/agent/reviewer.md": {
+      "filePath": ".opencode/agent/reviewer.md",
+      "contentHash": "602e522c3691cd2076c698a263e82507cd11c87ecbfdcab784f8ac73f6fb70a6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 125,
+      "hasStructuralAnalysis": true
+    },
+    ".opencode/agent/room-migration.md": {
+      "filePath": ".opencode/agent/room-migration.md",
+      "contentHash": "a82bbd474af6307fc1cfe307ace499f25c2eea1be200003dffc27af1f8396c9b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 78,
+      "hasStructuralAnalysis": true
+    },
+    ".opencode/agent/runner.md": {
+      "filePath": ".opencode/agent/runner.md",
+      "contentHash": "a095ed9ae4eea4b618c99340d44745be644c75d252a4ca108ea0111345dd468d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 176,
+      "hasStructuralAnalysis": true
+    },
+    ".opencode/agent/screen-author.md": {
+      "filePath": ".opencode/agent/screen-author.md",
+      "contentHash": "5ee1f0725d391fe80d74b82e3baf615fb2b7ef6bd9982d12273c42922cfaac5d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 85,
+      "hasStructuralAnalysis": true
+    },
+    ".opencode/agent/source-author.md": {
+      "filePath": ".opencode/agent/source-author.md",
+      "contentHash": "ae0081aa58833a53d0f162de4d6b7c7fe9fc92e6e8a859e5e2d0eff3276d3e7e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 90,
+      "hasStructuralAnalysis": true
+    },
+    ".opencode/command/add-migration.md": {
+      "filePath": ".opencode/command/add-migration.md",
+      "contentHash": "1ca85896c940067845feb87c7d0f28b5459b0e86666d2600f188bafd12fe96dc",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 25,
+      "hasStructuralAnalysis": true
+    },
+    ".opencode/command/light-start.md": {
+      "filePath": ".opencode/command/light-start.md",
+      "contentHash": "a7758b30cf04f028ae5ccdef5f2a3b110c42b979c07e38707b47795e118fefc7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 34,
+      "hasStructuralAnalysis": true
+    },
+    ".opencode/command/new-screen.md": {
+      "filePath": ".opencode/command/new-screen.md",
+      "contentHash": "849ad001eea5a3fc96ec378c375a0ed5d249459d3e233257c528474aff5fd0e6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 25,
+      "hasStructuralAnalysis": true
+    },
+    ".opencode/command/new-source.md": {
+      "filePath": ".opencode/command/new-source.md",
+      "contentHash": "735d9931919d0cb0d4e398a4c1d9d9ee4d1aa7a51a03b2130ebf2db27fc4ba99",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 25,
+      "hasStructuralAnalysis": true
+    },
+    ".opencode/command/start.md": {
+      "filePath": ".opencode/command/start.md",
+      "contentHash": "4c9d70fb2b0ce3eea19fdecd956076f8f02cd1dd1c3418123e19ec9b03bc6005",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 49,
+      "hasStructuralAnalysis": true
+    },
+    ".opencode/command/verify.md": {
+      "filePath": ".opencode/command/verify.md",
+      "contentHash": "6f04b92b7a58ec3ef1d943fc6fb68dbb50060ca0d63765c0774eee076b23b41b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 17,
+      "hasStructuralAnalysis": true
+    },
+    ".opencode/opencode.json": {
+      "filePath": ".opencode/opencode.json",
+      "contentHash": "37b7d5758d258acaf9aca622874d3bb70373d75cc68eb1a8a1b0035376830d44",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 129,
+      "hasStructuralAnalysis": true
+    },
+    ".opencode/project-structure.md": {
+      "filePath": ".opencode/project-structure.md",
+      "contentHash": "09ff0fb0eb73a1a120af6262938d105d96d5c5195bef434baf987305f9c4b832",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 611,
+      "hasStructuralAnalysis": true
+    },
+    ".opencode/skills/trace-matrix/SKILL.md": {
+      "filePath": ".opencode/skills/trace-matrix/SKILL.md",
+      "contentHash": "2d4c14b68de75767775e06a99a807c8bea5b0fb5c6c7ae63df969c63b579fdf0",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 138,
+      "hasStructuralAnalysis": true
+    },
+    ".slim/codemap.json": {
+      "filePath": ".slim/codemap.json",
+      "contentHash": "0870c657c2b4b622600b7fe08cf15812865cc1cf05636bd1f91b2bd673027869",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 176,
+      "hasStructuralAnalysis": true
+    },
+    "AGENTS.md": {
+      "filePath": "AGENTS.md",
+      "contentHash": "656d8a853580f40f1cbfd6a95b48fc3c183f0accc6b7a67f44f59b1bb415dbf4",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 172,
+      "hasStructuralAnalysis": true
+    },
+    "app/build.gradle.kts": {
+      "filePath": "app/build.gradle.kts",
+      "contentHash": "1d84f957a1aed57eb39af038650eafd65145975b07113bcdcb8bfb7fcff186f5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 133,
+      "hasStructuralAnalysis": false
+    },
+    "app/codemap.md": {
+      "filePath": "app/codemap.md",
+      "contentHash": "f305fa818ff7d34517e82fa06dd7b493c69f4f9fe7a8fb23af0b126718ae7e2e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 28,
+      "hasStructuralAnalysis": true
+    },
+    "app/proguard-rules.pro": {
+      "filePath": "app/proguard-rules.pro",
+      "contentHash": "56fd960cf225f6ca40f982b13a5dbb0d8bc3dfde13ff76422825c6070d0a1890",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 21,
+      "hasStructuralAnalysis": false
+    },
+    "app/schemas/com.opus.readerparser.data.local.database.AppDatabase/1.json": {
+      "filePath": "app/schemas/com.opus.readerparser.data.local.database.AppDatabase/1.json",
+      "contentHash": "dad10bc2f7dd9d8a70c2e3659b53f8bb4a7a355b55a5907eb06ee79d4b8ed284",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 228,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/androidTest/java/com/opus/readerparser/data/local/database/dao/ChapterDaoTest.kt": {
+      "filePath": "app/src/androidTest/java/com/opus/readerparser/data/local/database/dao/ChapterDaoTest.kt",
+      "contentHash": "f63089395dc9682a7c4cfd4988d72c1fb75ac37c1542b10ba981da9b7aebb1a6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 230,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/androidTest/java/com/opus/readerparser/data/local/database/dao/DownloadQueueDaoTest.kt": {
+      "filePath": "app/src/androidTest/java/com/opus/readerparser/data/local/database/dao/DownloadQueueDaoTest.kt",
+      "contentHash": "71b30a9fa638775a1a3453968ef7d5212b46e1a05a909a7fecf611017d3a7ea1",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 186,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/androidTest/java/com/opus/readerparser/data/local/database/dao/SeriesDaoTest.kt": {
+      "filePath": "app/src/androidTest/java/com/opus/readerparser/data/local/database/dao/SeriesDaoTest.kt",
+      "contentHash": "702140b80d422b74c8d06515d7526a123c1d1fb3b53c8d0be2a10b9cbf19bc71",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 292,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/androidTest/java/com/opus/readerparser/data/local/database/MigrationTest.kt": {
+      "filePath": "app/src/androidTest/java/com/opus/readerparser/data/local/database/MigrationTest.kt",
+      "contentHash": "bf33a67eadc5d5588ff72a0a00c6b2681f69456a7ade7b78345b37672df91beb",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 131,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/androidTest/java/com/opus/readerparser/ExampleInstrumentedTest.kt": {
+      "filePath": "app/src/androidTest/java/com/opus/readerparser/ExampleInstrumentedTest.kt",
+      "contentHash": "64143c629903156b5645abb34bcb4bd93131077aff830016ef61743689a90df2",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 24,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/androidTest/java/com/opus/readerparser/testutil/FakeCoilRule.kt": {
+      "filePath": "app/src/androidTest/java/com/opus/readerparser/testutil/FakeCoilRule.kt",
+      "contentHash": "4c6304c974257f17f119bd10b02553541a1843c889d556a26b637a2bf6d869d1",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 49,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/androidTest/java/com/opus/readerparser/ui/browse/BrowseContentTest.kt": {
+      "filePath": "app/src/androidTest/java/com/opus/readerparser/ui/browse/BrowseContentTest.kt",
+      "contentHash": "9d55887ace4db48bcafe30b859530cfb481141a52ed2fa64bf054b97d566f20e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 72,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/androidTest/java/com/opus/readerparser/ui/downloads/DownloadsContentTest.kt": {
+      "filePath": "app/src/androidTest/java/com/opus/readerparser/ui/downloads/DownloadsContentTest.kt",
+      "contentHash": "6635a17adf49874cfc68fe46f052255f07ef82577dfd3cf2f15dc1fe3900cb37",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 81,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/androidTest/java/com/opus/readerparser/ui/library/LibraryContentTest.kt": {
+      "filePath": "app/src/androidTest/java/com/opus/readerparser/ui/library/LibraryContentTest.kt",
+      "contentHash": "74ef94ee721084f8ab0acd46f9ccf2162bfebb1e81b470ce61fbe9e9dad7a030",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 70,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/androidTest/java/com/opus/readerparser/ui/reader/manhwa/MangaReaderContentTest.kt": {
+      "filePath": "app/src/androidTest/java/com/opus/readerparser/ui/reader/manhwa/MangaReaderContentTest.kt",
+      "contentHash": "02c6a1e4a88104bd2f7c86a32574e1f4d03db619539b0e61f802f13290b759b0",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 182,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/androidTest/java/com/opus/readerparser/ui/reader/novel/NovelReaderContentTest.kt": {
+      "filePath": "app/src/androidTest/java/com/opus/readerparser/ui/reader/novel/NovelReaderContentTest.kt",
+      "contentHash": "78888d477f742985c977db70113bacdb37488ef531ef778f05c440b2662a51b7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 85,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/androidTest/java/com/opus/readerparser/ui/series/SeriesContentTest.kt": {
+      "filePath": "app/src/androidTest/java/com/opus/readerparser/ui/series/SeriesContentTest.kt",
+      "contentHash": "86d8ceba33c3f6bba5a3d489d02c84e226b999ba92af334b00f9c943e762b7dd",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 91,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/androidTest/java/com/opus/readerparser/ui/settings/SettingsContentTest.kt": {
+      "filePath": "app/src/androidTest/java/com/opus/readerparser/ui/settings/SettingsContentTest.kt",
+      "contentHash": "b554a7ab2fd348988c11bb8f98afed23606ac4851f4531b6e752b47e482c1f2d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 62,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/androidTest/java/com/opus/readerparser/workers/ChapterDownloadWorkerTest.kt": {
+      "filePath": "app/src/androidTest/java/com/opus/readerparser/workers/ChapterDownloadWorkerTest.kt",
+      "contentHash": "e918f9b93e0f9e57a926526572e30047c8cc4262d0d44df1b9d12e4af7e84eab",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 352,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/codemap.md": {
+      "filePath": "app/src/codemap.md",
+      "contentHash": "322852bbe8ee9011c7f72759ede2c65c1f69d5fd69fdf783b87b922a6b9c5da9",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 25,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/AndroidManifest.xml": {
+      "filePath": "app/src/main/AndroidManifest.xml",
+      "contentHash": "d99d92164910e2b4bbb12f588cfd4a8fadcad87a3d43a21f91f0ee80f40a9424",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 50,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/codemap.md": {
+      "filePath": "app/src/main/codemap.md",
+      "contentHash": "f4011825ff674917ebc7827279875d3bf134edd60b0d7269db405289d190ed9c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 25,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/codemap.md": {
+      "filePath": "app/src/main/java/codemap.md",
+      "contentHash": "f0131951e0513285adb64ab6e73f2d198cbb6c88a4691d5418fb26fbc8ef6540",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 23,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/codemap.md": {
+      "filePath": "app/src/main/java/com/codemap.md",
+      "contentHash": "46b35800fc28d49ee144951be18512d684b85d544653ab8857c9f36d209156ef",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 22,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/codemap.md",
+      "contentHash": "4e6fc3b7362c066d42fef58763e0a48ec786d411f570eca279c71f2bdbeddc50",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 21,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/App.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/App.kt",
+      "contentHash": "924de0dbc0651d597f311599e35f02b6cc620a61294dbe8de77c6a3e80135dee",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 20,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/codemap.md",
+      "contentHash": "fec6037d905c064e35206fb9d601cb054b64d38c16a4ff1814a2fab6a6d952f6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 58,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/core/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/core/codemap.md",
+      "contentHash": "c3b08e8b83e530b8f64695fed4d40cfa76cf4fe392202d7f7b12fbc922ec8663",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 62,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/core/di/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/core/di/codemap.md",
+      "contentHash": "d881eda383363d830cee14cae7fb2150360401cdb297096244ebcb0109e2115c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 83,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/core/di/DatabaseModule.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/core/di/DatabaseModule.kt",
+      "contentHash": "0a2f28ae906d8e842cce6dfe03a10a26579b78e39d58eb1ed1bf250bc50b09fe",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 34,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/core/di/FilesystemModule.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/core/di/FilesystemModule.kt",
+      "contentHash": "eb1da0b50b97f3de2eec41a5c3072dda8ba16a42786b7637675c1bc3f2a5d049",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 45,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/core/di/NetworkModule.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/core/di/NetworkModule.kt",
+      "contentHash": "dbeca980c244d5f53b86f8adb6595193394bda2c4b6fee46681cbc0d70bdc8d5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 61,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/core/di/PrefsModule.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/core/di/PrefsModule.kt",
+      "contentHash": "0002e2822159471c32e745b2546d0b9433bccda6b1fb7e826a3ec2e9ef4c4a5a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 31,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/core/di/RepositoryModule.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/core/di/RepositoryModule.kt",
+      "contentHash": "74c015cdbccd92972c15179a7872f64b6a36b13c6d0895bfae0154d048c49c69",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 43,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/core/di/SourceModule.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/core/di/SourceModule.kt",
+      "contentHash": "fc2cd9a3164814c7bb438b383b7a84ddd548596c1fb8cc357da9fc0fdc692001",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 32,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/core/util/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/core/util/codemap.md",
+      "contentHash": "9fdc0eb1c76af4b8bd196527756c26684377357cfc13c2ba92d7347e54c83959",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 90,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/core/util/ComputeSourceId.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/core/util/ComputeSourceId.kt",
+      "contentHash": "16402a5b8c4d6e2cdee2f2998f60cfd5bcf88ee5e47f27ce87bea91e39398966",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 17,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/core/util/Hashing.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/core/util/Hashing.kt",
+      "contentHash": "6b9a85f97b3726a9bc97c259030b8d2b4f7f34c3b5cbf35f285c9199a0b316b5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 23,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/core/util/TitleMatcher.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/core/util/TitleMatcher.kt",
+      "contentHash": "99bac6b218f556885700ff43ba1143e64df898b929653b90a5af8c5e0b3aabe2",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 111,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/data/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/codemap.md",
+      "contentHash": "a275acb681f6500fc264891dc71e4cc0b04c4482547e82e1591b3ee6fda73af1",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 66,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/data/local/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/local/codemap.md",
+      "contentHash": "d1a4ceba0fde1d6dc03ec9c5799bd05aefb415b52efb49ce76ade06b9e2e4be5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 53,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/data/local/database/AGENTS.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/local/database/AGENTS.md",
+      "contentHash": "28d29c1cafaa0e8afbd3fe7b5c4b3b575cdf43a691bf27aeae1ef86773d2b0d5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 9,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/data/local/database/AppDatabase.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/local/database/AppDatabase.kt",
+      "contentHash": "46721be24feefce2d9d21c32edc3d01024962c10138c3a451deb334a8d8eeff0",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 22,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/data/local/database/CLAUDE.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/local/database/CLAUDE.md",
+      "contentHash": "c94f9b1bc6e06bc3ecc266cf3e801a14748307920b6e62fd5ba072e3d614a1bc",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 4,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/data/local/database/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/local/database/codemap.md",
+      "contentHash": "c5c06f04259294509ea647c899a04f618ea9ca2f26d1ff6871f2b70a99424b67",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 62,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/data/local/database/dao/ChapterDao.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/local/database/dao/ChapterDao.kt",
+      "contentHash": "776edd075bb8e16c7727ec8f391197fd151344871c974858f04e67d7228c2bf6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 38,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/data/local/database/dao/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/local/database/dao/codemap.md",
+      "contentHash": "044d3ea46e694a24fb99b06efe66c33bcca4a6c9850e0d82a790241eb25e0e1f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 59,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/data/local/database/dao/DownloadQueueDao.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/local/database/dao/DownloadQueueDao.kt",
+      "contentHash": "2cdd4bac0fb233294c594c0a65813868d077c19f5e9f2a5761167cb4a81db894",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 58,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/data/local/database/dao/SeriesDao.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/local/database/dao/SeriesDao.kt",
+      "contentHash": "90b470640fc0d1cb3aa70c0105a01920efbdd1b96bc0b568d6b114e7ac1ffd49",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 71,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/data/local/database/entities/ChapterEntity.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/local/database/entities/ChapterEntity.kt",
+      "contentHash": "4c9170b2e58cd499271f0792d8f2113ca8bc11a7182f2977310d6cc18ae6373d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 31,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/data/local/database/entities/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/local/database/entities/codemap.md",
+      "contentHash": "8cd014b80b081d167c37bac8b1127c1bc8189f68aa044b95f2bf13f7ffcbfcee",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 56,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/data/local/database/entities/DownloadQueueEntity.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/local/database/entities/DownloadQueueEntity.kt",
+      "contentHash": "a749ca9cc420d0c64c29d1351764b1bca14c855403bcb395f39b5a188d6c2ce5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 16,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/data/local/database/entities/SeriesEntity.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/local/database/entities/SeriesEntity.kt",
+      "contentHash": "e908ddcb0e10c6ef6678077b59367d5e650be77788be6edd00c41baedde16c2d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 23,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/data/local/database/mappers/ChapterMappers.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/local/database/mappers/ChapterMappers.kt",
+      "contentHash": "de8fa90c32878ee0575227938b2d5e5f1bbe5425d6da6e62ee32a3fde6420be0",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 33,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/data/local/database/mappers/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/local/database/mappers/codemap.md",
+      "contentHash": "297d9309001a17b0a2d7c03d4b919b88d695c28ea15bc01d4eb04f0ab973a1a6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 51,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/data/local/database/mappers/GenreJson.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/local/database/mappers/GenreJson.kt",
+      "contentHash": "e3e11263512802380a9e056a9b85acc05da1a194407309733a35c84eb6dfae9d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 18,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/data/local/database/mappers/SeriesMappers.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/local/database/mappers/SeriesMappers.kt",
+      "contentHash": "dabb534eec84505b57298d8519ae9db5acf5e08a4d70cc906016cee80210e7ed",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 32,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/data/local/filesystem/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/local/filesystem/codemap.md",
+      "contentHash": "d6274253708dc57a65727649ea337ad808c00ab8b7c87ada5439933e99ba94aa",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 70,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/data/local/filesystem/DownloadStore.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/local/filesystem/DownloadStore.kt",
+      "contentHash": "f34103967cd55e3221f8b6d57e66eeb6581c89340abe8d326672bcf21bb28658",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 59,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/data/local/filesystem/DownloadStoreImpl.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/local/filesystem/DownloadStoreImpl.kt",
+      "contentHash": "b8848166274d46d38bdef58398cb90a463f01a3404246d1eb0825013b2f97dab",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 136,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/data/local/prefs/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/local/prefs/codemap.md",
+      "contentHash": "15f9052cad5fb8da81828544979f3b3b45a3168fbf269c447a3cd9f3b1230295",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 75,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/data/local/prefs/DataStoreExt.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/local/prefs/DataStoreExt.kt",
+      "contentHash": "20f8fa3d326b269a31345cbeac48214f37b71656e0924b3f7b3ab100038ec373",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 18,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/data/local/prefs/SettingsRepositoryImpl.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/local/prefs/SettingsRepositoryImpl.kt",
+      "contentHash": "d1086115a93e8377ccae7d9af7b61b273fc637db77822f635ba44cde46442502",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 59,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/data/local/prefs/SettingsStore.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/local/prefs/SettingsStore.kt",
+      "contentHash": "1a6c89dd3445e86e953e459f5c8bceeea220b534d702e04cadaf8fd19b068051",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 32,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/data/repository/ChapterRepositoryImpl.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/repository/ChapterRepositoryImpl.kt",
+      "contentHash": "0752b1c58b8ad27ffd7e2aff6b7240cb97f742e899e2c59bc8a0737180226a6e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 52,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/data/repository/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/repository/codemap.md",
+      "contentHash": "cc06493cd4a07636c247ed58b6f2e434d7ae0c2115cef373c95a0b7ecc4e3875",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 106,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/data/repository/DownloadRepositoryImpl.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/repository/DownloadRepositoryImpl.kt",
+      "contentHash": "04b1b14dc6928744f073f38efc93807df2a1c21340e0e981047948349de14c45",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 49,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/data/repository/SeriesRepositoryImpl.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/repository/SeriesRepositoryImpl.kt",
+      "contentHash": "365769da9873e9aaf493d29cdfca439670d042a6cfeb64c2b73fd5b74f90ddea",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 98,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/data/repository/SourceRepositoryImpl.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/repository/SourceRepositoryImpl.kt",
+      "contentHash": "1ca779a58f4e7a10a531ed34ce98adb9b2ce45c788b591d05d997ccfc967af15",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 17,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/data/source/AGENTS.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/source/AGENTS.md",
+      "contentHash": "3b42ca3e3e588227f280b687da3ddf3a61c888cd191a7abed206243605e5de03",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 8,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/data/source/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/source/codemap.md",
+      "contentHash": "53e6083f7bba341ce84538f60dc8424bf3693996906178a0b38f49752edaad23",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 96,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/data/source/HtmlSource.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/source/HtmlSource.kt",
+      "contentHash": "feaf615e9b3a5226817120723375420dc4028e5914b60fe0a968b2d102dee694",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 177,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/data/source/Source.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/source/Source.kt",
+      "contentHash": "e7bc1ce79db122ef771c980bfc41f86d04f1418f8a28b6336690ee593f0bf016",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 55,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/data/source/SourceRegistry.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/data/source/SourceRegistry.kt",
+      "contentHash": "792b0dc2dc5d7eb2e7ef5822beb0671e058c889fc2d74f0d118deef71043b307",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 17,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/domain/ChapterRepository.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/domain/ChapterRepository.kt",
+      "contentHash": "487223c21a63a0ed89d4883075b50d8939b9e2c2e31df2a875133bfd6224a326",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 23,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/domain/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/domain/codemap.md",
+      "contentHash": "11ba607d9e0400610ce5756a7d057ed6c3980977c00bb9d9797d5f97be9cdbdd",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 193,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/domain/DownloadRepository.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/domain/DownloadRepository.kt",
+      "contentHash": "a70990cf1ac41c8f005dc2e5c16c16fdc4ae5df5d0a4b88735ebabf12cc1d381",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 19,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/domain/model/AppSettings.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/domain/model/AppSettings.kt",
+      "contentHash": "1beeafb62658aede49502c0c5408dff0d059dc48f15b933755fdbda2d8c0cc52",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 10,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/domain/model/AppTheme.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/domain/model/AppTheme.kt",
+      "contentHash": "74283360375882e0b48be3e323397b51f40994b8597d430ae9cc0c46d8870c8e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 4,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/domain/model/Chapter.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/domain/model/Chapter.kt",
+      "contentHash": "417aa7c6ecbb946581378dc9f3a611379f1e2ebbfd59444caee1183c32746a91",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 11,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/domain/model/ChapterContent.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/domain/model/ChapterContent.kt",
+      "contentHash": "69184ef78a28efb042369f4be41c2335a647575ed2050a0e97037d12e7dbac7e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 14,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/domain/model/ChapterWithState.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/domain/model/ChapterWithState.kt",
+      "contentHash": "407ac46c5590724247884de85f37a6904cdc3639e754724a5ab0afe403842271",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 9,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/domain/model/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/domain/model/codemap.md",
+      "contentHash": "75552665dc4dfe619aa7b5bda64ca82bfc25d13a57766146d9f005aa64938a95",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 147,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/domain/model/ContentType.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/domain/model/ContentType.kt",
+      "contentHash": "fd690490208437e23b077f1db45e8703dceea9eda65e200b1df5e6f4e1668f8f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 4,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/domain/model/DownloadItem.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/domain/model/DownloadItem.kt",
+      "contentHash": "583920178d135db48a2a640ad641e56b95f11b7cffb4c670e6a380cc42513d41",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 12,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/domain/model/DownloadState.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/domain/model/DownloadState.kt",
+      "contentHash": "c0e8bfc9ab8d33460da1b1abb8d63005817fdd1ee0aa8eabfe546a9e6b052541",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 4,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/domain/model/Filter.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/domain/model/Filter.kt",
+      "contentHash": "ef968f79e846bbe4ab00b224f476599dd7a724e70eb0f0e4736d4f3a44f84744",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 9,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/domain/model/FilterList.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/domain/model/FilterList.kt",
+      "contentHash": "91eb57f8a5a1d06497e759b86855e9d6d3e1507e5c471e0e73d62dfda4685966",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 4,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/domain/model/ManhwaLayout.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/domain/model/ManhwaLayout.kt",
+      "contentHash": "ad14b246762a66527f7b9773881fe51b95e547b760c9d2d9ef0d61ae7dd2fa92",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 4,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/domain/model/ManhwaZoom.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/domain/model/ManhwaZoom.kt",
+      "contentHash": "eb98140c1f0afbde9555c3c334892a7da62e56b1e79aab8d8a408deb14816bf0",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 4,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/domain/model/Series.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/domain/model/Series.kt",
+      "contentHash": "f8cb1714652fa7f01c028ce4c3b93d5ca0a0eeed01b49bff94c6be7b576c2621",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 15,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/domain/model/SeriesPage.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/domain/model/SeriesPage.kt",
+      "contentHash": "8252233c35348122037416da52308c404351380e249346f1d06d1c620f080de6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 7,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/domain/model/SeriesStatus.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/domain/model/SeriesStatus.kt",
+      "contentHash": "5cb3b136286d80b852cc1194e2215ec5323f4d2156fd6103d02989408c3aef50",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 4,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/domain/model/SourceInfo.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/domain/model/SourceInfo.kt",
+      "contentHash": "6374d6fed1f2c9b98b49a3fc432e6cab488b4e3aab42a68cd1718bd6226bbc6a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 9,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/domain/SeriesRepository.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/domain/SeriesRepository.kt",
+      "contentHash": "19150adc02d143ee31da0045f0b7b02005c82529b72785e6a6b78ebb64c1cb93",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 31,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/domain/SettingsRepository.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/domain/SettingsRepository.kt",
+      "contentHash": "7dae6ebb09ffd4c6ac131cd1d833f1516979702a4d797f585e5f60b619df339b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 17,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/domain/SourceRepository.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/domain/SourceRepository.kt",
+      "contentHash": "88806ceaeae59b94a38f66d2c1ab3b617e4bf5a83db77bea9ba06de57d80a8f7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 8,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/MainActivity.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/MainActivity.kt",
+      "contentHash": "ebfe23339c096f1a708f6808cb40d504b396e3cf1b4201ed7a7f0a368b952f20",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 21,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/sources/AGENTS.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/sources/AGENTS.md",
+      "contentHash": "8786545339e10d2beb7e61bd526ee0e9367d8c8f200886f8d6da758545c0514c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 12,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/sources/asurascans/AsuraScans.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/sources/asurascans/AsuraScans.kt",
+      "contentHash": "950fc2f9f68f81985a4c7a28b32f3d3315ef7dd5290d6eb7154dd11aa5eec606",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 375,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/sources/asurascans/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/sources/asurascans/codemap.md",
+      "contentHash": "929403ecf746c7f3ae3fe988fea55e1ccfc1971379b66a5dfbbbed6d57a44d83",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 162,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/sources/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/sources/codemap.md",
+      "contentHash": "faf575c4a693506df2fce58f3bb14d58b50cc19ffe6abff5c6a3df01baf80c60",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 123,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/sources/freewebnovel/FreeWebNovel.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/sources/freewebnovel/FreeWebNovel.kt",
+      "contentHash": "7204c3ca28f29988277546c5925dfe85a951a49984a3513f31606af7d99fc627",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 291,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/AGENTS.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/AGENTS.md",
+      "contentHash": "a89d2b15ae06ac1719409dc5acbb439e90fcf32f6d958eb4a9b8d5b58096fe65",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 11,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/ui/browse/BrowseContent.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/browse/BrowseContent.kt",
+      "contentHash": "915b6316ac4075524b0961ed94109c7a93ed53c1fb1fe0666bdb3699c5e81467",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 278,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/browse/BrowseScreen.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/browse/BrowseScreen.kt",
+      "contentHash": "6df8a5e044904831ea8bb1d4c009fa09a303737f3147842b0232152731b2dbd9",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 30,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/browse/BrowseUiState.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/browse/BrowseUiState.kt",
+      "contentHash": "e0ab4ea4433df720c26193eb7db267afc2e3e4a5d3fe4194eafa7d6acba83a04",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 33,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/browse/BrowseViewModel.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/browse/BrowseViewModel.kt",
+      "contentHash": "11a136f9fb66ed5221dcd85a968f5e949665c38cd8051f0bbf8710fd42713b3e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 96,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/browse/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/browse/codemap.md",
+      "contentHash": "21780d9b6593a3b31a9f5c542a6e8263164e27bcc6aaa92427bcccfc4e4a90ab",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 75,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/ui/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/codemap.md",
+      "contentHash": "e5957646b18dfb06f101e6494e9528ef5aad2ed96a3f96e8c03e23b03104d5bf",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 99,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/ui/downloads/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/downloads/codemap.md",
+      "contentHash": "a695e8722722fe14c9fd1c1fc95ed5ddaf17a4c8844373fef0917ef269294a91",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 86,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/ui/downloads/DownloadsContent.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/downloads/DownloadsContent.kt",
+      "contentHash": "cf48f7668d40ce4d16e105ef58fd49c40ac1fa85ec1913767bc6e3f6440da111",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 236,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/downloads/DownloadsScreen.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/downloads/DownloadsScreen.kt",
+      "contentHash": "b6c46e36ca093bb3d9bc42eeec5bb747dd56ded8081a108396a93c440ff207d9",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 27,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/downloads/DownloadsUiState.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/downloads/DownloadsUiState.kt",
+      "contentHash": "ae3c8310fdfd0511693c8deed26e8c7f211f426debe9350f1fead7cacf1bcd52",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 19,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/downloads/DownloadsViewModel.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/downloads/DownloadsViewModel.kt",
+      "contentHash": "03571f96b6f8f478988d22e0517ad9e61875a667cee5ac7373a8049a1d24e8ca",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 55,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/library/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/library/codemap.md",
+      "contentHash": "9b098290e65647359a37a148aa4078d9221c7a6379eedd659ecbf5e490487e82",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 69,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/ui/library/LibraryContent.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/library/LibraryContent.kt",
+      "contentHash": "3e1350e6c5301bf5d5d3a8ee969b00aee1eb0d2db81739e9701b55f0cd1c18e3",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 280,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/library/LibraryScreen.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/library/LibraryScreen.kt",
+      "contentHash": "20157bf802cdfafee509e2f407bd85d0fe1cdd4fdadea917657c89023aefc9a0",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 35,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/library/LibraryUiState.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/library/LibraryUiState.kt",
+      "contentHash": "63622e2c884850e6331881c1ed4f360b90414e925f8ebed2759bd5c563b2f409",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 28,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/library/LibraryViewModel.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/library/LibraryViewModel.kt",
+      "contentHash": "298dcdf48bdb27efc56ad77bfc6d5841bb6a06b249b288a01f34817977240800",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 91,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/navigation/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/navigation/codemap.md",
+      "contentHash": "208a14c98d31f998ae0f253ad7bf115d9e5fc3b1a06b2f53b212456e18357358",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 122,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/ui/navigation/Destinations.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/navigation/Destinations.kt",
+      "contentHash": "7d82a266b9b7aea6df195cd93a06996977cf4a502b0df067a136c8dfac490b41",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 24,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/navigation/NavGraph.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/navigation/NavGraph.kt",
+      "contentHash": "666303f9c80ffcbd08f5618f453557422336d2fb12aa75e633c5d805244bc71f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 178,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/reader/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/reader/codemap.md",
+      "contentHash": "bcd88bea5ddcaec2ee959c5b9b5d0effd15d1c51cc252544ea5d93505867ffb3",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 84,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/ui/reader/manhwa/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/reader/manhwa/codemap.md",
+      "contentHash": "1325c47c5f3867af16fde16529d7dfbfabd90a78ecd8204d08c6cbd315350a94",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 103,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/ui/reader/manhwa/MangaReaderContent.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/reader/manhwa/MangaReaderContent.kt",
+      "contentHash": "3148578307cc6f86d30335d1e46003326578e04ffa5870a4a17a1d4c55936d8a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 348,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/reader/manhwa/MangaReaderScreen.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/reader/manhwa/MangaReaderScreen.kt",
+      "contentHash": "91a6d755dddb1cfc42b02c4911809773a34ea97f32a493141e8e34c143f2c422",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 34,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/reader/manhwa/MangaReaderUiState.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/reader/manhwa/MangaReaderUiState.kt",
+      "contentHash": "259e4ea1b1d0486db22bead137419d8c50a5e6c2450f5aeb77c0ebcccfb55ca7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 28,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/reader/manhwa/MangaReaderViewModel.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/reader/manhwa/MangaReaderViewModel.kt",
+      "contentHash": "0ebdf621f07c4f411d6d77e9fb1961853b744c5c90e190501170c4cb35738b85",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 118,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/reader/novel/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/reader/novel/codemap.md",
+      "contentHash": "0f9cddebc5a0c91b37b406c8e2f67c1bdbc9f869f2180f582d8f2705873b7337",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 90,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/ui/reader/novel/NovelReaderContent.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/reader/novel/NovelReaderContent.kt",
+      "contentHash": "90069412b580f76873d8dd52da33194b4c64d79710713512e43e96b4523f614b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 225,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/reader/novel/NovelReaderScreen.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/reader/novel/NovelReaderScreen.kt",
+      "contentHash": "92bbe9134f17fc4a4536d776a59513d1797c98e8b3bcbf68739ef6d5b56b5759",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 40,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/reader/novel/NovelReaderUiState.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/reader/novel/NovelReaderUiState.kt",
+      "contentHash": "5ae2b23675b0614bd2ba959eca14757ad0786d49fd10d1f446cb2c801f3a7c29",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 28,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/reader/novel/NovelReaderViewModel.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/reader/novel/NovelReaderViewModel.kt",
+      "contentHash": "76855b4ff6676f19b2148d2c64e5e684649b413d9d408c0fc1b1dce55de0696c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 111,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/series/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/series/codemap.md",
+      "contentHash": "10106f63ab6e43f62b847baa9e236b0678acc4b2d6b06b75aafe62c97c003b84",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 77,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/ui/series/SeriesContent.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/series/SeriesContent.kt",
+      "contentHash": "4cacb0a692a5a7048b18c17a8ad3756592504e20c716443d1aa339d15f3d887f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 292,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/series/SeriesScreen.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/series/SeriesScreen.kt",
+      "contentHash": "6a012fb682deb0d19b8020cc84c98bf41fc3c58aae992b4a8cc3c03282b13be0",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 46,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/series/SeriesUiState.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/series/SeriesUiState.kt",
+      "contentHash": "83ed366129f877271a1ff6be2f0f5bf2a79bfc6f487fd9b2031e08e789e6295c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 26,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/series/SeriesViewModel.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/series/SeriesViewModel.kt",
+      "contentHash": "8f759de4e61c50e0ee9c7748e845a2ed068ecccaf57d74af33f8336b8c5b2f3f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 102,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/settings/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/settings/codemap.md",
+      "contentHash": "c8426ad2afa9160e61baedf1a78751fdbe64e4e38773ee0e0f1115b171bdd5f8",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 96,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/ui/settings/SettingsContent.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/settings/SettingsContent.kt",
+      "contentHash": "6b08e8c02fbf5d2fc64651ee5f12cab3b5acf34a41e4c3d1a16060fe508e301b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 252,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/settings/SettingsScreen.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/settings/SettingsScreen.kt",
+      "contentHash": "1811e08915c6fedeebdd7041435a946e1d1bd2feebcff0645da9f2572ba0d959",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 18,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/settings/SettingsUiState.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/settings/SettingsUiState.kt",
+      "contentHash": "67f0e55d4332204497ca32fa98472f0f4fedeccc50d4c91572162dcd37220248",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 20,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/settings/SettingsViewModel.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/settings/SettingsViewModel.kt",
+      "contentHash": "905796b6ce705365b0b69c96788410d6b14bdb367892f7d7521ec8622e587983",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 50,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/theme/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/theme/codemap.md",
+      "contentHash": "22b1235c32f963c88f55ebdc8dfc6905ecbbcba8f850f6630bc16e2d0f7d6e7e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 101,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/ui/theme/Color.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/theme/Color.kt",
+      "contentHash": "7e2600a004e4e714477e93ee7dbf37ca6299388338173e6d820caeb9c45a817c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 40,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/theme/Theme.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/theme/Theme.kt",
+      "contentHash": "ac49b73436395837703d993f0efc3f2f494890ca1b2c828a23881c3f8a9830e0",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 64,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/ui/theme/Type.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/ui/theme/Type.kt",
+      "contentHash": "899549bd323adec6c8f882453a287dc12502c6a5cef65878693c81a427a6ace6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 23,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/workers/ChapterDownloadWorker.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/workers/ChapterDownloadWorker.kt",
+      "contentHash": "d00345f393fb49d1127af6881996d72aa94d065d526ceee27b10cc5e61962ea0",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 126,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/java/com/opus/readerparser/workers/codemap.md": {
+      "filePath": "app/src/main/java/com/opus/readerparser/workers/codemap.md",
+      "contentHash": "2d2148159504fa9a941b4192cb5466c95748120879edbcc2b328c2e4fdf0f3a3",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 135,
+      "hasStructuralAnalysis": true
+    },
+    "app/src/main/java/com/opus/readerparser/workers/LibraryUpdateWorker.kt": {
+      "filePath": "app/src/main/java/com/opus/readerparser/workers/LibraryUpdateWorker.kt",
+      "contentHash": "4ddc0b01799510710719a6b06303c95819b8fdf3192e046d2d7c98d5d0b95c2b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 60,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/res/mipmap-anydpi/ic_launcher_round.xml": {
+      "filePath": "app/src/main/res/mipmap-anydpi/ic_launcher_round.xml",
+      "contentHash": "993b38e238eaf485eca875727e0a128293d612a52e20ea8e2ef84a15493bb06e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 5,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/res/mipmap-anydpi/ic_launcher.xml": {
+      "filePath": "app/src/main/res/mipmap-anydpi/ic_launcher.xml",
+      "contentHash": "993b38e238eaf485eca875727e0a128293d612a52e20ea8e2ef84a15493bb06e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 5,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/res/values-night/themes.xml": {
+      "filePath": "app/src/main/res/values-night/themes.xml",
+      "contentHash": "0a67cb1c1c912403bbfa56e0868dafb932f47d5a87d77a77328908b05c1ddeac",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 4,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/res/values/colors.xml": {
+      "filePath": "app/src/main/res/values/colors.xml",
+      "contentHash": "b5626527d503417f0d8e5b1e08f338de7b31173bf0e122815f03e64932adbd88",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 10,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/res/values/strings.xml": {
+      "filePath": "app/src/main/res/values/strings.xml",
+      "contentHash": "392850e618566276fe6a14add1ef2fcfc64ce96aeeb769b1c53eea912827f6af",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 3,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/res/values/themes.xml": {
+      "filePath": "app/src/main/res/values/themes.xml",
+      "contentHash": "ac282cdca878830f63a2801b7e810c44d09c8644575b4aeb682ece6e071a2422",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 4,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/res/xml/backup_rules.xml": {
+      "filePath": "app/src/main/res/xml/backup_rules.xml",
+      "contentHash": "6cf1a27e6807b1d24e41d3fbe7ddc1bfe1f42226027964f6eaf477d71b43b283",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 13,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/main/res/xml/data_extraction_rules.xml": {
+      "filePath": "app/src/main/res/xml/data_extraction_rules.xml",
+      "contentHash": "cb1fc47ab4a984530ed60e0e6ee638929c3038290e7e7e0b4b03a3a30fbe7381",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 19,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/core/util/ComputeSourceIdTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/core/util/ComputeSourceIdTest.kt",
+      "contentHash": "c9543256ce989a7fcf7baf6b3178aa51a15b5f843299263b34471be2b8fce33d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 59,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/core/util/HashingTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/core/util/HashingTest.kt",
+      "contentHash": "7ad0caee3e13a388e2cc194251ba98d5a58f08b22057c6dbc756dbf9768aebc8",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 53,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/core/util/TitleMatcherTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/core/util/TitleMatcherTest.kt",
+      "contentHash": "ce7dd11a91db98d75bce215273e0546cf862802fa0fa53b047f9fd786389f9bc",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 140,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/data/local/database/mappers/ChapterMappersTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/data/local/database/mappers/ChapterMappersTest.kt",
+      "contentHash": "1a6d0593595238643e911d27ad03d7c39f2c2751129d0feff595c4c91bfd00ae",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 168,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/data/local/database/mappers/GenreJsonTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/data/local/database/mappers/GenreJsonTest.kt",
+      "contentHash": "cfb22abc7590b136494bf1592b97ff4b76053a5066fd81436aa6691e16fb5bc7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 57,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/data/local/database/mappers/SeriesMappersTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/data/local/database/mappers/SeriesMappersTest.kt",
+      "contentHash": "557fdc663f71a2ef931ba91396dfbdcdab55841fe8aafc92a4987a15cbd582ef",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 191,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/data/local/filesystem/DownloadStoreImplTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/data/local/filesystem/DownloadStoreImplTest.kt",
+      "contentHash": "fa55647ee13a8f5b3107f5a1308b09c94ba5777bba56990a15a77d7e0d63a317",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 152,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/data/local/prefs/SettingsStoreTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/data/local/prefs/SettingsStoreTest.kt",
+      "contentHash": "d86d828410ff3c58ec31ee2c9f39e573a6281c0461e4ea97e60bfdfa66db2cb4",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 97,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/data/repository/ChapterRepositoryImplTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/data/repository/ChapterRepositoryImplTest.kt",
+      "contentHash": "a8368c722ae8d40a604111d79af7fb3c8d442b5d6a4c22777fb298b1b92e64a6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 353,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/data/repository/SeriesRepositoryImplTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/data/repository/SeriesRepositoryImplTest.kt",
+      "contentHash": "c604de8a1ed20fb7f67e148ef52ab5afba1e8f7d0cb060c64a5dd5659c5d376f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 503,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/data/source/HtmlSourceTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/data/source/HtmlSourceTest.kt",
+      "contentHash": "38219302a441302da3d9376a90c911c231f4e83e764ef74e66942d669f2c18de",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 552,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/data/source/SourceContractTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/data/source/SourceContractTest.kt",
+      "contentHash": "cdec7067c4dff3d2cfc0b9c4eb58c86019b635a4c9dbcc130675962c4fec71bb",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 94,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/domain/model/ChapterContentTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/domain/model/ChapterContentTest.kt",
+      "contentHash": "a7b32a4a7d89dc9891796eac6ead617cba463e9ba3dfdf6093182e4e7ea30bc5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 30,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/domain/model/ChapterTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/domain/model/ChapterTest.kt",
+      "contentHash": "ba5dda853f0f8cd26bce46ae0b1b705c69b47bf78a56d545cb626f4b3a19a9c5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 80,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/domain/model/ChapterWithStateTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/domain/model/ChapterWithStateTest.kt",
+      "contentHash": "55573ff20f4a2e5f37aa39ccf2769c4cb38679b9046d1e348436a7dfba03e22d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 76,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/domain/model/ContentTypeTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/domain/model/ContentTypeTest.kt",
+      "contentHash": "b82806165e4db1849582b91dea9bc90c598ef11b3f5e48f268f0b58ef297faf8",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 36,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/domain/model/FilterListTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/domain/model/FilterListTest.kt",
+      "contentHash": "32188d5838c1fafde10001282198445adeef9dd22a931613acac7f036ee2f92d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 36,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/domain/model/FilterTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/domain/model/FilterTest.kt",
+      "contentHash": "6e6bd621ab769b470096d3f2e57060a33f0bc997f603673117807f9bf8c9afdd",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 60,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/domain/model/SeriesPageTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/domain/model/SeriesPageTest.kt",
+      "contentHash": "5a2724b0e5d24d3c2e1b1e57decbd9183c48af78c942baf614ad0a05164a5a9d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 60,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/domain/model/SeriesStatusTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/domain/model/SeriesStatusTest.kt",
+      "contentHash": "856693c623e101684f1e87b7a57b34fe29d8fbe76db2a13d1c31d84142aaa306",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 34,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/domain/model/SeriesTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/domain/model/SeriesTest.kt",
+      "contentHash": "8bc51b7a1fa750175c1d4e47777de1cdf2c79c70c726e52a37c9cf4012775006",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 103,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/ExampleUnitTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/ExampleUnitTest.kt",
+      "contentHash": "226acf2e7c4eb8a4c999b9ad90449977f0872ab3a3af0af630c84a5e8355aaa7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 17,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/fakes/FakeChapterRepository.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/fakes/FakeChapterRepository.kt",
+      "contentHash": "4fabe8b6a70578862fd59980f1fe9163153705b6be58eea32edd7cdfa4535c4e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 94,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/fakes/FakeDownloadRepository.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/fakes/FakeDownloadRepository.kt",
+      "contentHash": "702ffbbafe82a5a1ff5752b429fe795d77f61d74cf428bc1721803d450c6c595",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 64,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/fakes/FakeDownloadStore.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/fakes/FakeDownloadStore.kt",
+      "contentHash": "3c7ea0329b82198efe948c61c3fabb2c2306b5da2e5f3d4ddffbcb79d8507fbc",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 58,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/fakes/FakeSeriesRepository.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/fakes/FakeSeriesRepository.kt",
+      "contentHash": "92618a104b8511ecab3c0b2abc1a17c9dfd66c70f81881778c111fdf83221dca",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 90,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/fakes/FakeSettingsRepository.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/fakes/FakeSettingsRepository.kt",
+      "contentHash": "0bfd660bd750e8a2d514629382f39d767da797c9872e63524df276abaa77aaa8",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 37,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/fakes/FakeSource.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/fakes/FakeSource.kt",
+      "contentHash": "2061ad2dc1e6e6ff738d19ca3cf11817231f8edce3934b8749564ec90df4747a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 103,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/fakes/FakeSourceRepository.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/fakes/FakeSourceRepository.kt",
+      "contentHash": "e30b18f7de0180f833222d4fa8cfba11c8365f3fb7e5a8e02c2a1c955569084f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 11,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/manifest/AndroidManifestTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/manifest/AndroidManifestTest.kt",
+      "contentHash": "570c97abbfe1ad8b8d2d8505905726d5a1b6309e399a4cceafa144275448da7f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 106,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/sources/asurascans/AsuraScansLiveTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/sources/asurascans/AsuraScansLiveTest.kt",
+      "contentHash": "aab182a658e3fcb134a615363691d57aaf5e64f962961b3585732f4514920c54",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 69,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/sources/asurascans/AsuraScansTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/sources/asurascans/AsuraScansTest.kt",
+      "contentHash": "28562f85803d93839c01c32481cc951b17b053fc89968bed67a612310a02333e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 304,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/sources/freewebnovel/FreeWebNovelTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/sources/freewebnovel/FreeWebNovelTest.kt",
+      "contentHash": "767420255a577def318704eb6e7037ee47b22a24c608263a5c341181d158e2a5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 359,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/testutil/KtorMockHelpers.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/testutil/KtorMockHelpers.kt",
+      "contentHash": "b0f2c6cf8248746d6fbbc5c7b7c267c5c74df98be62b11d93f248c3bddd2023e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 35,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/testutil/MainDispatcherRule.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/testutil/MainDispatcherRule.kt",
+      "contentHash": "caebbd4f51875762c1e3feb927f6ea6000d0f179d8ccff2e649a7d0629e8fa79",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 29,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/testutil/TestFixtures.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/testutil/TestFixtures.kt",
+      "contentHash": "af6f26d09115074bd2ce2c965cff725475aa2fb8e853e247968ab9551537a125",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 89,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/ui/browse/BrowseViewModelTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/ui/browse/BrowseViewModelTest.kt",
+      "contentHash": "b1ae3858fd90e0e39bbd1a37a5ad19a373f19f83f62e496c6b48662107cbb1ba",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 121,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/ui/downloads/DownloadsViewModelTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/ui/downloads/DownloadsViewModelTest.kt",
+      "contentHash": "070eb9ac604b44239d68e308ca9096d037f43d36e059d9dd376044b7fa687d4a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 82,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/ui/library/LibraryViewModelTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/ui/library/LibraryViewModelTest.kt",
+      "contentHash": "bc82f36a1752b6099702c05c59440d41966f1c18bfa6099a4611c8841fdefdc6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 197,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/ui/reader/manhwa/MangaReaderViewModelTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/ui/reader/manhwa/MangaReaderViewModelTest.kt",
+      "contentHash": "703053d20f8d626a1e1ddb8324dfc51f0737001014ee2f08401f07b2e52d5800",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 168,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/ui/reader/novel/NovelReaderViewModelTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/ui/reader/novel/NovelReaderViewModelTest.kt",
+      "contentHash": "e4d17016ca7abec4027a4f05462c02e96c0525211cbcb6b0f2103387c7c4ce43",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 126,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/ui/series/SeriesViewModelTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/ui/series/SeriesViewModelTest.kt",
+      "contentHash": "5d80d746b7c6846cd07edeb41ea8cdea216bf5b04848e56aa5fccb19bb14cc2c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 137,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/ui/settings/SettingsViewModelTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/ui/settings/SettingsViewModelTest.kt",
+      "contentHash": "e96101b929648b03d37562c5ac0901385a83759ee0668912ff33db0930e8fcd6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 82,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/kotlin/com/opus/readerparser/workers/ChapterDownloadWorkerTest.kt": {
+      "filePath": "app/src/test/kotlin/com/opus/readerparser/workers/ChapterDownloadWorkerTest.kt",
+      "contentHash": "ebc0fbe91e2ceb0644625e046647b3fd985df6606c9ce7c09e0cd366ff9bfa33",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 91,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/resources/fixtures/asurascans/chapter.html": {
+      "filePath": "app/src/test/resources/fixtures/asurascans/chapter.html",
+      "contentHash": "0d7a1b04eec0d754ef9b54fdd824fd81fbceb53a15b885a6ec7bd94e2f696944",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 30,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/resources/fixtures/asurascans/latest.html": {
+      "filePath": "app/src/test/resources/fixtures/asurascans/latest.html",
+      "contentHash": "1fbab39a1022d04440facc47cae0272b63a7c345720c1a2533ddf4490a753fa7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 39,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/resources/fixtures/asurascans/popular.html": {
+      "filePath": "app/src/test/resources/fixtures/asurascans/popular.html",
+      "contentHash": "dcaaf45722896e22c371fc66ce7bcb22e38b74661e4cf7bcd14bc34863233d2a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 59,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/resources/fixtures/asurascans/search.html": {
+      "filePath": "app/src/test/resources/fixtures/asurascans/search.html",
+      "contentHash": "5466f0a3fa130b5dc32bca0339f685167aef9b459325268fab102a077c361bbb",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 36,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/resources/fixtures/asurascans/series_detail.html": {
+      "filePath": "app/src/test/resources/fixtures/asurascans/series_detail.html",
+      "contentHash": "d8f32a21288da01655ed1a7bb2ca5f303c87b00b5e3db7aec2159e5cfb72e4e6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 105,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/resources/fixtures/freewebnovel/chapter.html": {
+      "filePath": "app/src/test/resources/fixtures/freewebnovel/chapter.html",
+      "contentHash": "edb8e6fb34dc6f3c170fb7d760127648df126f584cac9d066292adb74497e345",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1216,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/resources/fixtures/freewebnovel/latest_last.html": {
+      "filePath": "app/src/test/resources/fixtures/freewebnovel/latest_last.html",
+      "contentHash": "14f72e22536a5656337180e4a824e2e39f0d3ca0d82b58a6564480885e2e0267",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1134,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/resources/fixtures/freewebnovel/latest.html": {
+      "filePath": "app/src/test/resources/fixtures/freewebnovel/latest.html",
+      "contentHash": "f30ccc1aa2842e3cd4bf0805ac5a8c9b8566ce10fc0901da966eb389e3c0a703",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1393,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/resources/fixtures/freewebnovel/popular.html": {
+      "filePath": "app/src/test/resources/fixtures/freewebnovel/popular.html",
+      "contentHash": "6a8ca4d7913b696f99a559c52a17dc8d9f9880525c3cc93f40ff30a5b412893d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 2446,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/resources/fixtures/freewebnovel/search.html": {
+      "filePath": "app/src/test/resources/fixtures/freewebnovel/search.html",
+      "contentHash": "6a8ca4d7913b696f99a559c52a17dc8d9f9880525c3cc93f40ff30a5b412893d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 2446,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/resources/fixtures/freewebnovel/series_completed.html": {
+      "filePath": "app/src/test/resources/fixtures/freewebnovel/series_completed.html",
+      "contentHash": "1a5e8a87542cbb17a25c5c7c245594081cb32bc9e451948b69c52f4aa6f214ab",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 5206,
+      "hasStructuralAnalysis": false
+    },
+    "app/src/test/resources/fixtures/freewebnovel/series.html": {
+      "filePath": "app/src/test/resources/fixtures/freewebnovel/series.html",
+      "contentHash": "bee5aa2022515c0498eaf20161d199ef76b6b4107ba4f8af1fc6a5beb753180a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 2357,
+      "hasStructuralAnalysis": false
+    },
+    "architecture.md": {
+      "filePath": "architecture.md",
+      "contentHash": "8cba3f8c19ad81623b82b5d6f3c37b767034ad28b7167bff41d1e3d33b04e55f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 197,
+      "hasStructuralAnalysis": true
+    },
+    "avd-config.json": {
+      "filePath": "avd-config.json",
+      "contentHash": "aa7d95e6abfac746a9d37a9c7523bfb1d0573814f0af899b044725b3bc5e5d12",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 12,
+      "hasStructuralAnalysis": true
+    },
+    "build.gradle.kts": {
+      "filePath": "build.gradle.kts",
+      "contentHash": "87d7b3f0141ca2027f3654b56db3e367dfaf23605c1832f9f813e8fd1a2b66ec",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 9,
+      "hasStructuralAnalysis": false
+    },
+    "codemap.md": {
+      "filePath": "codemap.md",
+      "contentHash": "bdefd0f236312e792cfdb5cc58c1bebaf02d5e6efaee5d13f571ee5cbb8af295",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 121,
+      "hasStructuralAnalysis": true
+    },
+    "gradle.properties": {
+      "filePath": "gradle.properties",
+      "contentHash": "9e3fac8d6288f8ee4f6cddf3b2d0d158257a5acf86e5b89463c5403fe7a00080",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 17,
+      "hasStructuralAnalysis": false
+    },
+    "gradle/codemap.md": {
+      "filePath": "gradle/codemap.md",
+      "contentHash": "939716d8171adf0f18f931255e0318e3a3d410ed3ef83ffd7a1f5dd068bc0744",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 123,
+      "hasStructuralAnalysis": true
+    },
+    "gradle/libs.versions.toml": {
+      "filePath": "gradle/libs.versions.toml",
+      "contentHash": "a3c78b8ae42e73daf639a1e1c2b86244fac4ded3c122d4e1bccc4c87214089f6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 91,
+      "hasStructuralAnalysis": true
+    },
+    "gradle/wrapper/gradle-wrapper.properties": {
+      "filePath": "gradle/wrapper/gradle-wrapper.properties",
+      "contentHash": "3164d00789973efd1cfd3c3d9bd5bd59c35580cad73be762f4f80b21fbd9a751",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 10,
+      "hasStructuralAnalysis": false
+    },
+    "gradlew": {
+      "filePath": "gradlew",
+      "contentHash": "3238afb2aed5cb16eb7d6718077e7138059108f007b54179e9cc157c5a6e0e89",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 252,
+      "hasStructuralAnalysis": false
+    },
+    "gradlew.bat": {
+      "filePath": "gradlew.bat",
+      "contentHash": "1d297e00bd21de3ace22b4d7f2de1f9dfa858883d66bbf7c1ccbecccec8f4f3b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 95,
+      "hasStructuralAnalysis": false
+    },
+    "journeys/browse.xml": {
+      "filePath": "journeys/browse.xml",
+      "contentHash": "7e389236e694ad82ed0d3f7c27d8816d49e7246a9888177d135ca95df81c0a8b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 27,
+      "hasStructuralAnalysis": false
+    },
+    "journeys/library.xml": {
+      "filePath": "journeys/library.xml",
+      "contentHash": "96360216dea54020973fd1fd2f02d4ede02b4d29f0eb36fccca835c13a808883",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 24,
+      "hasStructuralAnalysis": false
+    },
+    "journeys/README.md": {
+      "filePath": "journeys/README.md",
+      "contentHash": "17159d16ebe96587d29e40331d1f4ed93e0fb327c3069f05d5d692fb38996f99",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 74,
+      "hasStructuralAnalysis": true
+    },
+    "journeys/series.xml": {
+      "filePath": "journeys/series.xml",
+      "contentHash": "99cb0edadffc02f54e7101946aad4e90a03af4830ded2a344423595ffdf74fc2",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 33,
+      "hasStructuralAnalysis": false
+    },
+    "memory-bank/activeContext.md": {
+      "filePath": "memory-bank/activeContext.md",
+      "contentHash": "9d33e2c0c7afaad9e5385fd50d1d11401012f7bee86e8cf764551ad9f72d55ca",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 84,
+      "hasStructuralAnalysis": true
+    },
+    "memory-bank/commit-conventions.md": {
+      "filePath": "memory-bank/commit-conventions.md",
+      "contentHash": "1598b4cd9ef9a272d05e858762dc8d5f70d7b6d47b9fb9cd74a6c34afb4b3a91",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 41,
+      "hasStructuralAnalysis": true
+    },
+    "memory-bank/conventions.md": {
+      "filePath": "memory-bank/conventions.md",
+      "contentHash": "0a069a1f8ce4fa88f2a7e2c2b187476182c91e5ffac92ca3cd90b3d5e66d083e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 7,
+      "hasStructuralAnalysis": true
+    },
+    "memory-bank/decision-log.md": {
+      "filePath": "memory-bank/decision-log.md",
+      "contentHash": "18e2fa1bd511a182cc612d217e3c8479288486665dab1f285b9dbd10a19b1ee3",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 16,
+      "hasStructuralAnalysis": true
+    },
+    "memory-bank/directory-map.md": {
+      "filePath": "memory-bank/directory-map.md",
+      "contentHash": "1bb61725439bd07701c28a957ed07f301f81face856b6dcd54dcf3989fbd3ff8",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 7,
+      "hasStructuralAnalysis": true
+    },
+    "memory-bank/productContext.md": {
+      "filePath": "memory-bank/productContext.md",
+      "contentHash": "f1c9e1747d0b4eece6452a8dddeda31041378797c65c632a31e810eda928f838",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 26,
+      "hasStructuralAnalysis": true
+    },
+    "memory-bank/progress.md": {
+      "filePath": "memory-bank/progress.md",
+      "contentHash": "1d74351431f767f0ff294667f420b91a0e34bcfeb8850b4a5e34537533180e01",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 100,
+      "hasStructuralAnalysis": true
+    },
+    "memory-bank/projectbrief.md": {
+      "filePath": "memory-bank/projectbrief.md",
+      "contentHash": "df07abd99f20af4264dd423b1ea4bef2d945beb389c257d14bf442b83721dad0",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 30,
+      "hasStructuralAnalysis": true
+    },
+    "memory-bank/README.md": {
+      "filePath": "memory-bank/README.md",
+      "contentHash": "6bd2c708d52569fa5b663d043428b01e770701f1bcb926fd1f787a137bff315b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 28,
+      "hasStructuralAnalysis": true
+    },
+    "memory-bank/systemPatterns.md": {
+      "filePath": "memory-bank/systemPatterns.md",
+      "contentHash": "34f9c3bf460a960f1d05ba62a3fd9c6b21b032ee0997e90d8f325581b7f9b1d3",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 65,
+      "hasStructuralAnalysis": true
+    },
+    "memory-bank/techContext.md": {
+      "filePath": "memory-bank/techContext.md",
+      "contentHash": "79d54b0eec11448d2113dddf0d3bc2089b74ae8e6ac37566060a765b258bfaa4",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 50,
+      "hasStructuralAnalysis": true
+    },
+    "memory-bank/test-strategy.md": {
+      "filePath": "memory-bank/test-strategy.md",
+      "contentHash": "a56d83500155652d108855ce7abf7a0059e832771750ac1dabceb24770ddc1f1",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 6,
+      "hasStructuralAnalysis": true
+    },
+    "plans/2026-05-27-architecture-codemap-doc-split.md": {
+      "filePath": "plans/2026-05-27-architecture-codemap-doc-split.md",
+      "contentHash": "ba1c46cef95b2febdd6044cd17683258c5a7d26a1f5f98292fa9a2c02699930c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 175,
+      "hasStructuralAnalysis": true
+    },
+    "plans/2026-05-27-freewebnovel-source-onboarding.md": {
+      "filePath": "plans/2026-05-27-freewebnovel-source-onboarding.md",
+      "contentHash": "2a7f9fc9f40fa59ad628424ff280e99c8777d6e99f46ba9ca8f84b16a667be43",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 134,
+      "hasStructuralAnalysis": true
+    },
+    "plans/2026-05-27-memory-bank-workflow-incorporation.md": {
+      "filePath": "plans/2026-05-27-memory-bank-workflow-incorporation.md",
+      "contentHash": "27c6338714a46f1b3675f424f83b18c5e311d60ceac5458cbb089ee02a423dbb",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 167,
+      "hasStructuralAnalysis": true
+    },
+    "plans/debug-issue6-findings.md": {
+      "filePath": "plans/debug-issue6-findings.md",
+      "contentHash": "5bc0bc16b365b5e6cded4884eccf7e3832b42e769a9bd7d826e3f6b1ac00e1d8",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 236,
+      "hasStructuralAnalysis": true
+    },
+    "plans/decision-log-archive-2026-05-27.md": {
+      "filePath": "plans/decision-log-archive-2026-05-27.md",
+      "contentHash": "068912e8a5d9fcc930cdf91975dfef7de66141ef6a718cca94c7a603f47e3b05",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 40,
+      "hasStructuralAnalysis": true
+    },
+    "README.md": {
+      "filePath": "README.md",
+      "contentHash": "880cc3864f7d91d795378c0797259af756edfeccf83341ec0a1d56f122e9f136",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 148,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/ci-check": {
+      "filePath": "scripts/ci-check",
+      "contentHash": "0941d7014df4e0f5af76fc6bc30b82fed66d4743a6ea44d7adb6ec9818cd4ef5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 72,
+      "hasStructuralAnalysis": false
+    },
+    "scripts/codemap.md": {
+      "filePath": "scripts/codemap.md",
+      "contentHash": "8b2cbc1804668b0dc4ed2c832d8cc907b48d5a711f8adedf947cba2e2f906011",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 173,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/emulator": {
+      "filePath": "scripts/emulator",
+      "contentHash": "d56c7c3af6f355c48de06f30a6ba010f1b171f88b8e7443e187602c9efcd1f34",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 87,
+      "hasStructuralAnalysis": false
+    },
+    "scripts/pre-push": {
+      "filePath": "scripts/pre-push",
+      "contentHash": "31f65c0a7debf079e877750af0ad9f9265dd0dea2f9329f3f2cb9a812b718c53",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 40,
+      "hasStructuralAnalysis": false
+    },
+    "scripts/run-journeys": {
+      "filePath": "scripts/run-journeys",
+      "contentHash": "5d1df33488f921b6e914658ef9e61207c9be7f474f217dae06d8731387bbd51d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 92,
+      "hasStructuralAnalysis": false
+    },
+    "scripts/setup-wsl.sh": {
+      "filePath": "scripts/setup-wsl.sh",
+      "contentHash": "154ec7a73ce0998bfa0b5d336db2b903c9bf7a11071d70ec17876cfb2678bd8f",
+      "functions": [
+        {
+          "name": "print_status",
+          "params": [],
+          "exported": false,
+          "lineCount": 1
+        }
+      ],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 80,
+      "hasStructuralAnalysis": true
+    },
+    "settings.gradle.kts": {
+      "filePath": "settings.gradle.kts",
+      "contentHash": "30ed1add0155c290216b6c6ac697176235d88c7205205468232ccdcd82ddc212",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 27,
+      "hasStructuralAnalysis": false
+    }
+  }
+}
