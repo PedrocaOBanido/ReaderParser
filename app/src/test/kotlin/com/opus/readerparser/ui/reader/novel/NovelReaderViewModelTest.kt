@@ -51,6 +51,32 @@ class NovelReaderViewModelTest {
         assertThat(vm.state.value.html).isEqualTo(html)
         assertThat(vm.state.value.isLoading).isFalse()
         assertThat(vm.state.value.chapter).isEqualTo(chapter)
+        assertThat(vm.state.value.seriesChapters).containsExactly(chapter)
+    }
+
+    @Test
+    fun `init stores current series chapter list in state`() = runTest {
+        val next = TestFixtures.testChapter(url = "https://test.invalid/chapter/2", name = "Chapter 2", number = 2f)
+        chapterRepo.setChapters(
+            series.url,
+            listOf(
+                ChapterWithState(chapter, read = false, downloaded = false, progress = 0f),
+                ChapterWithState(next, read = false, downloaded = false, progress = 0f),
+            ),
+        )
+
+        val freshVm = NovelReaderViewModel(
+            savedState = SavedStateHandle(
+                mapOf(
+                    "sourceId" to series.sourceId,
+                    "seriesUrl" to series.url,
+                    "chapterUrl" to chapter.url,
+                )
+            ),
+            chapterRepository = chapterRepo,
+        )
+
+        assertThat(freshVm.state.value.seriesChapters).containsExactly(chapter, next).inOrder()
     }
 
     @Test
