@@ -4787,20 +4787,6 @@
       "complexity": "simple"
     },
     {
-      "id": "document:.opencode/command/light-start.md",
-      "type": "document",
-      "name": "light-start.md",
-      "filePath": ".opencode/command/light-start.md",
-      "summary": "OpenCode slash-command guide for the light start workflow in this repository.",
-      "tags": [
-        "documentation",
-        "opencode",
-        "command",
-        "light-start"
-      ],
-      "complexity": "simple"
-    },
-    {
       "id": "document:.opencode/command/new-screen.md",
       "type": "document",
       "name": "new-screen.md",
@@ -4825,20 +4811,6 @@
         "opencode",
         "command",
         "new-source"
-      ],
-      "complexity": "simple"
-    },
-    {
-      "id": "document:.opencode/command/start.md",
-      "type": "document",
-      "name": "start.md",
-      "filePath": ".opencode/command/start.md",
-      "summary": "OpenCode slash-command guide for the start workflow in this repository.",
-      "tags": [
-        "documentation",
-        "opencode",
-        "command",
-        "start"
       ],
       "complexity": "simple"
     },
@@ -5252,244 +5224,6 @@
         "configuration",
         "series",
         "project-settings"
-      ],
-      "complexity": "simple"
-    },
-    {
-      "id": "document:memory-bank/README.md",
-      "type": "document",
-      "name": "README.md",
-      "filePath": "memory-bank/README.md",
-      "summary": "Operational memory note tracking readme for ongoing agent work in the repository.",
-      "tags": [
-        "documentation",
-        "memory-bank",
-        "operations",
-        "readme"
-      ],
-      "complexity": "simple"
-    },
-    {
-      "id": "document:memory-bank/activeContext.md",
-      "type": "document",
-      "name": "activeContext.md",
-      "filePath": "memory-bank/activeContext.md",
-      "summary": "Operational memory note tracking active context for ongoing agent work in the repository.",
-      "tags": [
-        "documentation",
-        "memory-bank",
-        "operations",
-        "active-context"
-      ],
-      "complexity": "moderate"
-    },
-    {
-      "id": "document:memory-bank/commit-conventions.md",
-      "type": "document",
-      "name": "commit-conventions.md",
-      "filePath": "memory-bank/commit-conventions.md",
-      "summary": "Operational memory note tracking commit conventions for ongoing agent work in the repository.",
-      "tags": [
-        "documentation",
-        "memory-bank",
-        "operations",
-        "commit-conventions"
-      ],
-      "complexity": "simple"
-    },
-    {
-      "id": "document:memory-bank/conventions.md",
-      "type": "document",
-      "name": "conventions.md",
-      "filePath": "memory-bank/conventions.md",
-      "summary": "Operational memory note tracking conventions for ongoing agent work in the repository.",
-      "tags": [
-        "documentation",
-        "memory-bank",
-        "operations",
-        "conventions"
-      ],
-      "complexity": "simple"
-    },
-    {
-      "id": "document:memory-bank/decision-log.md",
-      "type": "document",
-      "name": "decision-log.md",
-      "filePath": "memory-bank/decision-log.md",
-      "summary": "Operational memory note tracking decision log for ongoing agent work in the repository.",
-      "tags": [
-        "documentation",
-        "memory-bank",
-        "operations",
-        "decision-log"
-      ],
-      "complexity": "simple"
-    },
-    {
-      "id": "document:memory-bank/directory-map.md",
-      "type": "document",
-      "name": "directory-map.md",
-      "filePath": "memory-bank/directory-map.md",
-      "summary": "Operational memory note tracking directory map for ongoing agent work in the repository.",
-      "tags": [
-        "documentation",
-        "memory-bank",
-        "operations",
-        "directory-map"
-      ],
-      "complexity": "simple"
-    },
-    {
-      "id": "document:memory-bank/productContext.md",
-      "type": "document",
-      "name": "productContext.md",
-      "filePath": "memory-bank/productContext.md",
-      "summary": "Operational memory note tracking product context for ongoing agent work in the repository.",
-      "tags": [
-        "documentation",
-        "memory-bank",
-        "operations",
-        "product-context"
-      ],
-      "complexity": "simple"
-    },
-    {
-      "id": "document:memory-bank/progress.md",
-      "type": "document",
-      "name": "progress.md",
-      "filePath": "memory-bank/progress.md",
-      "summary": "Operational memory note tracking progress for ongoing agent work in the repository.",
-      "tags": [
-        "documentation",
-        "memory-bank",
-        "operations",
-        "progress"
-      ],
-      "complexity": "moderate"
-    },
-    {
-      "id": "document:memory-bank/projectbrief.md",
-      "type": "document",
-      "name": "projectbrief.md",
-      "filePath": "memory-bank/projectbrief.md",
-      "summary": "Operational memory note tracking projectbrief for ongoing agent work in the repository.",
-      "tags": [
-        "documentation",
-        "memory-bank",
-        "operations",
-        "projectbrief"
-      ],
-      "complexity": "simple"
-    },
-    {
-      "id": "document:memory-bank/systemPatterns.md",
-      "type": "document",
-      "name": "systemPatterns.md",
-      "filePath": "memory-bank/systemPatterns.md",
-      "summary": "Operational memory note tracking system patterns for ongoing agent work in the repository.",
-      "tags": [
-        "documentation",
-        "memory-bank",
-        "operations",
-        "system-patterns"
-      ],
-      "complexity": "moderate"
-    },
-    {
-      "id": "document:memory-bank/techContext.md",
-      "type": "document",
-      "name": "techContext.md",
-      "filePath": "memory-bank/techContext.md",
-      "summary": "Operational memory note tracking tech context for ongoing agent work in the repository.",
-      "tags": [
-        "documentation",
-        "memory-bank",
-        "operations",
-        "tech-context"
-      ],
-      "complexity": "simple"
-    },
-    {
-      "id": "document:memory-bank/test-strategy.md",
-      "type": "document",
-      "name": "test-strategy.md",
-      "filePath": "memory-bank/test-strategy.md",
-      "summary": "Operational memory note tracking test strategy for ongoing agent work in the repository.",
-      "tags": [
-        "documentation",
-        "memory-bank",
-        "operations",
-        "test-strategy"
-      ],
-      "complexity": "simple"
-    },
-    {
-      "id": "document:plans/2026-05-27-architecture-codemap-doc-split.md",
-      "type": "document",
-      "name": "2026-05-27-architecture-codemap-doc-split.md",
-      "filePath": "plans/2026-05-27-architecture-codemap-doc-split.md",
-      "summary": "Working plan document outlining the 2026 05 27 architecture codemap doc split implementation or investigation steps.",
-      "tags": [
-        "documentation",
-        "planning",
-        "implementation",
-        "2026-05-27-architecture-codemap-doc-split"
-      ],
-      "complexity": "moderate"
-    },
-    {
-      "id": "document:plans/2026-05-27-freewebnovel-source-onboarding.md",
-      "type": "document",
-      "name": "2026-05-27-freewebnovel-source-onboarding.md",
-      "filePath": "plans/2026-05-27-freewebnovel-source-onboarding.md",
-      "summary": "Working plan document outlining the 2026 05 27 freewebnovel source onboarding implementation or investigation steps.",
-      "tags": [
-        "documentation",
-        "planning",
-        "implementation",
-        "2026-05-27-freewebnovel-source-onboarding"
-      ],
-      "complexity": "moderate"
-    },
-    {
-      "id": "document:plans/2026-05-27-memory-bank-workflow-incorporation.md",
-      "type": "document",
-      "name": "2026-05-27-memory-bank-workflow-incorporation.md",
-      "filePath": "plans/2026-05-27-memory-bank-workflow-incorporation.md",
-      "summary": "Working plan document outlining the 2026 05 27 memory bank workflow incorporation implementation or investigation steps.",
-      "tags": [
-        "documentation",
-        "planning",
-        "implementation",
-        "2026-05-27-memory-bank-workflow-incorporation"
-      ],
-      "complexity": "moderate"
-    },
-    {
-      "id": "document:plans/debug-issue6-findings.md",
-      "type": "document",
-      "name": "debug-issue6-findings.md",
-      "filePath": "plans/debug-issue6-findings.md",
-      "summary": "Working plan document outlining the debug issue6 findings implementation or investigation steps.",
-      "tags": [
-        "documentation",
-        "planning",
-        "implementation",
-        "debug-issue6-findings"
-      ],
-      "complexity": "moderate"
-    },
-    {
-      "id": "document:plans/decision-log-archive-2026-05-27.md",
-      "type": "document",
-      "name": "decision-log-archive-2026-05-27.md",
-      "filePath": "plans/decision-log-archive-2026-05-27.md",
-      "summary": "Working plan document outlining the decision log archive 2026 05 27 implementation or investigation steps.",
-      "tags": [
-        "documentation",
-        "planning",
-        "implementation",
-        "decision-log-archive-2026-05-27"
       ],
       "complexity": "simple"
     },
@@ -11215,13 +10949,6 @@
       "weight": 0.5
     },
     {
-      "source": "document:.opencode/command/light-start.md",
-      "target": "config:.opencode/opencode.json",
-      "type": "documents",
-      "direction": "forward",
-      "weight": 0.5
-    },
-    {
       "source": "document:.opencode/command/new-screen.md",
       "target": "config:.opencode/opencode.json",
       "type": "documents",
@@ -11230,13 +10957,6 @@
     },
     {
       "source": "document:.opencode/command/new-source.md",
-      "target": "config:.opencode/opencode.json",
-      "type": "documents",
-      "direction": "forward",
-      "weight": 0.5
-    },
-    {
-      "source": "document:.opencode/command/start.md",
       "target": "config:.opencode/opencode.json",
       "type": "documents",
       "direction": "forward",
@@ -11423,125 +11143,6 @@
       "type": "configures",
       "direction": "forward",
       "weight": 0.6
-    },
-    {
-      "source": "document:memory-bank/README.md",
-      "target": "document:README.md",
-      "type": "documents",
-      "direction": "forward",
-      "weight": 0.5
-    },
-    {
-      "source": "document:memory-bank/activeContext.md",
-      "target": "document:README.md",
-      "type": "documents",
-      "direction": "forward",
-      "weight": 0.5
-    },
-    {
-      "source": "document:memory-bank/commit-conventions.md",
-      "target": "document:README.md",
-      "type": "documents",
-      "direction": "forward",
-      "weight": 0.5
-    },
-    {
-      "source": "document:memory-bank/conventions.md",
-      "target": "document:README.md",
-      "type": "documents",
-      "direction": "forward",
-      "weight": 0.5
-    },
-    {
-      "source": "document:memory-bank/decision-log.md",
-      "target": "document:README.md",
-      "type": "documents",
-      "direction": "forward",
-      "weight": 0.5
-    },
-    {
-      "source": "document:memory-bank/directory-map.md",
-      "target": "document:README.md",
-      "type": "documents",
-      "direction": "forward",
-      "weight": 0.5
-    },
-    {
-      "source": "document:memory-bank/productContext.md",
-      "target": "document:README.md",
-      "type": "documents",
-      "direction": "forward",
-      "weight": 0.5
-    },
-    {
-      "source": "document:memory-bank/progress.md",
-      "target": "document:README.md",
-      "type": "documents",
-      "direction": "forward",
-      "weight": 0.5
-    },
-    {
-      "source": "document:memory-bank/projectbrief.md",
-      "target": "document:README.md",
-      "type": "documents",
-      "direction": "forward",
-      "weight": 0.5
-    },
-    {
-      "source": "document:memory-bank/systemPatterns.md",
-      "target": "document:README.md",
-      "type": "documents",
-      "direction": "forward",
-      "weight": 0.5
-    },
-    {
-      "source": "document:memory-bank/techContext.md",
-      "target": "document:README.md",
-      "type": "documents",
-      "direction": "forward",
-      "weight": 0.5
-    },
-    {
-      "source": "document:memory-bank/test-strategy.md",
-      "target": "document:README.md",
-      "type": "documents",
-      "direction": "forward",
-      "weight": 0.5
-    },
-    {
-      "source": "document:plans/2026-05-27-architecture-codemap-doc-split.md",
-      "target": "document:README.md",
-      "type": "documents",
-      "direction": "forward",
-      "weight": 0.5
-    },
-    {
-      "source": "document:plans/2026-05-27-freewebnovel-source-onboarding.md",
-      "target": "document:README.md",
-      "type": "documents",
-      "direction": "forward",
-      "weight": 0.5
-    },
-    {
-      "source": "document:plans/2026-05-27-memory-bank-workflow-incorporation.md",
-      "target": "document:README.md",
-      "type": "documents",
-      "direction": "forward",
-      "weight": 0.5
-    },
-    {
-      "source": "document:plans/debug-issue6-findings.md",
-      "target": "document:README.md",
-      "type": "documents",
-      "direction": "forward",
-      "weight": 0.5
-    },
-    {
-      "source": "document:plans/decision-log-archive-2026-05-27.md",
-      "target": "document:README.md",
-      "type": "documents",
-      "direction": "forward",
-      "weight": 0.5
     },
     {
       "source": "config:.opencode/opencode.json",
@@ -12671,10 +12272,8 @@
         "document:.opencode/agent/screen-author.md",
         "document:.opencode/agent/source-author.md",
         "document:.opencode/command/add-migration.md",
-        "document:.opencode/command/light-start.md",
         "document:.opencode/command/new-screen.md",
         "document:.opencode/command/new-source.md",
-        "document:.opencode/command/start.md",
         "document:.opencode/command/verify.md",
         "document:.opencode/project-structure.md",
         "document:.opencode/skills/trace-matrix/SKILL.md",
@@ -12721,24 +12320,7 @@
         "document:app/src/main/java/com/opus/readerparser/ui/theme/codemap.md",
         "document:app/src/main/java/com/opus/readerparser/workers/codemap.md",
         "document:architecture.md",
-        "document:codemap.md",
-        "document:memory-bank/README.md",
-        "document:memory-bank/activeContext.md",
-        "document:memory-bank/commit-conventions.md",
-        "document:memory-bank/conventions.md",
-        "document:memory-bank/decision-log.md",
-        "document:memory-bank/directory-map.md",
-        "document:memory-bank/productContext.md",
-        "document:memory-bank/progress.md",
-        "document:memory-bank/projectbrief.md",
-        "document:memory-bank/systemPatterns.md",
-        "document:memory-bank/techContext.md",
-        "document:memory-bank/test-strategy.md",
-        "document:plans/2026-05-27-architecture-codemap-doc-split.md",
-        "document:plans/2026-05-27-freewebnovel-source-onboarding.md",
-        "document:plans/2026-05-27-memory-bank-workflow-incorporation.md",
-        "document:plans/debug-issue6-findings.md",
-        "document:plans/decision-log-archive-2026-05-27.md"
+        "document:codemap.md"
       ]
     },
     {
