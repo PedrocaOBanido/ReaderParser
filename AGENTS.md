@@ -89,6 +89,13 @@ New code ships with tests.
 - Room changes: migration tests
 - `*Content` composables: Compose UI tests
 
+Test utilities:
+
+- `app/src/test/kotlin/com/opus/readerparser/testutil/MainDispatcherRule.kt`
+- `app/src/test/kotlin/com/opus/readerparser/testutil/KtorMockHelpers.kt`
+- `app/src/test/kotlin/com/opus/readerparser/testutil/TestFixtures.kt`
+- `app/src/androidTest/java/com/opus/readerparser/testutil/FakeCoilRule.kt`
+
 Verification commands:
 
 ```bash
@@ -124,6 +131,56 @@ Ask before:
 Routine work such as a new source, screen, repository method, or migration can
 proceed without a separate approval gate.
 
+## Commit conventions
+
+Every commit uses one of the prefixes below. A commit never mixes prefixes.
+
+| Prefix | When to use |
+|---|---|
+| `feat:` | New file, new screen, new source plugin, new capability |
+| `fix:` | Bug fix to previously committed code (compile errors, crashes, wrong behavior) |
+| `refactor:` | Restructuring committed code without changing behavior |
+| `ci:` | CI pipeline, pre-push hooks, test scripts, Gradle verification tasks |
+| `cd:` | Release pipeline, signing config, deployment scripts, environment bootstrap |
+| `docs:` | `AGENTS.md`, `architecture.md`, `README.md`, `openspec/`, KDoc |
+
+Rules:
+
+1. **A fix only exists relative to a prior commit.** If a `feat:` commit
+   introduces code that doesn't compile, the compilation fix is part of that
+   same `feat:` commit — it was never committed broken.
+2. **Refactors don't change behavior.** If you improve code structure and add a
+   feature in the same commit, it's a `feat:`. If you fix a bug while
+   restructuring, it's a `fix:`.
+3. **CI vs CD.** CI covers quality gates (test, lint, assemble). CD covers
+   delivery (signing, release, artifact upload). When in doubt, prefer `ci:` for
+   automation that runs on every push and `cd:` for automation that publishes.
+4. **One commit = one verb.** If the diff adds a new screen *and* its tests,
+   that's one `feat:` commit. If the diff adds a screen *and* fixes a database
+   migration bug, that's two commits: `feat:` then `fix:`.
+5. **Subject line:** imperative mood, present tense, ≤ 72 characters. Body
+   explains *why*, not *what*.
+
+## Workflow
+
+Non-trivial changes go through the OpenSpec workflow:
+
+- **Propose** → `openspec propose` or the `/openspec-propose` skill creates a
+  change directory with `proposal.md`.
+- **Design** → `openspec design` adds `design.md` with decisions and trade-offs.
+- **Specs** → delta specs go under `openspec/changes/<name>/specs/`.
+- **Tasks** → `openspec tasks` produces `tasks.md` with tracked checkboxes.
+- **Implement** → the `/openspec-apply-change` skill executes tasks, marking
+  checkboxes as work completes.
+- **Archive** → when all tasks pass, the change is archived and durable outcomes
+  are synced into canonical docs and main specs.
+
+Trivial/read-only work proceeds directly: answering questions, read-only
+exploration, single-file cosmetic fixes, dependency version bumps, and
+CI/tooling config edits with no behavioral change. The
+`repository-governance` spec at `openspec/specs/repository-governance/spec.md`
+defines the full policy.
+
 ## Out of scope
 
 - No sync/accounts/cloud.
@@ -132,40 +189,13 @@ proceed without a separate approval gate.
 - No general-purpose browser shell.
 - No iOS/desktop/web unless explicitly requested.
 
-## Memory Bank
-
-Task start:
-
-- Always read `memory-bank/activeContext.md`.
-- Always read `memory-bank/progress.md`.
-- Lazy-load `memory-bank/projectbrief.md`,
-  `memory-bank/productContext.md`, `memory-bank/systemPatterns.md`, and
-  `memory-bank/techContext.md` only when the task needs them.
-- The parent/orchestrator owns memory-bank reads and writes. Specialists get a
-  short summary and, only when needed, a single relevant memory file.
-
-Task end:
-
-- Update `memory-bank/activeContext.md` with current state, active decisions,
-  next step, and last updated date.
-- Update `memory-bank/progress.md` with completed, in progress, blocked, known
-  issues, and verification commands.
-- Update the stable memory files only when durable product, architecture, or
-  tooling knowledge changed.
-
 ## Context retrieval rule
 
 - Start with the directly referenced file, command, or test.
 - Read the nearest relevant `AGENTS.md` before broad exploration.
-- Read `memory-bank/activeContext.md` and `memory-bank/progress.md` at task
-  start.
-- Read `memory-bank/projectbrief.md`, `memory-bank/productContext.md`,
-  `memory-bank/systemPatterns.md`, or `memory-bank/techContext.md` only when
-  task-relevant.
 - Read `architecture.md` when changing layers, contracts, invariants, or core
   data flow.
 - Read `codemap.md` when you need the current structure, entry points, or a
   repository-wide navigation map.
 - Read the nearest folder `codemap.md` before broad edits inside that area.
-- Do not load the whole `memory-bank/` by default.
 - Do not load whole-repo docs by default.

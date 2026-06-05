@@ -32,7 +32,6 @@
 # .cxx/
 # .kotlin/
 # .slim/
-# plans/
 # gradle/gradle-daemon-jvm.properties
 # session-ses_*.md
 

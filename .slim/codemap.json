@@ -20,7 +20,7 @@
       "app/src/androidTest/**",
       "app/schemas/**",
       ".opencode/**",
-      "memory-bank/**",
+
       "journeys/**",
       "**/*.md",
       "LICENSE"
