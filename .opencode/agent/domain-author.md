@@ -136,8 +136,8 @@ Read these (in this order):
 2. `data/source/AGENTS.md` — Source contract rules.
 3. `testutil/KtorMockHelpers.kt` and `testutil/MainDispatcherRule.kt` — understand
    what test infrastructure already exists.
-4. Use any memory summary or single relevant memory file the orchestrator
-   provided. Do not read the whole `memory-bank/` yourself.
+4. Use any context summary or single relevant file the orchestrator
+   provided. Do not broad-explore the repo yourself.
 
 ## Return format
 

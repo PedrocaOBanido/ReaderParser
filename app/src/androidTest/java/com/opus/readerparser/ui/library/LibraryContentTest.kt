@@ -2,9 +2,10 @@ package com.opus.readerparser.ui.library
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performLongClick
+import androidx.compose.ui.test.performTouchInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.opus.readerparser.domain.model.ContentType
 import com.opus.readerparser.domain.model.Series
@@ -63,7 +64,7 @@ class LibraryContentTest {
                 },
             )
         }
-        composeRule.onNodeWithText("Test Series").performLongClick()
+        composeRule.onNodeWithText("Test Series").performTouchInput { longClick() }
         assert(removedSeries == series)
     }
 }

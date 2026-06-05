@@ -44,9 +44,9 @@ the rest of the app doesn't know or care which site it's talking to.
 | File                  | What's in it                                          |
 | --------------------- | ----------------------------------------------------- |
 | `architecture.md`     | Layering, models, contracts, full code templates      |
+| `codemap.md`          | Repository structure, directory maps, navigation      |
 | `AGENTS.md`           | Rules for AI coding agents (and humans, honestly)     |
-| `project-structure.md`| Full directory tree + opencode setup details          |
-| `kickoff-prompt.md`   | Session-start prompt template for agentic work        |
+| `openspec/specs/`     | Per-capability normative specs (e.g. governance)      |
 
 Read `architecture.md` first if you're reasoning about anything beyond a
 single file. The other docs assume you've seen it.
@@ -102,7 +102,7 @@ Full rules in `app/src/main/kotlin/com/opus/readerparser/sources/AGENTS.md`.
 
 This repo is set up for opencode. The relevant files:
 
-- `opencode.json` — project config: instruction loading, permissions.
+- `opencode.json` — project config: permissions and tooling.
 - `AGENTS.md` (root) — non-negotiables for agents.
 - `app/src/main/kotlin/**/AGENTS.md` — narrower rules close to the code.
 - `.opencode/agent/` — specialized subagents (source-author, screen-author,
@@ -110,9 +110,9 @@ This repo is set up for opencode. The relevant files:
 - `.opencode/command/` — custom slash commands (`/new-source`, `/new-screen`,
   `/add-migration`, `/verify`).
 
-Start a new session with the kickoff prompt in `kickoff-prompt.md`. It primes
-the agent with the right context and working norms before any code is
-touched.
+Non-trivial changes follow the OpenSpec workflow: propose → design → specs →
+tasks → implement. See `AGENTS.md` for the full workflow and
+`openspec/specs/repository-governance/spec.md` for the change-management policy.
 
 ---
 

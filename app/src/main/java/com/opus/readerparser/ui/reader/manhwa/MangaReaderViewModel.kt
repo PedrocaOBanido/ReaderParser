@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.opus.readerparser.domain.ChapterRepository
 import com.opus.readerparser.domain.model.Chapter
 import com.opus.readerparser.domain.model.ChapterContent
+import com.opus.readerparser.domain.model.ChapterWithState
 import com.opus.readerparser.domain.model.ContentType
 import com.opus.readerparser.domain.model.Series
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -46,6 +47,7 @@ class MangaReaderViewModel @Inject constructor(
     fun onAction(action: MangaReaderAction) {
         when (action) {
             is MangaReaderAction.Load -> loadChapter(action.chapter)
+            is MangaReaderAction.SelectChapter -> navigateToSelectedChapter(action.chapter)
             is MangaReaderAction.SetPage -> {
                 val pages = _state.value.pages
                 _state.update { it.copy(currentPage = action.page) }
@@ -63,7 +65,7 @@ class MangaReaderViewModel @Inject constructor(
 
     private fun loadCurrentChapter() {
         viewModelScope.launch {
-            val chapters = chapterRepository.observeChapters(seriesStub).first()
+            val chapters = loadSeriesChapters()
             val chapter = chapters.firstOrNull { it.chapter.url == chapterUrl }?.chapter
                 ?: return@launch
             loadChapter(chapter)
@@ -79,7 +81,7 @@ class MangaReaderViewModel @Inject constructor(
                     _state.update { it.copy(isLoading = false, error = "Unexpected content type") }
                     return@launch
                 }
-                val chapters = chapterRepository.observeChapters(seriesStub).first()
+                val chapters = loadSeriesChapters()
                 val idx = chapters.indexOfFirst { it.chapter.url == chapter.url }
                 _state.update {
                     it.copy(
@@ -106,7 +108,7 @@ class MangaReaderViewModel @Inject constructor(
     private fun navigateChapter(forward: Boolean) {
         viewModelScope.launch {
             val current = _state.value.chapter ?: return@launch
-            val chapters = chapterRepository.observeChapters(seriesStub).first()
+            val chapters = loadSeriesChapters()
             val idx = chapters.indexOfFirst { it.chapter.url == current.url }
             val target = if (forward) chapters.getOrNull(idx + 1) else chapters.getOrNull(idx - 1)
             if (target != null) {
@@ -114,4 +116,16 @@ class MangaReaderViewModel @Inject constructor(
             }
         }
     }
+
+    private fun navigateToSelectedChapter(chapter: Chapter) {
+        viewModelScope.launch {
+            if (chapter.url == _state.value.chapter?.url) return@launch
+            _effects.send(MangaReaderEffect.NavigateToChapter(chapter))
+        }
+    }
+
+    private suspend fun loadSeriesChapters() =
+        chapterRepository.observeChapters(seriesStub).first().also { chapters ->
+            _state.update { it.copy(seriesChapters = chapters.map(ChapterWithState::chapter)) }
+        }
 }

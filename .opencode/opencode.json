@@ -1,11 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
 
-  "instructions": [
-    "memory-bank/activeContext.md",
-    "memory-bank/progress.md"
-  ],
-
   "permission": {
     "edit": "allow",
     "webfetch": "allow",
@@ -61,6 +56,8 @@
       "git clean -fd*":                     "deny",
       "git push --force*":                  "deny",
       "git push -f *":                      "deny",
+
+      "openspec *":                         "allow",
 
       "./gradlew :app:assembleDebug *":       "allow",
       "./gradlew :app:lintDebug *":           "allow",

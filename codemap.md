@@ -28,7 +28,6 @@ Ktor + Jsoup to fetch and parse remote content.
 | `avd-config.json` | Shared Android emulator configuration used by tooling. |
 | `scripts/` | Developer and CI automation entry points. |
 | `journeys/` | XML journey specs for emulator-driven interaction testing. |
-| `memory-bank/` | Agent memory and active-context notes; operational documentation, not app code. |
 | `.slim/codemap.json` | Codemap change-tracking state for this atlas. |
 
 ## System Entry Points
