@@ -47,7 +47,7 @@ class FakeChapterRepository : ChapterRepository {
             .firstOrNull { it.chapter.sourceId == sourceId && it.chapter.url == url }
             ?.chapter
 
-    override suspend fun getContent(chapter: Chapter): ChapterContent {
+    override suspend fun getContent(chapter: Chapter, forceNetwork: Boolean): ChapterContent {
         getContentCalls.add(chapter)
         return contentResult ?: ChapterContent.Text("<p>Test content</p>")
     }

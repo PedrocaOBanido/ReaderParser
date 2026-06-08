@@ -63,7 +63,7 @@ class ChapterDownloadWorkerTest {
         val registry = SourceRegistry(mapOf(fakeSource.id to fakeSource))
         // ChapterRepositoryImpl owns the source-dispatch; the worker never
         // touches SourceRegistry or DAOs directly.
-        chapterRepository = ChapterRepositoryImpl(registry, database.chapterDao())
+        chapterRepository = ChapterRepositoryImpl(registry, database.chapterDao(), FakeDownloadStoreAndroidTest())
         fakeDownloadRepository = FakeDownloadRepositoryAndroidTest()
         fakeDownloadStore = FakeDownloadStoreAndroidTest()
 
@@ -252,6 +252,8 @@ private class FakeDownloadStoreAndroidTest : DownloadStore {
         deleteCalls.add(chapter)
         storedContent.remove(chapter)
     }
+
+    override suspend fun deleteByHash(sourceId: Long, chapterUrlHash: String): Boolean = false
 }
 
 private class FakeDownloadRepositoryAndroidTest : DownloadRepository {
@@ -292,6 +294,18 @@ private class FakeDownloadRepositoryAndroidTest : DownloadRepository {
         errorMessage: String?,
     ) {
         updateQueueStateCalls.add(UpdateQueueStateCall(sourceId, chapterUrl, state, progress, errorMessage))
+    }
+
+    override suspend fun cancelBatch(sourceId: Long, chapterUrls: Set<String>) {
+        _queue.value = _queue.value.filter {
+            it.sourceId != sourceId || it.chapterUrl !in chapterUrls
+        }
+    }
+
+    override suspend fun deleteDownload(sourceId: Long, chapterUrl: String) {
+        _queue.value = _queue.value.filter {
+            it.sourceId != sourceId || it.chapterUrl != chapterUrl
+        }
     }
 }
 
