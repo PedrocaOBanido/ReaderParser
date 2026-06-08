@@ -132,4 +132,21 @@ class DownloadStoreImpl @Inject constructor(
         withContext(Dispatchers.IO) {
             chapterDir(chapter).deleteRecursively()
         }
+
+    override suspend fun deleteByHash(sourceId: Long, chapterUrlHash: String): Boolean =
+        withContext(Dispatchers.IO) {
+            val sourceDir = root.resolve("$sourceId")
+            if (!sourceDir.exists()) return@withContext false
+            // Search all series subdirectories for a matching chapter hash
+            val seriesDirs = sourceDir.listFiles() ?: return@withContext false
+            for (seriesDir in seriesDirs) {
+                if (!seriesDir.isDirectory) continue
+                val chapterDir = seriesDir.resolve(chapterUrlHash)
+                if (chapterDir.exists()) {
+                    chapterDir.deleteRecursively()
+                    return@withContext true
+                }
+            }
+            false
+        }
 }

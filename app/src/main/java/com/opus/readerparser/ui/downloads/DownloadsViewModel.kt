@@ -49,6 +49,13 @@ class DownloadsViewModel @Inject constructor(
                     _effects.send(DownloadsEffect.ShowError(e.message ?: "Failed to retry download"))
                 }
             }
+            is DownloadsAction.Delete -> viewModelScope.launch {
+                try {
+                    downloadRepository.deleteDownload(action.sourceId, action.chapterUrl)
+                } catch (e: Exception) {
+                    _effects.send(DownloadsEffect.ShowError(e.message ?: "Failed to delete download"))
+                }
+            }
         }
     }
 }

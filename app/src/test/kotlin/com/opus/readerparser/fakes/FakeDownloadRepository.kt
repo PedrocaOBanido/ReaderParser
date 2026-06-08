@@ -12,6 +12,8 @@ class FakeDownloadRepository : DownloadRepository {
 
     val cancelCalls: MutableList<Pair<Long, String>> = mutableListOf()
     val retryCalls: MutableList<Pair<Long, String>> = mutableListOf()
+    val cancelBatchCalls: MutableList<Pair<Long, Set<String>>> = mutableListOf()
+    val deleteDownloadCalls: MutableList<Pair<Long, String>> = mutableListOf()
 
     data class UpdateStateCall(
         val sourceId: Long,
@@ -58,6 +60,20 @@ class FakeDownloadRepository : DownloadRepository {
             } else {
                 it
             }
+        }
+    }
+
+    override suspend fun cancelBatch(sourceId: Long, chapterUrls: Set<String>) {
+        cancelBatchCalls.add(sourceId to chapterUrls)
+        _queue.value = _queue.value.filter {
+            it.sourceId != sourceId || it.chapterUrl !in chapterUrls
+        }
+    }
+
+    override suspend fun deleteDownload(sourceId: Long, chapterUrl: String) {
+        deleteDownloadCalls.add(sourceId to chapterUrl)
+        _queue.value = _queue.value.filter {
+            it.sourceId != sourceId || it.chapterUrl != chapterUrl
         }
     }
 }

@@ -93,6 +93,7 @@ fun DownloadsContent(
                                 item = item,
                                 onCancel = { onAction(DownloadsAction.Cancel(item.sourceId, item.chapterUrl)) },
                                 onRetry = { onAction(DownloadsAction.Retry(item.sourceId, item.chapterUrl)) },
+                                onDelete = { onAction(DownloadsAction.Delete(item.sourceId, item.chapterUrl)) },
                             )
                         }
                     }
@@ -107,6 +108,7 @@ private fun DownloadItemRow(
     item: DownloadItem,
     onCancel: () -> Unit,
     onRetry: () -> Unit,
+    onDelete: () -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -153,7 +155,11 @@ private fun DownloadItemRow(
                                 Text("Retry")
                             }
                         }
-                        DownloadState.COMPLETED -> {}
+                        DownloadState.COMPLETED -> {
+                            OutlinedButton(onClick = onDelete) {
+                                Text("Delete")
+                            }
+                        }
                     }
                 }
             }
