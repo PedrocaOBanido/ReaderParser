@@ -6,7 +6,7 @@
     "webfetch": "allow",
     "websearch": "allow",
     "task": {
-      "*": "ask",
+      "*": "allow",
       "domain-author": "allow",
       "journey-runner": "allow",
       "room-migration": "allow",
@@ -59,24 +59,14 @@
 
       "openspec *":                         "allow",
 
-      "./gradlew :app:assembleDebug *":       "allow",
-      "./gradlew :app:lintDebug *":           "allow",
-      "./gradlew :app:testDebugUnitTest *":   "allow",
-      "./gradlew :app:testDebug*":          "allow",
-      "./gradlew :app:ktlintCheck *":         "allow",
-      "./gradlew :app:detekt *":              "allow",
-      "./gradlew :app:dependencies *":      "allow",
-      "./gradlew :app:tasks *":               "allow",
-      "./gradlew help *":                   "allow",
-      "./gradlew tasks *":                    "allow",
-      "./gradlew --version *":                "allow",
-
       "./gradlew :app:ktlintFormat":        "ask",
       "./gradlew :app:installDebug":        "ask",
       "./gradlew :app:assembleRelease":     "ask",
       "./gradlew :app:bundleRelease":       "ask",
       "./gradlew :app:connectedDebugAndroidTest": "ask",
       "./gradlew clean":                    "ask",
+      
+      "./gradlew *":                        "allow",
 
       "android *":                          "allow",
       "adb devices":                        "allow",
