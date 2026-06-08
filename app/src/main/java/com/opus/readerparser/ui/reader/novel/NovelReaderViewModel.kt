@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.opus.readerparser.domain.ChapterRepository
+import com.opus.readerparser.domain.DownloadEnqueuer
 import com.opus.readerparser.domain.model.Chapter
 import com.opus.readerparser.domain.model.ChapterContent
 import com.opus.readerparser.domain.model.ChapterWithState
@@ -25,6 +26,7 @@ import javax.inject.Inject
 class NovelReaderViewModel @Inject constructor(
     savedState: SavedStateHandle,
     private val chapterRepository: ChapterRepository,
+    private val downloadEnqueuer: DownloadEnqueuer,
 ) : ViewModel() {
 
     private val sourceId: Long = checkNotNull(savedState["sourceId"])
@@ -57,6 +59,15 @@ class NovelReaderViewModel @Inject constructor(
             is NovelReaderAction.NextChapter -> navigateChapter(forward = true)
             is NovelReaderAction.OpenChapterList -> viewModelScope.launch {
                 _effects.send(NovelReaderEffect.ShowChapterList)
+            }
+            is NovelReaderAction.DownloadChapter -> viewModelScope.launch {
+                val chapter = _state.value.chapter ?: return@launch
+                try {
+                    downloadEnqueuer.enqueueChapter(chapter.sourceId, chapter.url)
+                    _effects.send(NovelReaderEffect.ShowSnackbar("Queued \"${chapter.name}\" for download"))
+                } catch (e: Exception) {
+                    _effects.send(NovelReaderEffect.ShowError(e.message ?: "Failed to queue download"))
+                }
             }
         }
     }

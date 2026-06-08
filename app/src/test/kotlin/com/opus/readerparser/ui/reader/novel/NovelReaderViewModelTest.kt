@@ -6,6 +6,7 @@ import com.google.common.truth.Truth.assertThat
 import com.opus.readerparser.domain.model.ChapterContent
 import com.opus.readerparser.domain.model.ChapterWithState
 import com.opus.readerparser.fakes.FakeChapterRepository
+import com.opus.readerparser.fakes.FakeDownloadEnqueuer
 import com.opus.readerparser.testutil.MainDispatcherRule
 import com.opus.readerparser.testutil.TestFixtures
 import kotlinx.coroutines.test.runTest
@@ -23,11 +24,13 @@ class NovelReaderViewModelTest {
     private val html = "<p>Chapter body</p>"
 
     private lateinit var chapterRepo: FakeChapterRepository
+    private lateinit var downloadEnqueuer: FakeDownloadEnqueuer
     private lateinit var vm: NovelReaderViewModel
 
     @Before
     fun setUp() {
         chapterRepo = FakeChapterRepository()
+        downloadEnqueuer = FakeDownloadEnqueuer()
         chapterRepo.contentResult = ChapterContent.Text(html)
         chapterRepo.setChapters(
             series.url,
@@ -42,6 +45,7 @@ class NovelReaderViewModelTest {
                 )
             ),
             chapterRepository = chapterRepo,
+            downloadEnqueuer = downloadEnqueuer,
         )
     }
 
@@ -74,6 +78,7 @@ class NovelReaderViewModelTest {
                 )
             ),
             chapterRepository = chapterRepo,
+            downloadEnqueuer = downloadEnqueuer,
         )
 
         assertThat(freshVm.state.value.seriesChapters).containsExactly(chapter, next).inOrder()
@@ -113,6 +118,7 @@ class NovelReaderViewModelTest {
                 )
             ),
             chapterRepository = chapterRepo,
+            downloadEnqueuer = downloadEnqueuer,
         )
         assertThat(freshVm.state.value.hasNextChapter).isTrue()
 
@@ -144,8 +150,21 @@ class NovelReaderViewModelTest {
                 )
             ),
             chapterRepository = chapterRepo,
+            downloadEnqueuer = downloadEnqueuer,
         )
         assertThat(errorVm.state.value.error).isEqualTo("Unexpected content type")
         assertThat(errorVm.state.value.isLoading).isFalse()
+    }
+
+    @Test
+    fun `DownloadChapter enqueues chapter and emits ShowSnackbar effect`() = runTest {
+        vm.effects.test {
+            vm.onAction(NovelReaderAction.DownloadChapter)
+            val effect = awaitItem() as NovelReaderEffect.ShowSnackbar
+            assertThat(effect.message).contains(chapter.name)
+        }
+        assertThat(downloadEnqueuer.enqueueChapterCalls).hasSize(1)
+        assertThat(downloadEnqueuer.enqueueChapterCalls.first().sourceId).isEqualTo(chapter.sourceId)
+        assertThat(downloadEnqueuer.enqueueChapterCalls.first().chapterUrl).isEqualTo(chapter.url)
     }
 }

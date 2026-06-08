@@ -7,6 +7,7 @@ import com.opus.readerparser.domain.model.ChapterContent
 import com.opus.readerparser.domain.model.ChapterWithState
 import com.opus.readerparser.domain.model.ContentType
 import com.opus.readerparser.fakes.FakeChapterRepository
+import com.opus.readerparser.fakes.FakeDownloadEnqueuer
 import com.opus.readerparser.testutil.MainDispatcherRule
 import com.opus.readerparser.testutil.TestFixtures
 import kotlinx.coroutines.test.runTest
@@ -24,11 +25,13 @@ class MangaReaderViewModelTest {
     private val pages = listOf("https://cdn.invalid/p1.jpg", "https://cdn.invalid/p2.jpg")
 
     private lateinit var chapterRepo: FakeChapterRepository
+    private lateinit var downloadEnqueuer: FakeDownloadEnqueuer
     private lateinit var vm: MangaReaderViewModel
 
     @Before
     fun setUp() {
         chapterRepo = FakeChapterRepository()
+        downloadEnqueuer = FakeDownloadEnqueuer()
         chapterRepo.contentResult = ChapterContent.Pages(pages)
         chapterRepo.setChapters(
             series.url,
@@ -43,6 +46,7 @@ class MangaReaderViewModelTest {
                 )
             ),
             chapterRepository = chapterRepo,
+            downloadEnqueuer = downloadEnqueuer,
         )
     }
 
@@ -74,6 +78,7 @@ class MangaReaderViewModelTest {
                 )
             ),
             chapterRepository = chapterRepo,
+            downloadEnqueuer = downloadEnqueuer,
         )
 
         assertThat(freshVm.state.value.seriesChapters).containsExactly(chapter, next).inOrder()
@@ -117,6 +122,7 @@ class MangaReaderViewModelTest {
                 )
             ),
             chapterRepository = chapterRepo,
+            downloadEnqueuer = downloadEnqueuer,
         )
         assertThat(freshVm.state.value.hasNextChapter).isTrue()
 
@@ -177,6 +183,7 @@ class MangaReaderViewModelTest {
                 )
             ),
             chapterRepository = chapterRepo,
+            downloadEnqueuer = downloadEnqueuer,
         )
         assertThat(freshVm.state.value.hasNextChapter).isTrue()
 
@@ -189,5 +196,17 @@ class MangaReaderViewModelTest {
             val effect = awaitItem() as MangaReaderEffect.NavigateToChapter
             assertThat(effect.chapter).isEqualTo(next)
         }
+    }
+
+    @Test
+    fun `DownloadChapter enqueues chapter and emits ShowSnackbar effect`() = runTest {
+        vm.effects.test {
+            vm.onAction(MangaReaderAction.DownloadChapter)
+            val effect = awaitItem() as MangaReaderEffect.ShowSnackbar
+            assertThat(effect.message).contains(chapter.name)
+        }
+        assertThat(downloadEnqueuer.enqueueChapterCalls).hasSize(1)
+        assertThat(downloadEnqueuer.enqueueChapterCalls.first().sourceId).isEqualTo(chapter.sourceId)
+        assertThat(downloadEnqueuer.enqueueChapterCalls.first().chapterUrl).isEqualTo(chapter.url)
     }
 }

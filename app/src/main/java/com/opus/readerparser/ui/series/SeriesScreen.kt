@@ -1,11 +1,14 @@
 package com.opus.readerparser.ui.series
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.opus.readerparser.domain.model.ContentType
+import kotlinx.coroutines.launch
 
 @Composable
 fun SeriesScreen(
@@ -15,6 +18,7 @@ fun SeriesScreen(
     viewModel: SeriesViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
@@ -35,11 +39,18 @@ fun SeriesScreen(
                     }
                 }
                 is SeriesEffect.ShowError -> {
-                    // TODO: show snackbar with effect.message
+                    launch { snackbarHostState.showSnackbar(effect.message) }
+                }
+                is SeriesEffect.ShowSnackbar -> {
+                    launch { snackbarHostState.showSnackbar(effect.message) }
                 }
             }
         }
     }
 
-    SeriesContent(state = state, onAction = viewModel::onAction)
+    SeriesContent(
+        state = state,
+        onAction = viewModel::onAction,
+        snackbarHostState = snackbarHostState,
+    )
 }

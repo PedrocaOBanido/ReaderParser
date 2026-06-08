@@ -23,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,6 +31,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -78,11 +81,13 @@ fun MangaReaderContent(
     state: MangaReaderUiState,
     onAction: (MangaReaderAction) -> Unit,
     imageLoader: ImageLoader? = null,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     var showControls by remember { mutableStateOf(true) }
 
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -234,6 +239,9 @@ fun MangaReaderContent(
                     }
                     IconButton(onClick = { onAction(MangaReaderAction.OpenChapterList) }) {
                         Icon(Icons.AutoMirrored.Filled.List, contentDescription = "Chapter list")
+                    }
+                    IconButton(onClick = { onAction(MangaReaderAction.DownloadChapter) }) {
+                        Icon(Icons.Filled.Download, contentDescription = "Download chapter")
                     }
                 }
             }

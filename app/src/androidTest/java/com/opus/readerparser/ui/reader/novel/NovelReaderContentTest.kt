@@ -13,6 +13,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.opus.readerparser.domain.model.Chapter
 import com.opus.readerparser.domain.model.ChapterContent
 import com.opus.readerparser.domain.model.ChapterWithState
+import com.opus.readerparser.testutil.FakeDownloadEnqueuer
 import com.opus.readerparser.testutil.ReaderScreenTestChapterRepository
 import org.junit.Rule
 import org.junit.Test
@@ -117,6 +118,7 @@ class NovelReaderContentTest {
                 ),
                 content = ChapterContent.Text("<p>Content</p>"),
             ),
+            downloadEnqueuer = FakeDownloadEnqueuer(),
         )
         var navigatedChapter: Chapter? = null
 

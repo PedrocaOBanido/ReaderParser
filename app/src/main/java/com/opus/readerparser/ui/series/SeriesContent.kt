@@ -13,24 +13,30 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -58,6 +64,7 @@ private val CoverWidth = 120.dp
 fun SeriesContent(
     state: SeriesUiState,
     onAction: (SeriesAction) -> Unit,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     var descriptionExpanded by remember { mutableStateOf(false) }
 
@@ -72,15 +79,32 @@ fun SeriesContent(
                 },
             )
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             if (state.series != null) {
-                FloatingActionButton(
-                    onClick = { onAction(SeriesAction.ToggleLibrary(!state.inLibrary)) },
-                ) {
-                    Icon(
-                        imageVector = if (state.inLibrary) Icons.Filled.Bookmark else Icons.Filled.BookmarkBorder,
-                        contentDescription = if (state.inLibrary) "Remove from library" else "Add to library",
-                    )
+                Column(horizontalAlignment = Alignment.End) {
+                    // Range download FAB (only when chapters are loaded)
+                    if (state.chapters.isNotEmpty()) {
+                        FloatingActionButton(
+                            onClick = { onAction(SeriesAction.ShowRangePicker) },
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            modifier = Modifier.padding(bottom = 12.dp),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Download,
+                                contentDescription = "Download range",
+                            )
+                        }
+                    }
+                    // Library toggle FAB (always visible when series is loaded)
+                    FloatingActionButton(
+                        onClick = { onAction(SeriesAction.ToggleLibrary(!state.inLibrary)) },
+                    ) {
+                        Icon(
+                            imageVector = if (state.inLibrary) Icons.Filled.Bookmark else Icons.Filled.BookmarkBorder,
+                            contentDescription = if (state.inLibrary) "Remove from library" else "Add to library",
+                        )
+                    }
                 }
             }
         },
@@ -183,6 +207,23 @@ fun SeriesContent(
                             }
                         }
 
+                        // Download unread button
+                        item {
+                            TextButton(
+                                onClick = { onAction(SeriesAction.DownloadUnread) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp),
+                            ) {
+                                Icon(
+                                    Icons.Filled.Download,
+                                    contentDescription = null,
+                                    modifier = Modifier.padding(end = 8.dp),
+                                )
+                                Text("Download unread")
+                            }
+                        }
+
                         // Chapter list
                         items(state.chapters, key = { "${it.chapter.sourceId}|${it.chapter.url}" }) { cws ->
                             ChapterRow(
@@ -195,6 +236,85 @@ fun SeriesContent(
             }
         }
     }
+
+    // Range picker dialog
+    if (state.showRangePicker) {
+        RangePickerDialog(
+            chapterCount = state.chapters.size,
+            onConfirm = { start, end ->
+                onAction(SeriesAction.DownloadRange(start, end))
+            },
+            onDismiss = { onAction(SeriesAction.DismissRangePicker) },
+        )
+    }
+}
+
+@Composable
+private fun RangePickerDialog(
+    chapterCount: Int,
+    onConfirm: (startIndex: Int, endIndex: Int) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    // Chapters are displayed in descending order in the list, but the range
+    // picker works with ascending chapter numbers. We present 1-based indices
+    // to the user and convert back to 0-based.
+    var startIndex by remember { mutableIntStateOf(0) }
+    var endIndex by remember { mutableIntStateOf((chapterCount - 1).coerceAtLeast(0)) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Download range") },
+        text = {
+            Column {
+                Text(
+                    text = "Select chapter range (1–$chapterCount)",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Spacer(Modifier.height(8.dp))
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text("From", style = MaterialTheme.typography.labelMedium)
+                        androidx.compose.material3.OutlinedTextField(
+                            value = (startIndex + 1).toString(),
+                            onValueChange = { value ->
+                                value.toIntOrNull()?.let { idx ->
+                                    startIndex = (idx - 1).coerceIn(0, chapterCount - 1)
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true,
+                        )
+                    }
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text("To", style = MaterialTheme.typography.labelMedium)
+                        androidx.compose.material3.OutlinedTextField(
+                            value = (endIndex + 1).toString(),
+                            onValueChange = { value ->
+                                value.toIntOrNull()?.let { idx ->
+                                    endIndex = (idx - 1).coerceIn(0, chapterCount - 1)
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true,
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { onConfirm(startIndex, endIndex) }) {
+                Text("Download")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        },
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

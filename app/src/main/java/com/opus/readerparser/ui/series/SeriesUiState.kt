@@ -11,15 +11,21 @@ data class SeriesUiState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val inLibrary: Boolean = false,
+    val showRangePicker: Boolean = false,
 )
 
 sealed interface SeriesAction {
     data object Refresh : SeriesAction
     data class ToggleLibrary(val inLibrary: Boolean) : SeriesAction
     data class OpenChapter(val chapter: Chapter) : SeriesAction
+    data object DownloadUnread : SeriesAction
+    data object ShowRangePicker : SeriesAction
+    data object DismissRangePicker : SeriesAction
+    data class DownloadRange(val startIndex: Int, val endIndex: Int) : SeriesAction
 }
 
 sealed interface SeriesEffect {
     data class NavigateToReader(val chapter: Chapter, val type: ContentType) : SeriesEffect
     data class ShowError(val message: String) : SeriesEffect
+    data class ShowSnackbar(val message: String) : SeriesEffect
 }

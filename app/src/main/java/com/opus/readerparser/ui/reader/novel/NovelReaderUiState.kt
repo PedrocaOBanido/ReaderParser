@@ -20,10 +20,12 @@ sealed interface NovelReaderAction {
     data object PreviousChapter : NovelReaderAction
     data object NextChapter : NovelReaderAction
     data object OpenChapterList : NovelReaderAction
+    data object DownloadChapter : NovelReaderAction
 }
 
 sealed interface NovelReaderEffect {
     data class NavigateToChapter(val chapter: Chapter) : NovelReaderEffect
     data object ShowChapterList : NovelReaderEffect
     data class ShowError(val message: String) : NovelReaderEffect
+    data class ShowSnackbar(val message: String) : NovelReaderEffect
 }
