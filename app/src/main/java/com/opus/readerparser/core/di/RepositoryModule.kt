@@ -2,10 +2,14 @@ package com.opus.readerparser.core.di
 
 import com.opus.readerparser.data.local.prefs.SettingsRepositoryImpl
 import com.opus.readerparser.data.repository.ChapterRepositoryImpl
+import com.opus.readerparser.data.repository.DownloadEnqueuerImpl
 import com.opus.readerparser.data.repository.DownloadRepositoryImpl
 import com.opus.readerparser.data.repository.SeriesRepositoryImpl
 import com.opus.readerparser.data.repository.SourceRepositoryImpl
+import com.opus.readerparser.data.repository.WorkManagerHelper
+import com.opus.readerparser.data.repository.WorkManagerHelperImpl
 import com.opus.readerparser.domain.ChapterRepository
+import com.opus.readerparser.domain.DownloadEnqueuer
 import com.opus.readerparser.domain.DownloadRepository
 import com.opus.readerparser.domain.SeriesRepository
 import com.opus.readerparser.domain.SettingsRepository
@@ -39,4 +43,12 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindSettingsRepository(impl: SettingsRepositoryImpl): SettingsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindDownloadEnqueuer(impl: DownloadEnqueuerImpl): DownloadEnqueuer
+
+    @Binds
+    @Singleton
+    abstract fun bindWorkManagerHelper(impl: WorkManagerHelperImpl): WorkManagerHelper
 }
