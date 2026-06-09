@@ -215,6 +215,63 @@ class ChapterDownloadWorkerTest {
         // findByUrl returns null (no chapter in DB for unknownSourceId) → FAILED.
         assertThat(info.state).isEqualTo(WorkInfo.State.FAILED)
     }
+
+    // --- progress tests ---
+
+    @Test
+    fun novelChapter_progressSequence_emitsRunningThenCompleted() = runTest {
+        val sourceId = fakeSource.id
+        val seriesUrl = "https://example.com/series/10"
+        val chapterUrl = "https://example.com/chapter/10"
+
+        fakeSource.chapterContentResult = ChapterContent.Text("<p>Novel</p>")
+        insertSeries(sourceId, seriesUrl)
+        insertChapter(sourceId, chapterUrl, seriesUrl)
+
+        enqueueAndWait(sourceId, chapterUrl)
+
+        val calls = fakeDownloadRepository.updateQueueStateCalls
+        // Expected sequence: RUNNING 0f (initial), RUNNING 0.5f (after fetch), COMPLETED 1f
+        val runningCalls = calls.filter { it.state == DownloadState.RUNNING }
+        assertThat(runningCalls).hasSize(2)
+        assertThat(runningCalls[0].progress).isEqualTo(0f)
+        assertThat(runningCalls[1].progress).isEqualTo(0.5f)
+
+        val completedCall = calls.firstOrNull { it.state == DownloadState.COMPLETED }
+        assertThat(completedCall).isNotNull()
+        assertThat(completedCall!!.progress).isEqualTo(1f)
+    }
+
+    @Test
+    fun manhwaChapter_progressSequence_emitsIntermediateRunningValues() = runTest {
+        val sourceId = fakeSource.id
+        val seriesUrl = "https://example.com/series/11"
+        val chapterUrl = "https://example.com/chapter/11"
+        val pages = listOf(
+            "https://cdn.example.com/p1.jpg",
+            "https://cdn.example.com/p2.jpg",
+            "https://cdn.example.com/p3.jpg",
+        )
+
+        fakeSource.chapterContentResult = ChapterContent.Pages(pages)
+        insertSeries(sourceId, seriesUrl)
+        insertChapter(sourceId, chapterUrl, seriesUrl)
+
+        enqueueAndWait(sourceId, chapterUrl)
+
+        val calls = fakeDownloadRepository.updateQueueStateCalls
+        val runningCalls = calls.filter { it.state == DownloadState.RUNNING }
+        // Expected: RUNNING 0f (initial) + 3 intermediate RUNNING calls (1/3, 2/3, 3/3)
+        assertThat(runningCalls).hasSize(4)
+        assertThat(runningCalls[0].progress).isEqualTo(0f)
+        assertThat(runningCalls[1].progress).isWithin(0.01f).of(1f / 3f)
+        assertThat(runningCalls[2].progress).isWithin(0.01f).of(2f / 3f)
+        assertThat(runningCalls[3].progress).isEqualTo(1f)
+
+        val completedCall = calls.firstOrNull { it.state == DownloadState.COMPLETED }
+        assertThat(completedCall).isNotNull()
+        assertThat(completedCall!!.progress).isEqualTo(1f)
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -242,8 +299,12 @@ private class FakeDownloadStoreAndroidTest : DownloadStore {
         chapter: Chapter,
         imageUrls: List<String>,
         fetchBytes: suspend (url: String) -> ByteArray,
+        onPageDownloaded: suspend (pagesDownloaded: Int, totalPages: Int) -> Unit,
     ) {
-        imageUrls.forEach { url -> fetchBytes(url) }   // invoke so lambda is exercised
+        imageUrls.forEachIndexed { index, url ->
+            fetchBytes(url)   // invoke so lambda is exercised
+            onPageDownloaded(index + 1, imageUrls.size)
+        }
         manhwaWrites.add(chapter to imageUrls)
         storedContent[chapter] = ChapterContent.Pages(imageUrls)
     }

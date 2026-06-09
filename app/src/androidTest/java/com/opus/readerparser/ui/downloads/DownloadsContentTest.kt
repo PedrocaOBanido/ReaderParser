@@ -77,4 +77,36 @@ class DownloadsContentTest {
         composeRule.onNodeWithText("Retry").performClick()
         assert(retried)
     }
+
+    @Test
+    fun runningItemWithProgress_showsPercentageBadge() {
+        val item = DownloadItem(
+            sourceId = 1L,
+            chapterUrl = "c1",
+            chapterName = "Chapter 1",
+            seriesTitle = "Solo Leveling",
+            state = DownloadState.RUNNING,
+            progress = 0.45f,
+        )
+        composeRule.setContent {
+            DownloadsContent(state = DownloadsUiState(downloads = listOf(item)), onAction = {})
+        }
+        composeRule.onNodeWithText("45%").assertIsDisplayed()
+    }
+
+    @Test
+    fun runningItemWithZeroProgress_showsDownloadingBadge() {
+        val item = DownloadItem(
+            sourceId = 1L,
+            chapterUrl = "c1",
+            chapterName = "Chapter 1",
+            seriesTitle = "Solo Leveling",
+            state = DownloadState.RUNNING,
+            progress = 0f,
+        )
+        composeRule.setContent {
+            DownloadsContent(state = DownloadsUiState(downloads = listOf(item)), onAction = {})
+        }
+        composeRule.onNodeWithText("Downloading").assertIsDisplayed()
+    }
 }

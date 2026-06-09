@@ -148,4 +148,36 @@ class DownloadStoreImplTest {
         // Should complete without exception even when nothing was written
         store.delete(chapter)
     }
+
+    @Test
+    fun `writeManhwa invokes onPageDownloaded with correct progress values`() = runTest {
+        val imageUrls = listOf(
+            "https://cdn.invalid/page1.jpg",
+            "https://cdn.invalid/page2.jpg",
+            "https://cdn.invalid/page3.jpg",
+        )
+        val store = makeStore()
+        val progressUpdates = mutableListOf<Pair<Int, Int>>()
+
+        store.writeManhwa(chapter, imageUrls, fetchBytes) { downloaded, total ->
+            progressUpdates.add(downloaded to total)
+        }
+
+        assertEquals(
+            listOf(1 to 3, 2 to 3, 3 to 3),
+            progressUpdates,
+        )
+    }
+
+    @Test
+    fun `writeManhwa does not invoke onPageDownloaded for empty imageUrls`() = runTest {
+        val store = makeStore()
+        var callbackInvoked = false
+
+        store.writeManhwa(chapter, emptyList(), fetchBytes) { _, _ ->
+            callbackInvoked = true
+        }
+
+        assertTrue("onPageDownloaded should not be called for empty list", !callbackInvoked)
+    }
 }
