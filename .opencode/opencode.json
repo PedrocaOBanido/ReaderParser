@@ -59,6 +59,8 @@
 
       "openspec *":                         "allow",
 
+      "./gradlew *":                        "allow",
+
       "./gradlew :app:ktlintFormat":        "ask",
       "./gradlew :app:installDebug":        "ask",
       "./gradlew :app:assembleRelease":     "ask",
@@ -66,8 +68,6 @@
       "./gradlew :app:connectedDebugAndroidTest": "ask",
       "./gradlew clean":                    "ask",
       
-      "./gradlew *":                        "allow",
-
       "android *":                          "allow",
       "adb devices":                        "allow",
       "adb logcat *":                       "allow",
