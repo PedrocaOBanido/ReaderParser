@@ -107,7 +107,7 @@ This repo is set up for opencode. The relevant files:
 - `app/src/main/kotlin/**/AGENTS.md` — narrower rules close to the code.
 - `.opencode/agent/` — specialized subagents (source-author, screen-author,
   room-migration, reviewer).
-- `.opencode/command/` — custom slash commands (`/new-source`, `/new-screen`,
+- `.opencode/commands/` — custom slash commands (`/new-source`, `/new-screen`,
   `/add-migration`, `/verify`).
 
 Non-trivial changes follow the OpenSpec workflow: propose → design → specs →
