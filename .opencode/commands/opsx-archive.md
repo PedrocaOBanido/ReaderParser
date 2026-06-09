@@ -75,13 +75,26 @@ Archive a completed change in the experimental workflow.
    mv openspec/changes/<name> openspec/changes/archive/YYYY-MM-DD-<name>
    ```
 
-6. **Display summary**
+6. **Dispatch integrator for git/PR/CI lifecycle**
+
+   After archiving the change directory and syncing delta specs, dispatch
+   the `integrator` agent to prepare the change for merge into
+   `origin/main`. The integrator will:
+   - Group commits by prefix (feat, fix, refactor, ci, cd, docs)
+   - Create a feature branch named `change/<change-name>`
+   - Push the branch to origin
+   - Create a PR with grouped commit summary
+   - Watch CI checks until they complete
+   - Merge on green with user confirmation (merge commit, not squash)
+
+7. **Display summary**
 
    Show archive completion summary including:
    - Change name
    - Schema that was used
    - Archive location
    - Spec sync status (synced / sync skipped / no delta specs)
+   - Integration status (PR URL, CI status, merge result)
    - Note about any warnings (incomplete artifacts/tasks)
 
 **Output On Success**
@@ -93,6 +106,7 @@ Archive a completed change in the experimental workflow.
 **Schema:** <schema-name>
 **Archived to:** openspec/changes/archive/YYYY-MM-DD-<name>/
 **Specs:** ✓ Synced to main specs
+**Integration:** ✓ PR created, CI green, merged
 
 All artifacts complete. All tasks complete.
 ```
@@ -106,6 +120,7 @@ All artifacts complete. All tasks complete.
 **Schema:** <schema-name>
 **Archived to:** openspec/changes/archive/YYYY-MM-DD-<name>/
 **Specs:** No delta specs
+**Integration:** ✓ PR created, CI green, merged
 
 All artifacts complete. All tasks complete.
 ```
@@ -119,6 +134,7 @@ All artifacts complete. All tasks complete.
 **Schema:** <schema-name>
 **Archived to:** openspec/changes/archive/YYYY-MM-DD-<name>/
 **Specs:** Sync skipped (user chose to skip)
+**Integration:** ⏸ Pending user confirmation / CI pending / blocked
 
 **Warnings:**
 - Archived with 2 incomplete artifacts
