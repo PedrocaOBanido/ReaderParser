@@ -104,6 +104,26 @@ other file may redefine or duplicate the content owned by these files.
 - **THEN** `AGENTS.md` MUST be updated, and no other canonical file may redefine
   agent behavior or routing
 
+#### Scenario: Integrator owns git/PR/CI lifecycle
+
+- **WHEN** a change needs to be pushed to `origin/main`
+- **THEN** the `integrator` agent SHALL handle branch creation, push, PR
+  creation, CI watching, and merge-on-green
+
+#### Scenario: Build agent does not run git commands
+
+- **WHEN** the build agent is dispatched for a task
+- **THEN** it SHALL NOT run `git add`, `git commit`, `git push`, or any
+  other git write command; it SHALL delegate to `integrator` if git
+  operations are needed
+
+#### Scenario: Agent permission model enforces lane boundaries
+
+- **WHEN** `.opencode/opencode.json` is configured
+- **THEN** each agent SHALL have per-agent `permission.bash` overrides
+  that deny commands outside its lane and allow commands within its lane,
+  and global `git add`/`git commit` defaults SHALL be `"ask"`
+
 #### Scenario: Change artifacts live in openspec/changes/
 
 - **WHEN** a non-trivial change is planned or implemented
