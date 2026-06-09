@@ -30,12 +30,15 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
           OWNER: ${{ github.repository_owner }}
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          INPUT_REF: ${{ inputs.ref }}
         run: |
           # Determine which ref to query (full ref for the API, short name for display)
-          if [[ "${{ github.event_name }}" == "workflow_run" ]]; then
-            REF="refs/heads/${{ github.event.workflow_run.head_branch }}"
+          if [[ "${EVENT_NAME}" == "workflow_run" ]]; then
+            REF="refs/heads/${HEAD_BRANCH}"
           else
-            REF="${{ inputs.ref }}"
+            REF="${INPUT_REF}"
           fi
           BRANCH_DISPLAY="${REF#refs/heads/}"
           echo "Querying alerts on branch: ${BRANCH_DISPLAY}"
