@@ -48,24 +48,27 @@ jobs:
         run: |
           TITLE="[${SEVERITY^}] ${RULE_NAME} (${TOOL_NAME} #${ALERT_NUMBER})"
 
-          BODY="## Alert
+          BODY=$(cat <<EOF
+          ## Alert
 
-**Rule:** \`${RULE_ID}\`
-**Severity:** ${SEVERITY^}
-**Tool:** ${TOOL_NAME}
-**Branch:** \`${REF#refs/heads/}\`
-**Alert URL:** ${ALERT_URL}
+          **Rule:** \`${RULE_ID}\`
+          **Severity:** ${SEVERITY^}
+          **Tool:** ${TOOL_NAME}
+          **Branch:** \`${REF#refs/heads/}\`
+          **Alert URL:** ${ALERT_URL}
 
-## Location
+          ## Location
 
-File: \`${FILE_PATH}\`, lines ${START_LINE}–${END_LINE}
+          File: \`${FILE_PATH}\`, lines ${START_LINE}–${END_LINE}
 
-## Message
+          ## Message
 
-${MESSAGE}
+          ${MESSAGE}
 
----
-*This issue was created automatically from a ${TOOL_NAME} code scanning alert.*"
+          ---
+          *This issue was created automatically from a ${TOOL_NAME} code scanning alert.*
+          EOF
+          )
 
           gh issue create \
             --repo "${{ github.repository }}" \
