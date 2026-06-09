@@ -21,7 +21,7 @@ reader-app/                              # repo root
 │   │   ├── screen-author.md             #   scaffolds new Compose screens
 │   │   ├── room-migration.md            #   handles Room schema changes
 │   │   └── reviewer.md                  #   read-only code review
-│   ├── command/                         # custom slash commands
+│   ├── commands/                        # custom slash commands
 │   │   ├── new-source.md                #   /new-source <SiteName>
 │   │   ├── new-screen.md                #   /new-screen <ScreenName>
 │   │   ├── verify.md                    #   /verify  → build + lint + tests
@@ -279,10 +279,10 @@ per-project only when this project genuinely needs a different model.
 
 ## 4. Custom commands
 
-Custom slash commands live in `.opencode/command/`. The filename becomes
+Custom slash commands live in `.opencode/commands/`. The filename becomes
 the command name. Below are the four worth having on day one.
 
-### `.opencode/command/new-source.md`
+### `.opencode/commands/new-source.md`
 
 ```markdown
 ---
@@ -311,7 +311,7 @@ Stop and ask the user for the CSS selectors before filling in parser logic.
 Do not invent selectors.
 ```
 
-### `.opencode/command/new-screen.md`
+### `.opencode/commands/new-screen.md`
 
 ```markdown
 ---
@@ -340,7 +340,7 @@ Do not implement business logic — leave TODOs. Ask for the screen's purpose
 before writing any state fields.
 ```
 
-### `.opencode/command/verify.md`
+### `.opencode/commands/verify.md`
 
 ```markdown
 ---
@@ -360,7 +360,7 @@ not attempt to fix without explicit instruction. Do not suppress warnings,
 add `@Suppress`, or disable lint rules to make a step pass.
 ```
 
-### `.opencode/command/add-migration.md`
+### `.opencode/commands/add-migration.md`
 
 ```markdown
 ---
@@ -600,7 +600,7 @@ When setting up the repo from scratch:
 2. Replace `app/src/main/kotlin/com/opus/readerparser/MainActivity.kt` with the
    directory layout from §1. Empty packages are fine; create files as needed.
 3. Drop in `architecture.md`, `AGENTS.md`, and `opencode.json` at the repo root.
-4. Create `.opencode/agent/`, `.opencode/command/` and populate from §4 and §5.
+4. Create `.opencode/agent/`, `.opencode/commands/` and populate from §4 and §5.
 5. Run `opencode` in the repo and verify with a small task — e.g., ask it to
    `/new-source TestSite https://example.invalid MANHWA en` and check that the
    scaffolded files match the conventions in `sources/AGENTS.md`.
