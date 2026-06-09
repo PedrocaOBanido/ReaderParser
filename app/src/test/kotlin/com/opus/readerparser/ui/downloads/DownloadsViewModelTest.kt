@@ -78,4 +78,19 @@ class DownloadsViewModelTest {
         }
         assertThat(repo.retryCalls).containsExactly(1L to chapterUrl)
     }
+
+    @Test
+    fun `Delete removes item from state and calls repository`() = runTest {
+        val chapterUrl = "https://test.invalid/ch/1"
+        vm.state.test {
+            awaitItem() // empty
+
+            repo.setQueue(listOf(item(chapterUrl, DownloadState.COMPLETED)))
+            awaitItem() // completed item
+
+            vm.onAction(DownloadsAction.Delete(1L, chapterUrl))
+            assertThat(awaitItem().downloads).isEmpty()
+        }
+        assertThat(repo.deleteDownloadCalls).containsExactly(1L to chapterUrl)
+    }
 }

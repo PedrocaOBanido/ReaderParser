@@ -20,10 +20,12 @@ sealed interface MangaReaderAction {
     data object PreviousChapter : MangaReaderAction
     data object NextChapter : MangaReaderAction
     data object OpenChapterList : MangaReaderAction
+    data object DownloadChapter : MangaReaderAction
 }
 
 sealed interface MangaReaderEffect {
     data class NavigateToChapter(val chapter: Chapter) : MangaReaderEffect
     data object ShowChapterList : MangaReaderEffect
     data class ShowError(val message: String) : MangaReaderEffect
+    data class ShowSnackbar(val message: String) : MangaReaderEffect
 }

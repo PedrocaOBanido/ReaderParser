@@ -22,7 +22,7 @@ class ReaderScreenTestChapterRepository(
     override suspend fun findByUrl(sourceId: Long, url: String): Chapter? =
         chapterState.value.firstOrNull { it.chapter.sourceId == sourceId && it.chapter.url == url }?.chapter
 
-    override suspend fun getContent(chapter: Chapter): ChapterContent = content
+    override suspend fun getContent(chapter: Chapter, forceNetwork: Boolean): ChapterContent = content
 
     override suspend fun markRead(chapter: Chapter, read: Boolean) = Unit
 

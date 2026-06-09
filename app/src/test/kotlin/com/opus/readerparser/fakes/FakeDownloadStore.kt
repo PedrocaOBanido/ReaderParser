@@ -33,6 +33,12 @@ class FakeDownloadStore : DownloadStore {
     /** Records every [delete] call. */
     val deleteCalls: MutableList<Chapter> = mutableListOf()
 
+    /** Records every [deleteByHash] call. */
+    val deleteByHashCalls: MutableList<Pair<Long, String>> = mutableListOf()
+
+    /** Configurable return value for [deleteByHash]. */
+    var deleteByHashResult: Boolean = false
+
     override suspend fun read(chapter: Chapter): ChapterContent? = storedContent[chapter]
 
     override suspend fun writeNovel(chapter: Chapter, html: String) {
@@ -53,5 +59,10 @@ class FakeDownloadStore : DownloadStore {
     override suspend fun delete(chapter: Chapter) {
         deleteCalls.add(chapter)
         storedContent.remove(chapter)
+    }
+
+    override suspend fun deleteByHash(sourceId: Long, chapterUrlHash: String): Boolean {
+        deleteByHashCalls.add(sourceId to chapterUrlHash)
+        return deleteByHashResult
     }
 }

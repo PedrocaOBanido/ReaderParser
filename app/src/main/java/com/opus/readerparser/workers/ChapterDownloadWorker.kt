@@ -64,10 +64,9 @@ class ChapterDownloadWorker @AssistedInject constructor(
 
             downloadRepository.updateQueueState(sourceId, chapterUrl, DownloadState.RUNNING, 0f)
 
-            // getContent delegates to the source internally; the worker never
-            // references SourceRegistry directly. HttpClient is used only to
-            // provide the fetchBytes lambda for writeManhwa.
-            val content = chapterRepository.getContent(chapter)
+            // Always fetch fresh remote content for downloads — the offline-first
+            // cache is for readers, not for the download worker.
+            val content = chapterRepository.getContent(chapter, forceNetwork = true)
 
             when (content) {
                 is ChapterContent.Text -> downloads.writeNovel(chapter, content.html)

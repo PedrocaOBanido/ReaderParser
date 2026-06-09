@@ -55,4 +55,14 @@ interface DownloadStore {
 
     /** Removes the downloaded files for [chapter], if they exist. */
     suspend fun delete(chapter: Chapter)
+
+    /**
+     * Removes downloaded files by searching for a matching chapter URL hash.
+     *
+     * Unlike [delete], this does not require a full [Chapter] object with
+     * `seriesUrl`. It searches the download directory for any subdirectory
+     * matching [chapterUrlHash] under [sourceId] and removes it. Returns
+     * `true` if a matching directory was found and deleted.
+     */
+    suspend fun deleteByHash(sourceId: Long, chapterUrlHash: String): Boolean
 }

@@ -11,6 +11,7 @@ import com.opus.readerparser.domain.model.ChapterContent
 import com.opus.readerparser.domain.model.ContentType
 import com.opus.readerparser.domain.model.FilterList
 import com.opus.readerparser.domain.model.Series
+import com.opus.readerparser.fakes.FakeDownloadStore
 import com.opus.readerparser.fakes.FakeSource
 import com.opus.readerparser.testutil.TestFixtures
 import kotlinx.coroutines.flow.first
@@ -18,6 +19,8 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.fail
 import org.junit.Test
 
@@ -83,7 +86,9 @@ class ChapterRepositoryImplTest {
 
     private val fakeDao = FakeChapterDao()
 
-    private val repository = ChapterRepositoryImpl(sourceRegistry, fakeDao)
+    private val fakeDownloadStore = FakeDownloadStore()
+
+    private val repository = ChapterRepositoryImpl(sourceRegistry, fakeDao, fakeDownloadStore)
 
     private val testSeries = TestFixtures.testSeries(sourceId = fakeSource.id)
 
@@ -184,7 +189,7 @@ class ChapterRepositoryImplTest {
     fun `getContent delegates to Source getChapterContent for manhwa`() = runTest {
         val manhwaSource = FakeSource(name = "ManhwaSource", lang = "en", type = ContentType.MANHWA)
         val manhwaRegistry = SourceRegistry(mapOf(manhwaSource.id to manhwaSource))
-        val manhwaRepo = ChapterRepositoryImpl(manhwaRegistry, fakeDao)
+        val manhwaRepo = ChapterRepositoryImpl(manhwaRegistry, fakeDao, fakeDownloadStore)
         val manhwaChapter = testChapter.copy(sourceId = manhwaSource.id)
         val expectedContent = TestFixtures.testPagesContent(
             imageUrls = listOf("https://test.invalid/page/1.jpg", "https://test.invalid/page/2.jpg"),
@@ -198,17 +203,27 @@ class ChapterRepositoryImplTest {
     }
 
     @Test
-    fun `getContent does not check downloads - always delegates to Source`() = runTest {
-        val chapterInDao = testChapter.toEntity().copy(downloaded = true)
-        fakeDao.upsertAll(listOf(chapterInDao))
+    fun `getContent returns cached content from DownloadStore when available`() = runTest {
+        val cachedContent = TestFixtures.testTextContent(html = "<p>Cached content</p>")
+        fakeDownloadStore.storedContent[testChapter] = cachedContent
 
-        val expectedContent = TestFixtures.testTextContent()
+        val result = repository.getContent(testChapter)
+
+        assertEquals(cachedContent, result)
+        // Source should NOT have been called
+        assertEquals(emptyList<Chapter>(), fakeSource.getChapterContentCalls)
+    }
+
+    @Test
+    fun `getContent falls back to Source when DownloadStore returns null`() = runTest {
+        // DownloadStore is empty — no cached content
+        val expectedContent = TestFixtures.testTextContent(html = "<p>Network content</p>")
         fakeSource.chapterContentResult = expectedContent
 
         val result = repository.getContent(testChapter)
 
-        assertEquals(listOf(testChapter), fakeSource.getChapterContentCalls)
         assertEquals(expectedContent, result)
+        assertEquals(listOf(testChapter), fakeSource.getChapterContentCalls)
     }
 
     // -----------------------------------------------------------------
@@ -287,7 +302,7 @@ class ChapterRepositoryImplTest {
                 error("not implemented")
         }
         val throwingRegistry = SourceRegistry(mapOf(throwingSource.id to throwingSource))
-        val throwingRepo = ChapterRepositoryImpl(throwingRegistry, fakeDao)
+        val throwingRepo = ChapterRepositoryImpl(throwingRegistry, fakeDao, fakeDownloadStore)
         val series = testSeries.copy(sourceId = throwingSource.id)
 
         try {
@@ -316,7 +331,7 @@ class ChapterRepositoryImplTest {
                 throw IllegalStateException("Content error")
         }
         val throwingRegistry = SourceRegistry(mapOf(throwingSource.id to throwingSource))
-        val throwingRepo = ChapterRepositoryImpl(throwingRegistry, fakeDao)
+        val throwingRepo = ChapterRepositoryImpl(throwingRegistry, fakeDao, fakeDownloadStore)
         val chapter = testChapter.copy(sourceId = throwingSource.id)
 
         try {
@@ -349,5 +364,82 @@ class ChapterRepositoryImplTest {
         } catch (_: Exception) {
             // Expected — SourceRegistry throws for unregistered IDs
         }
+    }
+
+    // -----------------------------------------------------------------
+    // refreshChapters — state preservation
+    // -----------------------------------------------------------------
+
+    @Test
+    fun `refreshChapters preserves read state for existing chapters`() = runTest {
+        // Seed local DB with a chapter that is read
+        val localChapter = testChapter.copy(url = "https://test.invalid/chapter/1", number = 1f)
+        fakeDao.upsertAll(listOf(localChapter.toEntity().copy(read = true)))
+
+        // Remote returns the same chapter
+        fakeSource.chapterListResult = listOf(localChapter)
+
+        repository.refreshChapters(testSeries)
+
+        val stored = fakeDao.getByUrl(testSeries.sourceId, localChapter.url)!!
+        assertEquals(true, stored.read)
+    }
+
+    @Test
+    fun `refreshChapters preserves progress for existing chapters`() = runTest {
+        val localChapter = testChapter.copy(url = "https://test.invalid/chapter/1", number = 1f)
+        fakeDao.upsertAll(listOf(localChapter.toEntity().copy(progress = 0.75f)))
+
+        fakeSource.chapterListResult = listOf(localChapter)
+
+        repository.refreshChapters(testSeries)
+
+        val stored = fakeDao.getByUrl(testSeries.sourceId, localChapter.url)!!
+        assertEquals(0.75f, stored.progress, 0.001f)
+    }
+
+    @Test
+    fun `refreshChapters preserves downloaded flag for existing chapters`() = runTest {
+        val localChapter = testChapter.copy(url = "https://test.invalid/chapter/1", number = 1f)
+        fakeDao.upsertAll(listOf(localChapter.toEntity().copy(downloaded = true)))
+
+        fakeSource.chapterListResult = listOf(localChapter)
+
+        repository.refreshChapters(testSeries)
+
+        val stored = fakeDao.getByUrl(testSeries.sourceId, localChapter.url)!!
+        assertEquals(true, stored.downloaded)
+    }
+
+    @Test
+    fun `refreshChapters inserts new chapters with default state`() = runTest {
+        // No local chapters exist
+        val remoteChapter = testChapter.copy(url = "https://test.invalid/chapter/new", number = 1f)
+        fakeSource.chapterListResult = listOf(remoteChapter)
+
+        repository.refreshChapters(testSeries)
+
+        val stored = fakeDao.getByUrl(testSeries.sourceId, remoteChapter.url)!!
+        assertEquals(false, stored.read)
+        assertEquals(0f, stored.progress, 0.001f)
+        assertEquals(false, stored.downloaded)
+    }
+
+    @Test
+    fun `refreshChapters removes stale chapters no longer in remote list`() = runTest {
+        // Local has chapter 1 and chapter 2
+        val ch1 = testChapter.copy(url = "https://test.invalid/chapter/1", number = 1f)
+        val ch2 = testChapter.copy(url = "https://test.invalid/chapter/2", number = 2f)
+        fakeDao.upsertAll(listOf(ch1.toEntity(), ch2.toEntity()))
+
+        // Remote only returns chapter 1 (chapter 2 was removed from source)
+        fakeSource.chapterListResult = listOf(ch1)
+
+        repository.refreshChapters(testSeries)
+
+        val stored1 = fakeDao.getByUrl(testSeries.sourceId, ch1.url)
+        val stored2 = fakeDao.getByUrl(testSeries.sourceId, ch2.url)
+        assertNotNull(stored1)
+        assertNull(stored2)
     }
 }

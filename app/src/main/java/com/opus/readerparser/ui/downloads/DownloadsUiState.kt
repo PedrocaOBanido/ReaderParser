@@ -11,6 +11,7 @@ data class DownloadsUiState(
 sealed interface DownloadsAction {
     data class Cancel(val sourceId: Long, val chapterUrl: String) : DownloadsAction
     data class Retry(val sourceId: Long, val chapterUrl: String) : DownloadsAction
+    data class Delete(val sourceId: Long, val chapterUrl: String) : DownloadsAction
 }
 
 sealed interface DownloadsEffect {

@@ -54,4 +54,10 @@ interface DownloadQueueDao {
 
     @Query("DELETE FROM download_queue WHERE sourceId = :sourceId AND chapterUrl = :chapterUrl")
     suspend fun delete(sourceId: Long, chapterUrl: String)
+
+    @Query("DELETE FROM download_queue WHERE sourceId = :sourceId AND chapterUrl IN (:chapterUrls)")
+    suspend fun deleteBatch(sourceId: Long, chapterUrls: List<String>)
+
+    @Query("SELECT state FROM download_queue WHERE sourceId = :sourceId AND chapterUrl = :chapterUrl")
+    suspend fun getState(sourceId: Long, chapterUrl: String): String?
 }
