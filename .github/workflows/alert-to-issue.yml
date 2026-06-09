@@ -1,8 +1,15 @@
 name: Alert → Issue
 
 on:
-  code_scanning_alert:
-    types: [appeared_in_branch, reopened]
+  workflow_run:
+    workflows: ["CodeQL"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch to scan (e.g. refs/heads/main)"
+        required: false
+        default: "refs/heads/main"
 
 permissions:
   contents: read
@@ -10,51 +17,84 @@ permissions:
   security-events: read
 
 jobs:
-  create-issue:
+  create-issues:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
 
     steps:
-      - name: Check for duplicate issue
-        id: dedup
+      - name: Create issues for open alerts
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ALERT_NUMBER: ${{ github.event.alert.number }}
+          REPO: ${{ github.repository }}
+          OWNER: ${{ github.repository_owner }}
         run: |
-          # Search for an open issue that already tracks this alert
-          EXISTING=$(gh issue list \
-            --repo "${{ github.repository }}" \
-            --state open \
-            --search "\"CodeQL #${ALERT_NUMBER}\" in:title" \
-            --json number \
-            --jq 'length')
-          echo "existing=${EXISTING}" >> "$GITHUB_OUTPUT"
+          # Determine which ref to query (full ref for the API, short name for display)
+          if [[ "${{ github.event_name }}" == "workflow_run" ]]; then
+            REF="refs/heads/${{ github.event.workflow_run.head_branch }}"
+          else
+            REF="${{ inputs.ref }}"
+          fi
+          BRANCH_DISPLAY="${REF#refs/heads/}"
+          echo "Querying alerts on branch: ${BRANCH_DISPLAY}"
 
-      - name: Create issue
-        if: steps.dedup.outputs.existing == '0'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RULE_ID:       ${{ github.event.alert.rule.id }}
-          RULE_NAME:     ${{ github.event.alert.rule.description }}
-          SEVERITY:      ${{ github.event.alert.rule.severity }}
-          ALERT_URL:     ${{ github.event.alert.html_url }}
-          ALERT_NUMBER:  ${{ github.event.alert.number }}
-          TOOL_NAME:     ${{ github.event.alert.tool.name }}
-          FILE_PATH:     ${{ github.event.alert.most_recent_instance.location.path }}
-          START_LINE:    ${{ github.event.alert.most_recent_instance.location.start_line }}
-          END_LINE:      ${{ github.event.alert.most_recent_instance.location.end_line }}
-          MESSAGE:       ${{ github.event.alert.most_recent_instance.message.text }}
-          REF:           ${{ github.event.ref }}
-        run: |
-          TITLE="[${SEVERITY^}] ${RULE_NAME} (${TOOL_NAME} #${ALERT_NUMBER})"
+          # Fetch every open alert on this branch, paginated
+          # Use @base64 so each alert is a single line, avoiding multi-line JSON issues
+          ALERT_LINES=$(gh api \
+            --paginate \
+            -X GET \
+            "repos/${REPO}/code-scanning/alerts" \
+            -f state=open \
+            -f ref="${REF}" \
+            --jq '.[] | @base64')
 
-          BODY=$(cat <<EOF
+          if [[ -z "${ALERT_LINES}" ]]; then
+            echo "No open alerts found."
+            exit 0
+          fi
+
+          CREATED=0
+          SKIPPED=0
+
+          # Iterate over each alert (base64-encoded, one per line)
+          while IFS= read -r B64; do
+            ALERT=$(echo "${B64}" | base64 -d)
+            ALERT_NUMBER=$(echo "${ALERT}"  | jq -r '.number')
+            RULE_ID=$(echo "${ALERT}"       | jq -r '.rule.id')
+            RULE_NAME=$(echo "${ALERT}"     | jq -r '.rule.description')
+            SEVERITY=$(echo "${ALERT}"      | jq -r '.rule.severity')
+            TOOL_NAME=$(echo "${ALERT}"     | jq -r '.tool.name')
+            ALERT_URL=$(echo "${ALERT}"     | jq -r '.html_url')
+            FILE_PATH=$(echo "${ALERT}"     | jq -r '.most_recent_instance.location.path // empty')
+            START_LINE=$(echo "${ALERT}"    | jq -r '.most_recent_instance.location.start_line // empty')
+            END_LINE=$(echo "${ALERT}"      | jq -r '.most_recent_instance.location.end_line // empty')
+            MESSAGE=$(echo "${ALERT}"       | jq -r '.most_recent_instance.message.text // empty')
+
+            # Check for an existing open issue already tracking this alert
+            EXISTING=$(gh issue list \
+              --repo "${REPO}" \
+              --state open \
+              --search "\"CodeQL #${ALERT_NUMBER}\" in:title" \
+              --json number \
+              --jq 'length')
+
+            if [[ "${EXISTING}" != "0" ]]; then
+              echo "Alert #${ALERT_NUMBER}: issue already exists, skipping."
+              SKIPPED=$((SKIPPED + 1))
+              continue
+            fi
+
+            TITLE="[${SEVERITY^}] ${RULE_NAME} (${TOOL_NAME} #${ALERT_NUMBER})"
+
+            BODY=$(cat <<EOF
           ## Alert
 
           **Rule:** \`${RULE_ID}\`
           **Severity:** ${SEVERITY^}
           **Tool:** ${TOOL_NAME}
-          **Branch:** \`${REF#refs/heads/}\`
+          **Branch:** \`${BRANCH_DISPLAY}\`
           **Alert URL:** ${ALERT_URL}
 
           ## Location
@@ -70,8 +110,14 @@ jobs:
           EOF
           )
 
-          gh issue create \
-            --repo "${{ github.repository }}" \
-            --title "${TITLE}" \
-            --body "${BODY}" \
-            --assignee "${{ github.repository_owner }}"
+            gh issue create \
+              --repo "${REPO}" \
+              --title "${TITLE}" \
+              --body "${BODY}" \
+              --assignee "${OWNER}"
+
+            echo "Alert #${ALERT_NUMBER}: issue created."
+            CREATED=$((CREATED + 1))
+          done <<< "${ALERT_LINES}"
+
+          echo "Done. Created: ${CREATED}, Skipped: ${SKIPPED}"
