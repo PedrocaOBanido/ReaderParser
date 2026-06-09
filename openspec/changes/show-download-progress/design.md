@@ -30,7 +30,7 @@ The domain model `DownloadItem` already has `progress: Float` and `state`, and t
 **Rationale:** 
 - Reuses existing infrastructure (`updateQueueState` method already exists)
 - Progress flows reactively through DAO → Repository → ViewModel → UI
-- No new dependencies or architectural changes needed
+- No architectural changes needed; requires adding `androidx.hilt:hilt-compiler` KSP dependency for `@HiltWorker` codegen
 - Worker already has access to `downloadRepository`
 
 **Alternatives considered:**

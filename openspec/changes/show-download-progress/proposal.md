@@ -27,4 +27,4 @@ Downloads currently show queued state but not meaningful in-progress status. The
 - `DownloadQueueDao`: Already supports progress updates via `updateStateWithError`
 - `DownloadsContent.kt`: Enhance status badge to show percentage or page count
 - `DownloadItem`: Already has `progress` field, no domain model changes needed
-- No new dependencies required
+- Requires `androidx.hilt:hilt-compiler` (KSP) for `@HiltWorker` codegen — without this, WorkManager cannot instantiate the app's `@HiltWorker`s (`ChapterDownloadWorker`, `LibraryUpdateWorker`) at runtime

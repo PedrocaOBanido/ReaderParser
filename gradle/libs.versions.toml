@@ -63,6 +63,7 @@ work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "work"
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
 hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hilt-work" }
+hilt-compiler-androidx = { module = "androidx.hilt:hilt-compiler", version.ref = "hilt-work" }
 
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
