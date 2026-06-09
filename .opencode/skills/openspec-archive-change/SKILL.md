@@ -82,13 +82,26 @@ Archive a completed change in the experimental workflow.
    mv openspec/changes/<name> openspec/changes/archive/YYYY-MM-DD-<name>
    ```
 
-6. **Display summary**
+6. **Dispatch integrator for git/PR/CI lifecycle**
+
+   After archiving the change directory and syncing delta specs, dispatch
+   the `integrator` agent to prepare the change for merge into
+   `origin/main`. The integrator will:
+   - Group commits by prefix (feat, fix, refactor, ci, cd, docs)
+   - Create a feature branch named `change/<change-name>`
+   - Push the branch to origin
+   - Create a PR with grouped commit summary
+   - Watch CI checks until they complete
+   - Merge on green with user confirmation (merge commit, not squash)
+
+7. **Display summary**
 
    Show archive completion summary including:
    - Change name
    - Schema that was used
    - Archive location
    - Whether specs were synced (if applicable)
+   - Integration status (PR URL, CI status, merge result)
    - Note about any warnings (incomplete artifacts/tasks)
 
 **Output On Success**
@@ -99,9 +112,59 @@ Archive a completed change in the experimental workflow.
 **Change:** <change-name>
 **Schema:** <schema-name>
 **Archived to:** openspec/changes/archive/YYYY-MM-DD-<name>/
-**Specs:** ✓ Synced to main specs (or "No delta specs" or "Sync skipped")
+**Specs:** ✓ Synced to main specs
+**Integration:** ✓ PR created, CI green, merged
 
 All artifacts complete. All tasks complete.
+```
+
+**Output On Success (No Delta Specs)**
+
+```
+## Archive Complete
+
+**Change:** <change-name>
+**Schema:** <schema-name>
+**Archived to:** openspec/changes/archive/YYYY-MM-DD-<name>/
+**Specs:** No delta specs
+**Integration:** ✓ PR created, CI green, merged
+
+All artifacts complete. All tasks complete.
+```
+
+**Output On Success With Warnings**
+
+```
+## Archive Complete (with warnings)
+
+**Change:** <change-name>
+**Schema:** <schema-name>
+**Archived to:** openspec/changes/archive/YYYY-MM-DD-<name>/
+**Specs:** Sync skipped (user chose to skip)
+**Integration:** ⏸ Pending user confirmation / CI pending / blocked
+
+**Warnings:**
+- Archived with 2 incomplete artifacts
+- Archived with 3 incomplete tasks
+- Delta spec sync was skipped (user chose to skip)
+
+Review the archive if this was not intentional.
+```
+
+**Output On Error (Archive Exists)**
+
+```
+## Archive Failed
+
+**Change:** <change-name>
+**Target:** openspec/changes/archive/YYYY-MM-DD-<name>/
+
+Target archive directory already exists.
+
+**Options:**
+1. Rename the existing archive
+2. Delete the existing archive if it's a duplicate
+3. Wait until a different date to archive
 ```
 
 **Guardrails**

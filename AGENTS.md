@@ -65,6 +65,7 @@ These extend the global orchestrator persona with repo-specific lanes:
 - `runner` — build, lint, test, formatter verification.
 - `reviewer` — read-only diff review.
 - `journey-runner` — emulator / APK / journey XML execution.
+- `integrator` — git staging, commit, branch, push, PR creation, CI watch, merge-on-green.
 
 Prefer these specialists over stuffing repo-specific workflow into the root
 prompt.
