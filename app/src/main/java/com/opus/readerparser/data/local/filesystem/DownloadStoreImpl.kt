@@ -104,6 +104,7 @@ class DownloadStoreImpl @Inject constructor(
         chapter: Chapter,
         imageUrls: List<String>,
         fetchBytes: suspend (url: String) -> ByteArray,
+        onPageDownloaded: suspend (pagesDownloaded: Int, totalPages: Int) -> Unit,
     ) {
         val dir = chapterDir(chapter)
         withContext(Dispatchers.IO) { dir.mkdirs() }
@@ -113,6 +114,7 @@ class DownloadStoreImpl @Inject constructor(
             withContext(Dispatchers.IO) {         // disk — IO dispatcher
                 pageFile(dir, index + 1).writeBytes(bytes)
             }
+            onPageDownloaded(index + 1, imageUrls.size)
         }
 
         val meta = Meta(

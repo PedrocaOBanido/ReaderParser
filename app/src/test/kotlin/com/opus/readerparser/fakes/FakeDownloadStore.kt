@@ -50,8 +50,12 @@ class FakeDownloadStore : DownloadStore {
         chapter: Chapter,
         imageUrls: List<String>,
         fetchBytes: suspend (url: String) -> ByteArray,
+        onPageDownloaded: suspend (pagesDownloaded: Int, totalPages: Int) -> Unit,
     ) {
-        imageUrls.forEach { url -> fetchBytes(url) }   // invoke so callers can assert on it
+        imageUrls.forEachIndexed { index, url ->
+            fetchBytes(url)   // invoke so callers can assert on it
+            onPageDownloaded(index + 1, imageUrls.size)
+        }
         manhwaWrites.add(chapter to imageUrls)
         storedContent[chapter] = ChapterContent.Pages(imageUrls)
     }

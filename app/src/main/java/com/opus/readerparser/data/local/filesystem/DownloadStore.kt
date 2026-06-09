@@ -46,11 +46,15 @@ interface DownloadStore {
      *   Keeping the network call in the caller (the WorkManager worker) ensures this
      *   interface and its implementation remain Android-free and trivially fakeable in
      *   JVM unit tests.
+     * @param onPageDownloaded Optional callback invoked after each page is written,
+     *   with (pagesDownloaded, totalPages). The caller can use this to report
+     *   download progress back to the user.
      */
     suspend fun writeManhwa(
         chapter: Chapter,
         imageUrls: List<String>,
         fetchBytes: suspend (url: String) -> ByteArray,
+        onPageDownloaded: suspend (pagesDownloaded: Int, totalPages: Int) -> Unit = { _, _ -> },
     )
 
     /** Removes the downloaded files for [chapter], if they exist. */

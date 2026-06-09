@@ -69,9 +69,17 @@ class ChapterDownloadWorker @AssistedInject constructor(
             val content = chapterRepository.getContent(chapter, forceNetwork = true)
 
             when (content) {
-                is ChapterContent.Text -> downloads.writeNovel(chapter, content.html)
-                is ChapterContent.Pages -> downloads.writeManhwa(chapter, content.imageUrls) { url ->
+                is ChapterContent.Text -> {
+                    downloadRepository.updateQueueState(sourceId, chapterUrl, DownloadState.RUNNING, 0.5f)
+                    downloads.writeNovel(chapter, content.html)
+                }
+                is ChapterContent.Pages -> downloads.writeManhwa(chapter, content.imageUrls, { url ->
                     client.get(url).bodyAsBytes()
+                }) { pagesDownloaded, totalPages ->
+                    downloadRepository.updateQueueState(
+                        sourceId, chapterUrl, DownloadState.RUNNING,
+                        pagesDownloaded.toFloat() / totalPages,
+                    )
                 }
             }
 

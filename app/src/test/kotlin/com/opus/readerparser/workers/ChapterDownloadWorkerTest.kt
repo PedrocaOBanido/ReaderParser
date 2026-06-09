@@ -46,10 +46,10 @@ class ChapterDownloadWorkerTest {
         )
         val fetchedUrls = mutableListOf<String>()
 
-        store.writeManhwa(chapter, imageUrls) { url ->
+        store.writeManhwa(chapter, imageUrls, fetchBytes = { url ->
             fetchedUrls.add(url)
             ByteArray(0)
-        }
+        })
 
         assertEquals(
             "fetchBytes should be called once per image URL",
@@ -66,7 +66,7 @@ class ChapterDownloadWorkerTest {
             "https://cdn.test.invalid/page2.jpg",
         )
 
-        store.writeManhwa(chapter, imageUrls) { ByteArray(0) }
+        store.writeManhwa(chapter, imageUrls, fetchBytes = { ByteArray(0) })
 
         assertEquals("manhwaWrites should have exactly one entry", 1, store.manhwaWrites.size)
         val (recordedChapter, recordedUrls) = store.manhwaWrites.first()
@@ -79,12 +79,74 @@ class ChapterDownloadWorkerTest {
         val store = FakeDownloadStore()
         var fetchBytesCalled = false
 
-        store.writeManhwa(chapter, emptyList()) { url ->
+        store.writeManhwa(chapter, emptyList(), fetchBytes = { url ->
             fetchBytesCalled = true
             ByteArray(0)
-        }
+        })
 
         assertTrue("fetchBytes should not be called for empty URL list", !fetchBytesCalled)
         assertTrue("manhwaWrites should contain the chapter entry", store.manhwaWrites.isNotEmpty())
+    }
+
+    @Test
+    fun `writeManhwa invokes onPageDownloaded after each page`() = runTest {
+        val store = FakeDownloadStore()
+        val imageUrls = listOf(
+            "https://cdn.test.invalid/page1.jpg",
+            "https://cdn.test.invalid/page2.jpg",
+            "https://cdn.test.invalid/page3.jpg",
+        )
+        val progressUpdates = mutableListOf<Pair<Int, Int>>()
+
+        store.writeManhwa(chapter, imageUrls, { ByteArray(0) }) { downloaded, total ->
+            progressUpdates.add(downloaded to total)
+        }
+
+        assertEquals(
+            "onPageDownloaded should be called once per page",
+            listOf(1 to 3, 2 to 3, 3 to 3),
+            progressUpdates,
+        )
+    }
+
+    @Test
+    fun `writeManhwa does not invoke onPageDownloaded for empty imageUrls`() = runTest {
+        val store = FakeDownloadStore()
+        var callbackInvoked = false
+
+        store.writeManhwa(chapter, emptyList(), { ByteArray(0) }) { _, _ ->
+            callbackInvoked = true
+        }
+
+        assertTrue("onPageDownloaded should not be called for empty URL list", !callbackInvoked)
+    }
+
+    @Test
+    fun `writeManhwa passes page count as totalPages in callback`() = runTest {
+        val store = FakeDownloadStore()
+        val imageUrls = listOf(
+            "https://cdn.test.invalid/page1.jpg",
+            "https://cdn.test.invalid/page2.jpg",
+        )
+        val totalPagesSeen = mutableListOf<Int>()
+
+        store.writeManhwa(chapter, imageUrls, { ByteArray(0) }) { _, total ->
+            totalPagesSeen.add(total)
+        }
+
+        assertEquals("totalPages should be 2 for all callbacks", listOf(2, 2), totalPagesSeen)
+    }
+
+    @Test
+    fun `writeNovel records chapter and html in novelWrites`() = runTest {
+        val store = FakeDownloadStore()
+        val html = "<p>Chapter content</p>"
+
+        store.writeNovel(chapter, html)
+
+        assertEquals("novelWrites should have exactly one entry", 1, store.novelWrites.size)
+        val (recordedChapter, recordedHtml) = store.novelWrites.first()
+        assertEquals(chapter, recordedChapter)
+        assertEquals(html, recordedHtml)
     }
 }

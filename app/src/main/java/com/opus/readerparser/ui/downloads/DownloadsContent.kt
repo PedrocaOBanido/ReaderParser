@@ -141,7 +141,7 @@ private fun DownloadItemRow(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                StateBadge(state = item.state)
+                StateBadge(state = item.state, progress = item.progress)
 
                 Row {
                     when (item.state) {
@@ -168,10 +168,14 @@ private fun DownloadItemRow(
 }
 
 @Composable
-private fun StateBadge(state: DownloadState) {
+private fun StateBadge(state: DownloadState, progress: Float = 0f) {
     val label = when (state) {
         DownloadState.QUEUED -> "Queued"
-        DownloadState.RUNNING -> "Downloading"
+        DownloadState.RUNNING -> if (progress in 0.01f..1.0f) {
+            "${(progress * 100).toInt()}%"
+        } else {
+            "Downloading"
+        }
         DownloadState.COMPLETED -> "Done"
         DownloadState.FAILED -> "Failed"
     }
