@@ -2,19 +2,20 @@
 
 ## Responsibility
 
-Background task orchestration via Android `WorkManager`. Houses two `CoroutineWorker`
-implementations that survive process death and run on a scheduled or manual basis
-independently of any UI screen:
+Background task orchestration via Android `WorkManager`. Houses three `CoroutineWorker`
+implementations and one `BroadcastReceiver` that survive process death and run on a
+scheduled or manual basis independently of any UI screen:
 
 - **`ChapterDownloadWorker`** — downloads a single chapter's content to app-private
   storage when the user enqueues it from the reader or downloads screen.
 - **`LibraryUpdateWorker`** — periodically (every 6 hours) refreshes the chapter
   list for every series in the user's library, so new chapters are discovered
   without manual pull-to-refresh.
+- **`SamsungSearchRebuildWorker`** — one-time worker that performs a full
+  Samsung Search index rebuild, triggered by `SamsungSearchUpdateReceiver`.
 
-These are the only two entry points into background work. No other `Worker` subclasses
-exist; any future background processing (e.g., cleaning old downloads, syncing
-library metadata) should follow the same pattern.
+- **`SamsungSearchUpdateReceiver`** — receives `ACTION_UPDATE_INDEX` broadcasts
+  from Samsung Search and enqueues `SamsungSearchRebuildWorker` via WorkManager.
 
 ## Design
 
@@ -51,6 +52,23 @@ repository boundary as UI-initiated operations.
   (each `refreshChapters` call is independent). Exceptions propagate per-series
   and failures trigger retry via WorkManager's built-in backoff.
 - **Constraints**: requires `NetworkType.CONNECTED`.
+
+### `SamsungSearchRebuildWorker`
+
+- **Input**: none.
+- **Flow**: calls `SearchIndexSyncer.rebuildIndex()` which queries the DAO,
+  clears the Samsung Search index, and bulk-inserts current indexable series.
+- **Backoff**: default WorkManager backoff. Retries up to 2 times
+  (`runAttemptCount < 2`) before returning `Result.failure()`.
+- **Trigger**: enqueued by `SamsungSearchUpdateReceiver` on
+  `ACTION_UPDATE_INDEX` broadcast.
+
+### `SamsungSearchUpdateReceiver`
+
+- **Action**: `com.samsung.android.smartsuggestions.search.ACTION_UPDATE_INDEX`
+- **Flow**: validates the action string, then enqueues a
+  `OneTimeWorkRequest` for `SamsungSearchRebuildWorker` via WorkManager.
+- **Permission**: requires `SEND_ACTION_UPDATE_INDEX` (declared in manifest).
 
 ### Shared patterns
 
