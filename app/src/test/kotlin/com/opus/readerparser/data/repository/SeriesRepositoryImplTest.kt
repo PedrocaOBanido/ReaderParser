@@ -396,6 +396,24 @@ class SeriesRepositoryImplTest {
     }
 
     @Test
+    fun `addToLibrary refreshes details when title is blank`() = runTest {
+        val stubSeries = testSeries.copy(title = "")
+        val enriched = testSeries.copy(title = "Full Title", author = "Author")
+        fakeSource.seriesDetailsResult = { enriched }
+
+        repository.addToLibrary(stubSeries)
+
+        // Details should have been fetched and persisted
+        val stored = fakeDao.getByUrl(testSeries.sourceId, testSeries.url)!!
+        assertTrue(stored.inLibrary)
+        assertEquals("Full Title", stored.title)
+        assertEquals("Author", stored.author)
+
+        // Source should have been called with the stub
+        assertEquals(listOf(stubSeries), fakeSource.getSeriesDetailsCalls)
+    }
+
+    @Test
     fun `addToLibrary is a no-op when series does not exist in DB`() = runTest {
         // Do NOT pre-insert — simulates calling addToLibrary before refreshDetails
         repository.addToLibrary(testSeries)
