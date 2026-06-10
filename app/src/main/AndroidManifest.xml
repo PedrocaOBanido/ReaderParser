@@ -4,6 +4,11 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Samsung Search public API permissions -->
+    <uses-permission android:name="com.samsung.android.smartsuggestions.search.permission.WRITE" />
+    <uses-permission android:name="com.samsung.android.smartsuggestions.search.permission.READ" />
+    <uses-permission android:name="com.samsung.android.smartsuggestions.search.permission.UPDATE_INDEX" />
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -22,9 +27,20 @@
             android:name=".MainActivity"
             android:exported="true"
             tools:ignore="Instantiatable">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Deep link for Samsung Search results: readerparser://series/{sourceId}/{seriesUrl} -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="readerparser"
+                    android:host="series" />
             </intent-filter>
         </activity>
 
@@ -44,6 +60,16 @@
                 android:value="androidx.startup"
                 tools:node="remove" />
         </provider>
+
+        <!-- Samsung Search ACTION_UPDATE_INDEX receiver -->
+        <receiver
+            android:name=".workers.SamsungSearchUpdateReceiver"
+            android:exported="true"
+            android:permission="com.samsung.android.smartsuggestions.search.permission.SEND_ACTION_UPDATE_INDEX">
+            <intent-filter>
+                <action android:name="com.samsung.android.smartsuggestions.search.ACTION_UPDATE_INDEX" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

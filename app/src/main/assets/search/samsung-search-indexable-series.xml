@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search-scheme schema="com.opus.readerparser.series">
+    <field name="_id" type="string" key="true" />
+    <field name="title" type="text" />
+    <field name="author" type="text" />
+    <field name="description" type="text" stored="false" />
+    <field name="genres" type="text" />
+    <field name="status" type="string" />
+    <field name="type" type="string" />
+    <field name="source_url" type="string" stored="true" />
+</search-scheme>

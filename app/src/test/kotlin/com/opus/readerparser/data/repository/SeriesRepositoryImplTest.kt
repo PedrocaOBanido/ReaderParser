@@ -98,6 +98,10 @@ class SeriesRepositoryImplTest {
         override suspend fun delete(sourceId: Long, url: String) {
             store.removeAll { it.sourceId == sourceId && it.url == url }
         }
+
+        override fun observeIndexableSeries(): Flow<List<SeriesEntity>> = flowOf(emptyList())
+
+        override suspend fun getIndexableSeries(): List<SeriesEntity> = emptyList()
     }
 
     // ---- Test fixtures ----

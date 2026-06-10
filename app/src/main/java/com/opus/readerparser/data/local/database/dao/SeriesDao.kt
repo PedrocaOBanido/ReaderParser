@@ -68,4 +68,36 @@ interface SeriesDao {
 
     @Query("DELETE FROM series WHERE sourceId = :sourceId AND url = :url")
     suspend fun delete(sourceId: Long, url: String)
+
+    /**
+     * Returns distinct series that have at least one chapter with
+     * [com.opus.readerparser.data.local.database.entities.ChapterEntity.downloaded] = `true`.
+     *
+     * Searchability is driven by download state, not library membership — a
+     * series not in the library but with downloaded chapters **is** included.
+     */
+    @Query(
+        """
+        SELECT DISTINCT s.*
+        FROM series s
+        INNER JOIN chapters c
+          ON s.sourceId = c.sourceId AND s.url = c.seriesUrl
+        WHERE c.downloaded = 1
+        ORDER BY s.title ASC
+        """,
+    )
+    fun observeIndexableSeries(): Flow<List<SeriesEntity>>
+
+    /** One-shot counterpart to [observeIndexableSeries]. */
+    @Query(
+        """
+        SELECT DISTINCT s.*
+        FROM series s
+        INNER JOIN chapters c
+          ON s.sourceId = c.sourceId AND s.url = c.seriesUrl
+        WHERE c.downloaded = 1
+        ORDER BY s.title ASC
+        """,
+    )
+    suspend fun getIndexableSeries(): List<SeriesEntity>
 }
