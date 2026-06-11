@@ -32,6 +32,8 @@ class SamsungSearchClientSchemaTest {
         assertTrue("Schema asset must be non-empty", bytes.isNotEmpty())
         val xml = bytes.toString(Charsets.UTF_8)
         assertTrue("Schema must declare schema name", xml.contains("com.opus.readerparser.series"))
+        assertTrue("Schema root must be <schema>", xml.contains("<schema"))
+        assertTrue("Schema must declare keyFieldName", xml.contains("keyFieldName"))
     }
 }
 
@@ -51,7 +53,7 @@ class SamsungSearchClientRegisterTest {
         assertEquals(1, fake.callCount)
         assertEquals(SamsungSearchClient.AUTHORITY_URI, fake.lastCallAuthority)
         assertEquals("register_schema", fake.lastCallMethod)
-        assertEquals("com.opus.readerparser.series", fake.lastCallArg)
+        assertEquals(null, fake.lastCallArg)
     }
 
     @Test

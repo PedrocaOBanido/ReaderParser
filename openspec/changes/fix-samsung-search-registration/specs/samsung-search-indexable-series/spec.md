@@ -3,6 +3,8 @@
 ### Requirement: Schema registration via public API
 ReaderParser SHALL register a search schema named `com.opus.readerparser.series` by calling `ContentResolver.call()` with method `register_schema` against `content://com.samsung.android.smartsuggestions.search/v2`. The schema XML SHALL be bundled as an asset and sent as `byte[]` in the `schema-content` extra. The schema name SHALL be sent in the `extras` bundle under key `"name"` — the provider does not read the schema name from the `arg` parameter. The schema name SHALL start with the app's package name to pass `validateSchemaName()`.
 
+The bundled schema asset SHALL use a `<schema>` root element with `name`, `package`, `version`, and `keyFieldName` attributes, and SHALL declare `<fieldType>` elements for each field type used (e.g. `StringField`, `TextField`). The `<search-scheme>` root format is not accepted by Samsung Search.
+
 ReaderParser SHALL determine Samsung Search availability by calling `ContentResolver.call()` with method `request_search_api_version` against the same authority URI. The provider is considered available only when the returned bundle is non-null **and** contains a plausible `response_search_api_version` value (present and ≥ 1). `ContentResolver.getType()` SHALL NOT be used as an availability probe because the Samsung Search provider returns `null` from `getType()`.
 
 #### Scenario: Successful schema registration
@@ -34,6 +36,10 @@ ReaderParser SHALL determine Samsung Search availability by calling `ContentReso
 - **WHEN** ReaderParser calls `register_schema`
 - **THEN** the extras bundle SHALL contain `extras["name"]` set to `"com.opus.readerparser.series"` and `extras["schema-content"]` set to the schema XML bytes
 
-#### Scenario: register_schema does not rely on arg for schema name
+#### Scenario: register_schema passes null for arg
 - **WHEN** ReaderParser calls `register_schema`
-- **THEN** the `arg` parameter of `ContentResolver.call()` MAY be set to the schema name for clarity, but the provider SHALL NOT depend on it — the schema name in `extras["name"]` is the authoritative source
+- **THEN** the `arg` parameter of `ContentResolver.call()` SHALL be `null` — the schema name in `extras["name"]` is the authoritative source
+
+#### Scenario: Schema XML uses schema root with fieldTypes
+- **WHEN** ReaderParser loads the bundled schema asset
+- **THEN** the XML SHALL have a `<schema>` root element (not `<search-scheme>`) with `name`, `package`, `version`, and `keyFieldName` attributes, and SHALL declare `<fieldType>` elements for each field type used

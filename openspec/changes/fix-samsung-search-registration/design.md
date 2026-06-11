@@ -2,13 +2,14 @@
 
 Samsung Smart Suggestions' v2 public ContentProvider API (`content://com.samsung.android.smartsuggestions.search/v2`) does not implement `getType()` — it returns `null`. The correct way to probe availability is `ContentResolver.call()` with method `request_search_api_version`, which returns a `Bundle` containing `response_search_api_version`. The provider also requires the schema name in `extras["name"]` when calling `register_schema`, not in the `arg` parameter.
 
-ReaderParser's `SamsungSearchClient` currently uses both incorrect patterns, so the integration never activates.
+ReaderParser's `SamsungSearchClient` currently uses both incorrect patterns, so the integration never activates. Additionally, the bundled schema XML uses a `<search-scheme>` root element with `<field>` tags but no `<fieldType>` declarations, which Samsung Search rejects.
 
 ## Goals / Non-Goals
 
 **Goals:**
 - Fix the availability probe to use `request_search_api_version`
-- Fix `registerSchema()` to include the schema name in extras
+- Fix `registerSchema()` to include the schema name in extras and pass `null` for `arg`
+- Replace schema XML with `<schema>` root structure including `<fieldType>` declarations
 - Keep the existing startup flow (`App.kt`) unchanged
 - Update tests to match the corrected behavior
 
@@ -27,15 +28,15 @@ ReaderParser's `SamsungSearchClient` currently uses both incorrect patterns, so 
 
 ### 2. Schema name in extras
 
-**Decision:** Add `extras.putString("name", SCHEMA_NAME)` before calling `delegate.call(AUTHORITY_URI, METHOD_REGISTER_SCHEMA, SCHEMA_NAME, extras)`.
+**Decision:** Add `extras.putString("name", SCHEMA_NAME)` before calling `delegate.call(AUTHORITY_URI, METHOD_REGISTER_SCHEMA, null, extras)`.
 
-**Rationale:** The Samsung Search `PublicSchemaManager.registerSchema()` reads the schema name from `extras.getString("name")`, not from the `arg` parameter. Without this, registration silently fails because the name is null.
+**Rationale:** The Samsung Search `PublicSchemaManager.registerSchema()` reads the schema name from `extras.getString("name")`, not from the `arg` parameter. Passing `null` for `arg` makes the contract explicit and avoids ambiguity.
 
 ### 3. Minimal diff
 
-**Decision:** Change only `isAvailable()` and `registerSchema()` in `SamsungSearchClient.kt`. Do not touch `App.kt`, `SearchIndexSyncer`, the schema XML, or the `SearchProviderDelegate` interface.
+**Decision:** Change only `isAvailable()` and `registerSchema()` in `SamsungSearchClient.kt`, plus the schema XML asset. Do not touch `App.kt`, `SearchIndexSyncer`, or the `SearchProviderDelegate` interface.
 
-**Rationale:** The startup flow and sync logic are correct — the bug is isolated to the two client methods. Keeping the diff minimal reduces risk.
+**Rationale:** The startup flow and sync logic are correct — the bugs are isolated to the client methods and the schema asset. Keeping the diff minimal reduces risk.
 
 ## Risks / Trade-offs
 

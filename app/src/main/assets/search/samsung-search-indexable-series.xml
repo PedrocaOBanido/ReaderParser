@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<search-scheme schema="com.opus.readerparser.series">
-    <field name="_id" type="string" key="true" />
-    <field name="title" type="text" />
-    <field name="author" type="text" />
-    <field name="description" type="text" stored="false" />
-    <field name="genres" type="text" />
-    <field name="status" type="string" />
-    <field name="type" type="string" />
-    <field name="source_url" type="string" stored="true" />
-</search-scheme>
+<schema name="com.opus.readerparser.series" package="" version="1" keyFieldName="_id">
+
+    <fieldType name="string_field" class="StringField" dataType="String"/>
+    <fieldType name="text_field" class="TextField" dataType="String"/>
+
+    <field name="_id" type="string_field"/>
+    <field name="title" type="text_field" termVector="true"/>
+    <field name="author" type="text_field"/>
+    <field name="description" type="text_field" stored="false"/>
+    <field name="genres" type="text_field"/>
+    <field name="status" type="string_field"/>
+    <field name="type" type="string_field"/>
+    <field name="source_url" type="string_field" stored="true"/>
+
+</schema>

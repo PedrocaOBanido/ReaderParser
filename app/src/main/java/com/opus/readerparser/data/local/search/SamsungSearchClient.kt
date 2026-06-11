@@ -46,7 +46,7 @@ open class SamsungSearchClient @Inject constructor(
             putString("name", SCHEMA_NAME)
             putByteArray("schema-content", schemaBytes)
         }
-        val result = delegate.call(AUTHORITY_URI, METHOD_REGISTER_SCHEMA, SCHEMA_NAME, extras)
+        val result = delegate.call(AUTHORITY_URI, METHOD_REGISTER_SCHEMA, null, extras)
         val status = result?.getInt("status", -1) ?: -1
         if (status == 0) {
             Log.i(TAG, "Schema '$SCHEMA_NAME' registered successfully")
