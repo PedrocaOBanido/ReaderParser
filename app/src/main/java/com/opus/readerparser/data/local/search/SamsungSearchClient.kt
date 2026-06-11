@@ -24,10 +24,13 @@ open class SamsungSearchClient @Inject constructor(
 
     /**
      * Returns `true` if the Samsung Search ContentProvider is reachable on
-     * this device. A simple probe — `null` or exception means unavailable.
+     * this device. Probes via [METHOD_REQUEST_API_VERSION] — `null` bundle,
+     * missing key, or version < 1 means unavailable.
      */
     open fun isAvailable(): Boolean = try {
-        delegate.getType(AUTHORITY_URI) != null
+        val result = delegate.call(AUTHORITY_URI, METHOD_REQUEST_API_VERSION, null, null)
+        val version = result?.getInt("response_search_api_version", 0) ?: 0
+        version >= 1
     } catch (e: Exception) {
         Log.w(TAG, "Samsung Search provider not available", e)
         false
@@ -40,6 +43,7 @@ open class SamsungSearchClient @Inject constructor(
     open fun registerSchema(): Boolean = try {
         val schemaBytes = schema.readSchemaBytes()
         val extras = Bundle().apply {
+            putString("name", SCHEMA_NAME)
             putByteArray("schema-content", schemaBytes)
         }
         val result = delegate.call(AUTHORITY_URI, METHOD_REGISTER_SCHEMA, SCHEMA_NAME, extras)
@@ -100,6 +104,7 @@ open class SamsungSearchClient @Inject constructor(
     companion object {
         private const val TAG = "SamsungSearchClient"
         private const val SCHEMA_NAME = "com.opus.readerparser.series"
+        private const val METHOD_REQUEST_API_VERSION = "request_search_api_version"
         private const val METHOD_REGISTER_SCHEMA = "register_schema"
         private const val BATCH_SIZE = 100
 

@@ -7,6 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -77,6 +78,21 @@ class SamsungSearchClientRegisterTest {
 
         assertFalse(client.registerSchema())
     }
+
+    @Test
+    fun registerSchema_includes_name_and_schema_content_in_extras() {
+        val resultBundle = Bundle().apply { putInt("status", 0) }
+        val fake = FakeSearchProviderDelegate(callResult = resultBundle)
+        val client = SamsungSearchClient(fake, fakeSchema)
+
+        assertTrue(client.registerSchema())
+
+        val extras = fake.lastCallExtras
+        assertEquals("com.opus.readerparser.series", extras?.getString("name"))
+        val schemaContent = extras?.getByteArray("schema-content")
+        assertNotNull("extras must contain non-null schema-content byte[]", schemaContent)
+        assertTrue("schema-content must be non-empty", schemaContent!!.isNotEmpty())
+    }
 }
 
 @RunWith(AndroidJUnit4::class)
@@ -85,24 +101,49 @@ class SamsungSearchClientAvailabilityTest {
     private val fakeSchema = SamsungSearchSchema.fake(ByteArray(0))
 
     @Test
-    fun isAvailable_returns_true_when_getType_returns_non_null() {
-        val fake = FakeSearchProviderDelegate(getTypeResult = "vnd.android.cursor.dir/vnd.samsung")
+    fun isAvailable_returns_true_when_bundle_has_version_1() {
+        val bundle = Bundle().apply { putInt("response_search_api_version", 1) }
+        val fake = FakeSearchProviderDelegate(callResult = bundle)
         val client = SamsungSearchClient(fake, fakeSchema)
 
         assertTrue(client.isAvailable())
+
+        assertEquals(1, fake.callCount)
+        assertEquals(SamsungSearchClient.AUTHORITY_URI, fake.lastCallAuthority)
+        assertEquals("request_search_api_version", fake.lastCallMethod)
+        assertEquals(null, fake.lastCallArg)
+        assertEquals(null, fake.lastCallExtras)
     }
 
     @Test
-    fun isAvailable_returns_false_when_getType_returns_null() {
-        val fake = FakeSearchProviderDelegate(getTypeResult = null)
+    fun isAvailable_returns_false_when_bundle_is_null() {
+        val fake = FakeSearchProviderDelegate(callResult = null)
         val client = SamsungSearchClient(fake, fakeSchema)
 
         assertFalse(client.isAvailable())
     }
 
     @Test
-    fun isAvailable_returns_false_when_getType_throws() {
-        val fake = FakeSearchProviderDelegate(getTypeException = RuntimeException("not found"))
+    fun isAvailable_returns_false_when_bundle_missing_version_key() {
+        val bundle = Bundle().apply { putString("other_key", "value") }
+        val fake = FakeSearchProviderDelegate(callResult = bundle)
+        val client = SamsungSearchClient(fake, fakeSchema)
+
+        assertFalse(client.isAvailable())
+    }
+
+    @Test
+    fun isAvailable_returns_false_when_version_is_zero() {
+        val bundle = Bundle().apply { putInt("response_search_api_version", 0) }
+        val fake = FakeSearchProviderDelegate(callResult = bundle)
+        val client = SamsungSearchClient(fake, fakeSchema)
+
+        assertFalse(client.isAvailable())
+    }
+
+    @Test
+    fun isAvailable_returns_false_when_call_throws() {
+        val fake = FakeSearchProviderDelegate(callException = RuntimeException("not found"))
         val client = SamsungSearchClient(fake, fakeSchema)
 
         assertFalse(client.isAvailable())
@@ -270,6 +311,8 @@ internal class FakeSearchProviderDelegate(
         private set
     var lastCallArg: String? = null
         private set
+    var lastCallExtras: Bundle? = null
+        private set
 
     val bulkInsertCalls = mutableListOf<Pair<Uri, Array<ContentValues>>>()
     val deleteCalls = mutableListOf<Triple<Uri, String?, Array<String?>?>>()
@@ -285,6 +328,7 @@ internal class FakeSearchProviderDelegate(
         lastCallAuthority = authority
         lastCallMethod = method
         lastCallArg = arg
+        lastCallExtras = extras
         return callResult
     }
 
