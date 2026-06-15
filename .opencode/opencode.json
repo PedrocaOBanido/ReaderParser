@@ -59,6 +59,7 @@
       "git push -f *":                      "deny",
 
       "openspec *":                         "allow",
+      "rtk *":                              "allow",
 
       "./gradlew *":                        "allow",
 
