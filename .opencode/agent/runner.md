@@ -6,7 +6,9 @@ variant: high
 temperature: 0.1
 permission:
   edit: deny
-  skill: deny
+  skill:
+    "*": deny
+    "android-cli": allow
   task: deny
 agent:
   class: X
