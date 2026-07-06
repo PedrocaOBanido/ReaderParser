@@ -2,7 +2,7 @@
 
 ## Responsibility
 
-All local persistence on the Android device. Three sub-packages, each
+All local persistence on the Android device. Four sub-packages, each
 backed by a different storage technology, each with an interface that is
 fakeable in JVM unit tests:
 
@@ -11,6 +11,7 @@ fakeable in JVM unit tests:
 | `database/` | Room (SQLite) | Structured data: series metadata, chapters, download queue |
 | `filesystem/` | Flat files | Blob cache: downloaded chapter HTML and page images |
 | `prefs/` | Jetpack DataStore (Preferences) | App-wide user settings |
+| `search/` | Samsung Search v2 ContentProvider | External search index for downloaded series |
 
 ## Design
 
@@ -33,7 +34,8 @@ file I/O. DataStore operations are atomic via `edit {}`.
 data/repository/ → data/local/
                      ├── database/   (DAOs → entities → mappers → domain models)
                      ├── filesystem/ (DownloadStore → file read/write)
-                     └── prefs/      (SettingsStore → DataStore → AppSettings)
+                     ├── prefs/      (SettingsStore → DataStore → AppSettings)
+                     └── search/     (SearchIndexSyncer → SamsungSearchClient → Samsung Search provider)
 ```
 
 - Room flows (`Flow<List<Entity>>`) are the reactive backbone — repository
@@ -48,5 +50,6 @@ data/repository/ → data/local/
 | Connects to | Direction | Mechanism |
 |---|---|---|
 | `data/repository/` | Called by | Repository impls inject DAOs, `DownloadStore`, `SettingsStore` |
-| `core/di/` | Wired by Hilt | `DatabaseModule` provides Room DB + DAOs; `FilesystemModule` provides `DownloadStore`; `PrefsModule` provides DataStore |
+| `core/di/` | Wired by Hilt | `DatabaseModule` provides Room DB + DAOs; `FilesystemModule` provides `DownloadStore`; `PrefsModule` provides DataStore; `SearchModule` provides `SearchProviderDelegate` |
 | `domain/` (models) | Maps to | `database/mappers/` convert entities to `Series`, `Chapter`, `ChapterWithState` |
+| `workers/` | Driven by | `SamsungSearchRebuildWorker` calls `SearchIndexSyncer.rebuildIndex()`; `SamsungSearchUpdateReceiver` schedules the worker |

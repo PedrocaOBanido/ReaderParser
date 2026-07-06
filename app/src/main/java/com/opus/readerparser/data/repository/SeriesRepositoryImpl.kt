@@ -66,7 +66,8 @@ class SeriesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addToLibrary(series: Series) {
-        seriesDao.addToLibrary(series.sourceId, series.url, System.currentTimeMillis())
+        val toSave = if (series.title.isBlank()) refreshDetails(series) else series
+        seriesDao.addToLibrary(toSave.sourceId, toSave.url, System.currentTimeMillis())
     }
 
     override suspend fun removeFromLibrary(series: Series) {

@@ -266,6 +266,206 @@ class SeriesDaoTest {
         assertThat(result!!.inLibrary).isFalse()
     }
 
+    // --- observeIndexableSeries / getIndexableSeries ---
+
+    @Test
+    fun observeIndexableSeries_includesSeriesWithDownloadedChapters() = runTest {
+        val series = seriesEntity(sourceId = 1L, url = "https://example.com/series/1")
+        dao.upsert(series)
+
+        val chapterDao = database.chapterDao()
+        chapterDao.upsertAll(
+            listOf(
+                ChapterEntity(
+                    sourceId = 1L,
+                    url = "https://example.com/series/1/ch/1",
+                    seriesUrl = "https://example.com/series/1",
+                    name = "Ch 1",
+                    number = 1f,
+                    downloaded = true,
+                ),
+            ),
+        )
+
+        dao.observeIndexableSeries().test {
+            val items = awaitItem()
+            assertThat(items).hasSize(1)
+            assertThat(items[0].url).isEqualTo("https://example.com/series/1")
+        }
+    }
+
+    @Test
+    fun observeIndexableSeries_excludesSeriesWithoutDownloadedChapters() = runTest {
+        val series = seriesEntity(sourceId = 1L, url = "https://example.com/series/1")
+        dao.upsert(series)
+
+        val chapterDao = database.chapterDao()
+        chapterDao.upsertAll(
+            listOf(
+                ChapterEntity(
+                    sourceId = 1L,
+                    url = "https://example.com/series/1/ch/1",
+                    seriesUrl = "https://example.com/series/1",
+                    name = "Ch 1",
+                    number = 1f,
+                    downloaded = false,
+                ),
+            ),
+        )
+
+        dao.observeIndexableSeries().test {
+            val items = awaitItem()
+            assertThat(items).isEmpty()
+        }
+    }
+
+    @Test
+    fun observeIndexableSeries_includesNotInLibrarySeriesWithDownloadedChapters() = runTest {
+        // Series NOT in library, but has a downloaded chapter → should be included
+        val series = seriesEntity(
+            sourceId = 1L,
+            url = "https://example.com/series/1",
+            inLibrary = false,
+        )
+        dao.upsert(series)
+
+        val chapterDao = database.chapterDao()
+        chapterDao.upsertAll(
+            listOf(
+                ChapterEntity(
+                    sourceId = 1L,
+                    url = "https://example.com/series/1/ch/1",
+                    seriesUrl = "https://example.com/series/1",
+                    name = "Ch 1",
+                    number = 1f,
+                    downloaded = true,
+                ),
+            ),
+        )
+
+        dao.observeIndexableSeries().test {
+            val items = awaitItem()
+            assertThat(items).hasSize(1)
+            assertThat(items[0].inLibrary).isFalse()
+        }
+    }
+
+    @Test
+    fun observeIndexableSeries_returnsDistinctSeries() = runTest {
+        val series = seriesEntity(sourceId = 1L, url = "https://example.com/series/1")
+        dao.upsert(series)
+
+        val chapterDao = database.chapterDao()
+        chapterDao.upsertAll(
+            listOf(
+                ChapterEntity(
+                    sourceId = 1L,
+                    url = "https://example.com/series/1/ch/1",
+                    seriesUrl = "https://example.com/series/1",
+                    name = "Ch 1",
+                    number = 1f,
+                    downloaded = true,
+                ),
+                ChapterEntity(
+                    sourceId = 1L,
+                    url = "https://example.com/series/1/ch/2",
+                    seriesUrl = "https://example.com/series/1",
+                    name = "Ch 2",
+                    number = 2f,
+                    downloaded = true,
+                ),
+            ),
+        )
+
+        dao.observeIndexableSeries().test {
+            val items = awaitItem()
+            assertThat(items).hasSize(1)
+        }
+    }
+
+    @Test
+    fun observeIndexableSeries_ordersByTitleAscending() = runTest {
+        val bSeries = seriesEntity(sourceId = 1L, url = "https://example.com/b", title = "B Series")
+        val aSeries = seriesEntity(sourceId = 1L, url = "https://example.com/a", title = "A Series")
+        dao.upsertAll(listOf(bSeries, aSeries))
+
+        val chapterDao = database.chapterDao()
+        chapterDao.upsertAll(
+            listOf(
+                ChapterEntity(
+                    sourceId = 1L,
+                    url = "https://example.com/b/ch/1",
+                    seriesUrl = "https://example.com/b",
+                    name = "Ch 1",
+                    number = 1f,
+                    downloaded = true,
+                ),
+                ChapterEntity(
+                    sourceId = 1L,
+                    url = "https://example.com/a/ch/1",
+                    seriesUrl = "https://example.com/a",
+                    name = "Ch 1",
+                    number = 1f,
+                    downloaded = true,
+                ),
+            ),
+        )
+
+        dao.observeIndexableSeries().test {
+            val items = awaitItem()
+            assertThat(items).hasSize(2)
+            assertThat(items[0].title).isEqualTo("A Series")
+            assertThat(items[1].title).isEqualTo("B Series")
+        }
+    }
+
+    @Test
+    fun getIndexableSeries_returnsSameResultsAsObserveIndexableSeries() = runTest {
+        val series = seriesEntity(sourceId = 1L, url = "https://example.com/series/1")
+        dao.upsert(series)
+
+        val chapterDao = database.chapterDao()
+        chapterDao.upsertAll(
+            listOf(
+                ChapterEntity(
+                    sourceId = 1L,
+                    url = "https://example.com/series/1/ch/1",
+                    seriesUrl = "https://example.com/series/1",
+                    name = "Ch 1",
+                    number = 1f,
+                    downloaded = true,
+                ),
+            ),
+        )
+
+        val oneShot = dao.getIndexableSeries()
+        assertThat(oneShot).hasSize(1)
+        assertThat(oneShot[0].url).isEqualTo("https://example.com/series/1")
+    }
+
+    @Test
+    fun getIndexableSeries_excludesSeriesWithNoDownloadedChapters() = runTest {
+        val series = seriesEntity(sourceId = 1L, url = "https://example.com/series/1")
+        dao.upsert(series)
+
+        val chapterDao = database.chapterDao()
+        chapterDao.upsertAll(
+            listOf(
+                ChapterEntity(
+                    sourceId = 1L,
+                    url = "https://example.com/series/1/ch/1",
+                    seriesUrl = "https://example.com/series/1",
+                    name = "Ch 1",
+                    number = 1f,
+                    downloaded = false,
+                ),
+            ),
+        )
+
+        val oneShot = dao.getIndexableSeries()
+        assertThat(oneShot).isEmpty()
+    }
+
     // --- cascade delete ---
 
     @Test

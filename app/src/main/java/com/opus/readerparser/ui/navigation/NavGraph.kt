@@ -11,6 +11,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
@@ -40,8 +41,12 @@ private data class BottomNavItem(
 )
 
 @Composable
-fun AppNavGraph() {
+fun AppNavGraph(onNavGraphReady: (NavController) -> Unit = {}) {
     val navController = rememberNavController()
+
+    androidx.compose.runtime.LaunchedEffect(navController) {
+        onNavGraphReady(navController)
+    }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 

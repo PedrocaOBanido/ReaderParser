@@ -11,7 +11,7 @@ No business logic exists here — only wiring.
 
 ## Design
 
-Six `@Module` files, all installed in `SingletonComponent`:
+Seven `@Module` files, all installed in `SingletonComponent`:
 
 | File | Provides | Pattern |
 |------|----------|---------|
@@ -20,6 +20,7 @@ Six `@Module` files, all installed in `SingletonComponent`:
 | `NetworkModule.kt` | `HttpClient` (OkHttp engine), `Json` | `@Provides` |
 | `PrefsModule.kt` | `DataStore<Preferences>` | `@Provides` via extension `settingsDataStore` |
 | `RepositoryModule.kt` | `SeriesRepository`, `ChapterRepository`, `SourceRepository`, `DownloadRepository`, `SettingsRepository` | `@Binds` (all interface‑to‑impl) |
+| `SearchModule.kt` | `SearchProviderDelegate` (ContentResolver wrapper for Samsung Search) | `@Provides` |
 | `SourceModule.kt` | `SourceRegistry` (compile‑time map of all source plugins) | `@Provides` |
 
 Key decisions:
@@ -58,6 +59,9 @@ SingletonComponent (app start)
   │
   ├─ PrefsModule providePreferencesDataStore(ctx)
   │   └─ DataStore<Preferences>
+  │
+  ├─ SearchModule provideSearchDelegate(ctx)
+  │   └─ ContentResolverDelegate → SearchProviderDelegate
   │
   └─ RepositoryModule
       ├─ bindSeriesRepository(impl)     → SeriesRepository

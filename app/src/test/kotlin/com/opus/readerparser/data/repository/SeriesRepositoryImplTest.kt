@@ -98,6 +98,10 @@ class SeriesRepositoryImplTest {
         override suspend fun delete(sourceId: Long, url: String) {
             store.removeAll { it.sourceId == sourceId && it.url == url }
         }
+
+        override fun observeIndexableSeries(): Flow<List<SeriesEntity>> = flowOf(emptyList())
+
+        override suspend fun getIndexableSeries(): List<SeriesEntity> = emptyList()
     }
 
     // ---- Test fixtures ----
@@ -389,6 +393,24 @@ class SeriesRepositoryImplTest {
         assertEquals(testSeries.title, stored.title)
         assertEquals(testSeries.sourceId, stored.sourceId)
         assertEquals(testSeries.url, stored.url)
+    }
+
+    @Test
+    fun `addToLibrary refreshes details when title is blank`() = runTest {
+        val stubSeries = testSeries.copy(title = "")
+        val enriched = testSeries.copy(title = "Full Title", author = "Author")
+        fakeSource.seriesDetailsResult = { enriched }
+
+        repository.addToLibrary(stubSeries)
+
+        // Details should have been fetched and persisted
+        val stored = fakeDao.getByUrl(testSeries.sourceId, testSeries.url)!!
+        assertTrue(stored.inLibrary)
+        assertEquals("Full Title", stored.title)
+        assertEquals("Author", stored.author)
+
+        // Source should have been called with the stub
+        assertEquals(listOf(stubSeries), fakeSource.getSeriesDetailsCalls)
     }
 
     @Test
