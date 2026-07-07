@@ -2,11 +2,12 @@ package com.opus.readerparser.ui.library
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.opus.readerparser.core.util.TitleMatcher
 import com.opus.readerparser.domain.SeriesRepository
+import com.opus.readerparser.domain.model.LibrarySearchResult
 import com.opus.readerparser.domain.model.Series
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,13 +30,28 @@ class LibraryViewModel @Inject constructor(
 
     /** The complete, unfiltered library list used as the source for re-filtering. */
     private var allLibrarySeries: List<Series> = emptyList()
+    private var searchGeneration: Long = 0
+    private var searchJob: kotlinx.coroutines.Job? = null
 
     init {
         viewModelScope.launch {
             seriesRepository.observeLibrary().collect { library ->
                 allLibrarySeries = library
-                _state.update { current ->
-                    current.copy(series = filterAndSort(library, current.searchQuery, current.sortBy))
+                val currentQuery = _state.value.searchQuery.trim()
+                if (currentQuery.isBlank()) {
+                    _state.update { current ->
+                        current.copy(series = filterAndSort(library, current.sortBy))
+                    }
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            seriesRepository.observeLibrarySearchInvalidations().collect {
+                val currentQuery = _state.value.searchQuery.trim()
+                if (currentQuery.isNotBlank()) {
+                    val requestId = ++searchGeneration
+                    refreshSearch(currentQuery, requestId, showLoading = false)
                 }
             }
         }
@@ -54,18 +70,88 @@ class LibraryViewModel @Inject constructor(
                 }
             }
             is LibraryAction.SetSortBy -> _state.update { current ->
-                val sorted = filterAndSort(allLibrarySeries, current.searchQuery, action.sortBy)
-                current.copy(sortBy = action.sortBy, series = sorted)
+                val series = if (current.searchQuery.isBlank()) {
+                    filterAndSort(allLibrarySeries, action.sortBy)
+                } else {
+                    current.series
+                }
+                current.copy(sortBy = action.sortBy, series = series)
             }
             is LibraryAction.SetFilterUnreadOnly -> _state.update { current ->
+                val series = if (current.searchQuery.isBlank()) {
+                    filterAndSort(allLibrarySeries, current.sortBy)
+                } else {
+                    current.series
+                }
+                current.copy(filterUnreadOnly = action.enabled, series = series)
+            }
+            is LibraryAction.SetSearchQuery -> handleSearchQuery(action.query)
+        }
+    }
+
+    private fun handleSearchQuery(query: String) {
+        searchJob?.cancel()
+        val trimmedQuery = query.trim()
+        val requestId = ++searchGeneration
+
+        if (trimmedQuery.isBlank()) {
+            _state.update { current ->
                 current.copy(
-                    filterUnreadOnly = action.enabled,
-                    series = filterAndSort(allLibrarySeries, current.searchQuery, current.sortBy),
+                    searchQuery = query,
+                    isLoading = false,
+                    error = null,
+                    series = filterAndSort(allLibrarySeries, current.sortBy),
                 )
             }
-            is LibraryAction.SetSearchQuery -> _state.update { current ->
-                val filtered = filterAndSort(allLibrarySeries, action.query, current.sortBy)
-                current.copy(searchQuery = action.query, series = filtered)
+            return
+        }
+
+        _state.update { current ->
+            current.copy(searchQuery = query, isLoading = true, error = null)
+        }
+
+        refreshSearch(trimmedQuery, requestId, showLoading = true)
+    }
+
+    private fun refreshSearch(query: String, requestId: Long, showLoading: Boolean) {
+        if (showLoading) {
+            _state.update { current -> current.copy(isLoading = true, error = null) }
+        }
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            try {
+                when (val result = seriesRepository.searchLibrary(query)) {
+                    is LibrarySearchResult.Success -> if (requestId == searchGeneration) {
+                        _state.update { current ->
+                            current.copy(
+                                isLoading = false,
+                                error = null,
+                                series = result.series,
+                            )
+                        }
+                    }
+                    is LibrarySearchResult.Failure -> if (requestId == searchGeneration) {
+                        _state.update { current ->
+                            current.copy(
+                                isLoading = false,
+                                error = result.message,
+                                series = emptyList(),
+                            )
+                        }
+                    }
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                if (requestId == searchGeneration) {
+                    _state.update { current ->
+                        current.copy(
+                            isLoading = false,
+                            error = e.message ?: "Failed to search library",
+                            series = emptyList(),
+                        )
+                    }
+                }
             }
         }
     }
@@ -76,15 +162,11 @@ class LibraryViewModel @Inject constructor(
      */
     private fun filterAndSort(
         library: List<Series>,
-        query: String,
         sortBy: LibrarySortBy,
     ): List<Series> {
-        val filtered = library.filter { series ->
-            query.isBlank() || TitleMatcher.matches(query, series.title)
-        }
         return when (sortBy) {
-            LibrarySortBy.TITLE -> filtered.sortedBy { it.title }
-            LibrarySortBy.DEFAULT -> filtered
+            LibrarySortBy.TITLE -> library.sortedBy { it.title }
+            LibrarySortBy.DEFAULT -> library
         }
     }
 }

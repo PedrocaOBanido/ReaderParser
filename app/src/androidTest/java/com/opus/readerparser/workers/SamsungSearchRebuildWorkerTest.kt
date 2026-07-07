@@ -1,6 +1,7 @@
 package com.opus.readerparser.workers
 
 import android.content.ContentValues
+import android.database.Cursor
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
@@ -45,6 +46,8 @@ class SamsungSearchRebuildWorkerTest {
             return emptyList()
         }
 
+        override suspend fun getLibraryIndexableSeries(sourceId: Long, url: String): SeriesEntity? = null
+
         // --- unused DAO methods ---
         override fun observeIndexableSeries(): Flow<List<SeriesEntity>> = emptyFlow()
         override fun observeLibrary(): Flow<List<SeriesEntity>> = emptyFlow()
@@ -65,11 +68,21 @@ class SamsungSearchRebuildWorkerTest {
 
     private class FakeSearchClientForWorker : SamsungSearchClient(
         delegate = object : SearchProviderDelegate {
-            override fun getType(uri: Uri): String? =
-                "vnd.android.cursor.dir/vnd.samsung.search"
+            override fun getType(uri: Uri): String? = null
 
             override fun call(authority: Uri, method: String, arg: String?, extras: Bundle?): Bundle? =
-                Bundle().apply { putInt("status", 0) }
+                when (method) {
+                    "request_search_api_version" -> Bundle().apply { putInt("response_search_api_version", 1) }
+                    "register_schema" -> Bundle().apply { putInt("status", 0) }
+                    else -> null
+                }
+            override fun query(
+                uri: Uri,
+                projection: Array<String>?,
+                selection: String?,
+                selectionArgs: Array<String>?,
+                sortOrder: String?,
+            ): Cursor? = null
             override fun bulkInsert(uri: Uri, values: Array<ContentValues>): Int = values.size
             override fun delete(uri: Uri, where: String?, selectionArgs: Array<String?>?): Int = 0
         },
@@ -79,11 +92,21 @@ class SamsungSearchRebuildWorkerTest {
     /** Client that reports available + registered but fails on actual writes. */
     private class FailingSearchClient : SamsungSearchClient(
         delegate = object : SearchProviderDelegate {
-            override fun getType(uri: Uri): String? =
-                "vnd.android.cursor.dir/vnd.samsung.search"
+            override fun getType(uri: Uri): String? = null
 
             override fun call(authority: Uri, method: String, arg: String?, extras: Bundle?): Bundle? =
-                Bundle().apply { putInt("status", 0) }
+                when (method) {
+                    "request_search_api_version" -> Bundle().apply { putInt("response_search_api_version", 1) }
+                    "register_schema" -> Bundle().apply { putInt("status", 0) }
+                    else -> null
+                }
+            override fun query(
+                uri: Uri,
+                projection: Array<String>?,
+                selection: String?,
+                selectionArgs: Array<String>?,
+                sortOrder: String?,
+            ): Cursor? = null
             override fun bulkInsert(uri: Uri, values: Array<ContentValues>): Int =
                 throw RuntimeException("write failed")
             override fun delete(uri: Uri, where: String?, selectionArgs: Array<String?>?): Int =

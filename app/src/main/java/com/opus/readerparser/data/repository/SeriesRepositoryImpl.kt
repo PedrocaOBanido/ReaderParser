@@ -4,12 +4,18 @@ import com.opus.readerparser.core.util.TitleMatcher
 import com.opus.readerparser.data.local.database.dao.SeriesDao
 import com.opus.readerparser.data.local.database.mappers.toDomain
 import com.opus.readerparser.data.local.database.mappers.toEntity
+import com.opus.readerparser.data.local.search.SamsungSearchClient
+import com.opus.readerparser.data.local.search.SamsungSearchHit
+import com.opus.readerparser.data.local.search.SamsungSearchQueryResult
 import com.opus.readerparser.data.source.SourceRegistry
 import com.opus.readerparser.domain.SeriesRepository
 import com.opus.readerparser.domain.model.FilterList
+import com.opus.readerparser.domain.model.LibrarySearchResult
 import com.opus.readerparser.domain.model.Series
 import com.opus.readerparser.domain.model.SeriesPage
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -18,12 +24,17 @@ import javax.inject.Singleton
 class SeriesRepositoryImpl @Inject constructor(
     private val sourceRegistry: SourceRegistry,
     private val seriesDao: SeriesDao,
+    private val samsungSearchClient: SamsungSearchClient,
 ) : SeriesRepository {
 
     override fun observeLibrary(): Flow<List<Series>> =
         seriesDao.observeLibrary().map { entities ->
             entities.map { it.toDomain() }
         }
+
+    override fun observeLibrarySearchInvalidations(): Flow<Unit> =
+        combine(seriesDao.observeLibrary(), seriesDao.observeIndexableSeries()) { _, _ -> Unit }
+            .drop(1)
 
     override suspend fun fetchPopular(sourceId: Long, page: Int): SeriesPage {
         val result = sourceRegistry[sourceId].getPopular(page)
@@ -57,6 +68,19 @@ class SeriesRepositoryImpl @Inject constructor(
         }
 
         return result
+    }
+
+    override suspend fun searchLibrary(query: String): LibrarySearchResult {
+        return when (val result = samsungSearchClient.query(query)) {
+            is SamsungSearchQueryResult.Failure -> LibrarySearchResult.Failure(result.message)
+            is SamsungSearchQueryResult.Success -> LibrarySearchResult.Success(
+                result.hits.mapNotNull { hit ->
+                    hit.toLookupKey()?.let { (sourceId, url) ->
+                        seriesDao.getLibraryIndexableSeries(sourceId, url)?.toDomain()
+                    }
+                },
+            )
+        }
     }
 
     override suspend fun refreshDetails(series: Series): Series {
@@ -94,5 +118,12 @@ class SeriesRepositoryImpl @Inject constructor(
         if (updated == 0) {
             seriesDao.insert(entity)
         }
+    }
+
+    private fun SamsungSearchHit.toLookupKey(): Pair<Long, String>? {
+        val sourceId = id.substringBefore(':').toLongOrNull() ?: return null
+        val url = id.substringAfter(':', missingDelimiterValue = "")
+        if (url.isBlank()) return null
+        return sourceId to url
     }
 }

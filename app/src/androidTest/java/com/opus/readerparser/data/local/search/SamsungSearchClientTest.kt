@@ -1,10 +1,13 @@
 package com.opus.readerparser.data.local.search
 
 import android.content.ContentValues
+import android.database.Cursor
+import android.database.MatrixCursor
 import android.net.Uri
 import android.os.Bundle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -249,6 +252,77 @@ class SamsungSearchClientDeleteAllTest {
 }
 
 @RunWith(AndroidJUnit4::class)
+class SamsungSearchClientQueryTest {
+
+    private val fakeSchema = SamsungSearchSchema.fake(ByteArray(0))
+
+    @Test
+    fun query_returns_hits_from_cursor() {
+        val cursor = MatrixCursor(arrayOf("_id", "title", "source_url")).apply {
+            addRow(arrayOf("1:https://a", "Alpha", "readerparser://series/1/https%3A%2F%2Fa"))
+            addRow(arrayOf("2:https://b", "Beta", "readerparser://series/2/https%3A%2F%2Fb"))
+        }
+        val fake = FakeSearchProviderDelegate(queryResult = cursor)
+        val client = SamsungSearchClient(fake, fakeSchema)
+
+        runTest {
+            when (val result = client.query("alpha")) {
+                is SamsungSearchQueryResult.Success -> {
+                    assertEquals(2, result.hits.size)
+                    assertEquals("1:https://a", result.hits[0].id)
+                    assertEquals("Alpha", result.hits[0].title)
+                    assertEquals("readerparser://series/1/https%3A%2F%2Fa", result.hits[0].sourceUrl)
+                    assertEquals(SamsungSearchClient.SCHEMA_URI, fake.lastQueryUri)
+                    assertEquals("title LIKE ? OR author LIKE ? OR genres LIKE ?", fake.lastQuerySelection)
+                    assertEquals("%alpha%", fake.lastQuerySelectionArgs?.get(0))
+                }
+                is SamsungSearchQueryResult.Failure -> throw AssertionError("Expected success")
+            }
+        }
+    }
+
+    @Test
+    fun query_returns_failure_when_cursor_is_null() {
+        val fake = FakeSearchProviderDelegate(queryResult = null)
+        val client = SamsungSearchClient(fake, fakeSchema)
+
+        runTest {
+            when (val result = client.query("alpha")) {
+                is SamsungSearchQueryResult.Success -> throw AssertionError("Expected failure")
+                is SamsungSearchQueryResult.Failure -> assertEquals("Samsung Search query returned null cursor", result.message)
+            }
+        }
+    }
+
+    @Test
+    fun query_returns_empty_for_blank_query_without_calling_provider() {
+        val fake = FakeSearchProviderDelegate(queryResult = MatrixCursor(arrayOf("_id", "title", "source_url")))
+        val client = SamsungSearchClient(fake, fakeSchema)
+
+        runTest {
+            when (val result = client.query("   ")) {
+                is SamsungSearchQueryResult.Success -> assertTrue(result.hits.isEmpty())
+                is SamsungSearchQueryResult.Failure -> throw AssertionError("Expected success")
+            }
+        }
+        assertEquals(0, fake.queryCount)
+    }
+
+    @Test
+    fun query_returns_failure_when_provider_throws() {
+        val fake = FakeSearchProviderDelegate(queryException = RuntimeException("boom"))
+        val client = SamsungSearchClient(fake, fakeSchema)
+
+        runTest {
+            when (val result = client.query("alpha")) {
+                is SamsungSearchQueryResult.Success -> throw AssertionError("Expected failure")
+                is SamsungSearchQueryResult.Failure -> assertEquals("boom", result.message)
+            }
+        }
+    }
+}
+
+@RunWith(AndroidJUnit4::class)
 class SamsungSearchClientBatchingTest {
 
     @Test
@@ -298,6 +372,8 @@ internal class FakeSearchProviderDelegate(
     private val getTypeException: Exception? = null,
     private val callResult: Bundle? = null,
     private val callException: Exception? = null,
+    private val queryResult: Cursor? = null,
+    private val queryException: Exception? = null,
     private val bulkInsertException: Exception? = null,
     private val deleteException: Exception? = null,
 ) : SearchProviderDelegate {
@@ -314,6 +390,14 @@ internal class FakeSearchProviderDelegate(
     var lastCallArg: String? = null
         private set
     var lastCallExtras: Bundle? = null
+        private set
+    var lastQueryUri: Uri? = null
+        private set
+    var lastQuerySelection: String? = null
+        private set
+    var lastQuerySelectionArgs: Array<String>? = null
+        private set
+    var queryCount = 0
         private set
 
     val bulkInsertCalls = mutableListOf<Pair<Uri, Array<ContentValues>>>()
@@ -332,6 +416,21 @@ internal class FakeSearchProviderDelegate(
         lastCallArg = arg
         lastCallExtras = extras
         return callResult
+    }
+
+    override fun query(
+        uri: Uri,
+        projection: Array<String>?,
+        selection: String?,
+        selectionArgs: Array<String>?,
+        sortOrder: String?,
+    ): Cursor? {
+        queryException?.let { throw it }
+        queryCount++
+        lastQueryUri = uri
+        lastQuerySelection = selection
+        lastQuerySelectionArgs = selectionArgs
+        return queryResult
     }
 
     override fun bulkInsert(uri: Uri, values: Array<ContentValues>): Int {

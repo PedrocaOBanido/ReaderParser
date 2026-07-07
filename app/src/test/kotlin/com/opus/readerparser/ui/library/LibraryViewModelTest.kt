@@ -3,13 +3,18 @@ package com.opus.readerparser.ui.library
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.opus.readerparser.fakes.FakeSeriesRepository
+import com.opus.readerparser.domain.model.LibrarySearchResult
 import com.opus.readerparser.testutil.MainDispatcherRule
 import com.opus.readerparser.testutil.TestFixtures
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class LibraryViewModelTest {
 
     @get:Rule
@@ -95,102 +100,144 @@ class LibraryViewModelTest {
     @Test
     fun `SetSearchQuery updates searchQuery in state`() = runTest {
         vm.onAction(LibraryAction.SetSearchQuery("query"))
+        advanceUntilIdle()
         assertThat(vm.state.value.searchQuery).isEqualTo("query")
     }
 
     @Test
-    fun `search filters series by title`() = runTest {
-        val novel = TestFixtures.testSeries(title = "Solo Leveling", url = "https://test.invalid/solo")
-        val manhwa = TestFixtures.testSeries(title = "Tower of God", url = "https://test.invalid/tower")
+    fun `blank search keeps observed library sorted locally`() = runTest {
+        val zebra = TestFixtures.testSeries(title = "Zebra", url = "https://test.invalid/z")
+        val apple = TestFixtures.testSeries(title = "Apple", url = "https://test.invalid/a")
 
-        vm.state.test {
-            awaitItem() // initial empty
-            repo.addToLibrary(novel)
-            awaitItem() // [novel]
-            repo.addToLibrary(manhwa)
-            awaitItem() // [novel, manhwa]
+        repo.addToLibrary(zebra)
+        advanceUntilIdle()
+        repo.addToLibrary(apple)
+        advanceUntilIdle()
 
-            vm.onAction(LibraryAction.SetSearchQuery("Solo"))
-            val filtered = awaitItem()
-            assertThat(filtered.series.map { it.title }).containsExactly("Solo Leveling")
-        }
+        vm.onAction(LibraryAction.SetSortBy(LibrarySortBy.TITLE))
+        advanceUntilIdle()
+        assertThat(vm.state.value.series.map { it.title }).containsExactly("Apple", "Zebra").inOrder()
+        assertThat(repo.searchLibraryCalls).isEmpty()
     }
 
     @Test
-    fun `search matches single typo`() = runTest {
-        val novel = TestFixtures.testSeries(title = "Solo Leveling", url = "https://test.invalid/solo")
-        val manhwa = TestFixtures.testSeries(title = "Tower of God", url = "https://test.invalid/tower")
+    fun `non blank search uses samsung search results`() = runTest {
+        val first = TestFixtures.testSeries(title = "Zebra", url = "https://test.invalid/z")
+        val second = TestFixtures.testSeries(title = "Apple", url = "https://test.invalid/a")
+        repo.searchLibraryHandler = { LibrarySearchResult.Success(listOf(first, second)) }
 
-        vm.state.test {
-            awaitItem() // initial empty
-            repo.addToLibrary(novel)
-            awaitItem() // [novel]
-            repo.addToLibrary(manhwa)
-            awaitItem() // [novel, manhwa]
+        vm.onAction(LibraryAction.SetSearchQuery("search me"))
+        advanceUntilIdle()
 
-            // "Solo Levelin" (one deletion from "Solo Leveling")
-            vm.onAction(LibraryAction.SetSearchQuery("Solo Levelin"))
-            val filtered = awaitItem()
-            assertThat(filtered.series.map { it.title }).containsExactly("Solo Leveling")
-        }
+        assertThat(repo.searchLibraryCalls).containsExactly("search me")
+        assertThat(vm.state.value.series.map { it.title }).containsExactly("Zebra", "Apple").inOrder()
+        assertThat(vm.state.value.isLoading).isFalse()
+        assertThat(vm.state.value.error).isNull()
     }
 
     @Test
-    fun `search does not match when two chars differ`() = runTest {
-        val novel = TestFixtures.testSeries(title = "Solo Leveling", url = "https://test.invalid/solo")
-
-        vm.state.test {
-            awaitItem() // initial empty
-            repo.addToLibrary(novel)
-            awaitItem() // [novel]
-
-            // Two char difference
-            vm.onAction(LibraryAction.SetSearchQuery("Solo Levelex"))
-            val filtered = awaitItem()
-            assertThat(filtered.series).isEmpty()
+    fun `active search refreshes after remove from library`() = runTest {
+        val series = TestFixtures.testSeries(title = "Solo Leveling", url = "https://test.invalid/solo")
+        repo.addToLibrary(series)
+        advanceUntilIdle()
+        repo.searchLibraryHandler = {
+            if (repo.searchLibraryCalls.size == 1) {
+                LibrarySearchResult.Success(listOf(series))
+            } else {
+                LibrarySearchResult.Success(emptyList())
+            }
         }
+
+        vm.onAction(LibraryAction.SetSearchQuery("Solo"))
+        advanceUntilIdle()
+        assertThat(vm.state.value.series).containsExactly(series)
+
+        vm.onAction(LibraryAction.RemoveFromLibrary(series))
+        advanceUntilIdle()
+
+        assertThat(repo.removeFromLibraryCalls).containsExactly(series)
+        assertThat(repo.searchLibraryCalls).hasSize(2)
+        assertThat(vm.state.value.series).isEmpty()
     }
 
     @Test
-    fun `clearing search shows all series`() = runTest {
-        val novel = TestFixtures.testSeries(title = "Solo Leveling", url = "https://test.invalid/solo")
-        val manhwa = TestFixtures.testSeries(title = "Tower of God", url = "https://test.invalid/tower")
+    fun `active search refreshes after search invalidation`() = runTest {
+        val series = TestFixtures.testSeries(title = "Solo Leveling", url = "https://test.invalid/solo")
+        repo.addToLibrary(series)
+        advanceUntilIdle()
 
-        vm.state.test {
-            awaitItem() // initial empty
-            repo.addToLibrary(novel)
-            awaitItem() // [novel]
-            repo.addToLibrary(manhwa)
-            awaitItem() // [novel, manhwa]
-
-            vm.onAction(LibraryAction.SetSearchQuery("Solo"))
-            awaitItem() // filtered
-
-            vm.onAction(LibraryAction.SetSearchQuery(""))
-            val all = awaitItem()
-            assertThat(all.series.map { it.title }).containsExactly("Solo Leveling", "Tower of God")
+        repo.searchLibraryHandler = {
+            if (repo.searchLibraryCalls.size == 1) {
+                LibrarySearchResult.Success(listOf(series))
+            } else {
+                LibrarySearchResult.Success(emptyList())
+            }
         }
+
+        vm.onAction(LibraryAction.SetSearchQuery("Solo"))
+        advanceUntilIdle()
+        assertThat(vm.state.value.series).containsExactly(series)
+
+        repo.emitLibrarySearchInvalidation()
+        advanceUntilIdle()
+
+        assertThat(repo.searchLibraryCalls).hasSize(2)
+        assertThat(vm.state.value.series).isEmpty()
     }
 
     @Test
-    fun `search respects sort order`() = runTest {
-        val a = TestFixtures.testSeries(title = "Zebra", url = "https://test.invalid/z")
-        val b = TestFixtures.testSeries(title = "Apple", url = "https://test.invalid/a")
+    fun `latest search query wins`() = runTest {
+        val first = TestFixtures.testSeries(title = "First", url = "https://test.invalid/first")
+        val second = TestFixtures.testSeries(title = "Second", url = "https://test.invalid/second")
 
-        vm.state.test {
-            awaitItem() // initial empty
-            repo.addToLibrary(a)
-            awaitItem() // [Zebra]
-            repo.addToLibrary(b)
-            awaitItem() // [Zebra, Apple]
-
-            vm.onAction(LibraryAction.SetSortBy(LibrarySortBy.TITLE))
-            awaitItem() // [Apple, Zebra]
-
-            vm.onAction(LibraryAction.SetSearchQuery("Zebra"))
-            val filtered = awaitItem()
-            assertThat(filtered.series.map { it.title }).containsExactly("Zebra")
-            assertThat(filtered.sortBy).isEqualTo(LibrarySortBy.TITLE)
+        repo.searchLibraryHandler = { query ->
+            when (query) {
+                "first" -> {
+                    delay(100)
+                    LibrarySearchResult.Success(listOf(first))
+                }
+                else -> LibrarySearchResult.Success(listOf(second))
+            }
         }
+
+        vm.onAction(LibraryAction.SetSearchQuery("first"))
+        vm.onAction(LibraryAction.SetSearchQuery("second"))
+        advanceUntilIdle()
+
+        assertThat(vm.state.value.series.map { it.title }).containsExactly("Second")
+    }
+
+    @Test
+    fun `provider failure shows error distinct from empty results`() = runTest {
+        repo.searchLibraryHandler = { LibrarySearchResult.Failure("provider failed") }
+
+        vm.onAction(LibraryAction.SetSearchQuery("query"))
+        advanceUntilIdle()
+
+        assertThat(vm.state.value.series).isEmpty()
+        assertThat(vm.state.value.error).isEqualTo("provider failed")
+    }
+
+    @Test
+    fun `unexpected search exception shows error state`() = runTest {
+        repo.searchLibraryHandler = { throw IllegalStateException("boom") }
+
+        vm.onAction(LibraryAction.SetSearchQuery("query"))
+        advanceUntilIdle()
+
+        assertThat(vm.state.value.series).isEmpty()
+        assertThat(vm.state.value.isLoading).isFalse()
+        assertThat(vm.state.value.error).isEqualTo("boom")
+    }
+
+    @Test
+    fun `empty search results do not set error`() = runTest {
+        repo.searchLibraryHandler = { LibrarySearchResult.Success(emptyList()) }
+
+        vm.onAction(LibraryAction.SetSearchQuery("query"))
+        advanceUntilIdle()
+
+        assertThat(vm.state.value.series).isEmpty()
+        assertThat(vm.state.value.error).isNull()
     }
 }
