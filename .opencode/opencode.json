@@ -157,7 +157,7 @@
     },
     "orchestrator": {
       "permission": {
-        "skill": { "*": "deny", "clonedeps": "allow", "codemap": "allow", "deepwork": "allow", "android-skill-router": "allow", "openspec-propose": "allow", "openspec-apply-change": "allow", "openspec-archive-change": "allow", "openspec-explore": "allow", "trace-matrix": "allow" }
+        "skill": "allow"
       }
     },
     "oracle": {
