@@ -70,6 +70,9 @@ These extend the global orchestrator persona with repo-specific lanes:
 Prefer these specialists over stuffing repo-specific workflow into the root
 prompt.
 
+Natural-language commit / push / create-PR requests route to `integrator`; once
+a PR exists, use `babysit-pr` for the watch / fix / merge loop.
+
 ## Placement rules
 
 - New source: `sources/<sitename>/<SiteName>.kt`
