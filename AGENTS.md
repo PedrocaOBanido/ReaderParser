@@ -214,14 +214,14 @@ defines the full policy.
 ### Git Inspection
 *~60,000 tokens/session saved*
 - Capture git state once per phase with `git status -sb`, `git diff --stat`, `git diff --name-only`, and `git log --oneline -10`; avoid repeating unchanged `git status`, `git diff`, and `git log` commands.
-- Never run raw `git log` without `--oneline -N` or another bound; it returns tens of thousands of bytes in this repo.
+- Never run raw `git log` without `--oneline -N` or another bound; it returns large output in this repo.
 - After PR merge with `--delete-branch`, do not also push-delete the same remote branch; fetch/prune and verify PR state instead.
 
 ### Gradle Verification
 *~26,718 tokens/session saved*
 - Use `ANDROID_HOME=/home/pedro/Android/Sdk ANDROID_SDK_ROOT=/home/pedro/Android/Sdk ./gradlew ... --console=plain` for Android verification.
 - On Gradle failures, capture full output once or inspect the generated report/XML; avoid loops of `./gradlew :app:assembleDebug`, `:app:compileDebugAndroidTestKotlin`, or `... | tail -20`.
-- For targeted JVM test loops such as `LibraryViewModelTest`, run once with full output/report lookup before patching and rerunning.
+- For targeted JVM test loops such as `LibraryViewModelTest` and `SeriesRepositoryImplTest`, run once with full output/report lookup before patching and rerunning.
 
 ### Todo Updates
 *~7,400 tokens/session saved*
@@ -239,13 +239,7 @@ defines the full policy.
 *~5,100 tokens/session saved*
 - Use `openspec list --json` once, then `openspec status --change <name> --json`; do not poll the same change status repeatedly unless files changed.
 - Before `openspec instructions ... --change <name>`, confirm the change exists and schema validates; `openspec changes` is invalid, use `openspec change` or `openspec list`.
-- For house-style smoke tests, validate `schema.yaml` metadata and template paths before running `openspec instructions proposal|plan`; bad schema/template paths caused repeated failures.
-
-### Samsung Search Tests
-*~4,500 tokens/session saved*
-- JVM unit tests that touch Android framework classes like `android.util.Log`, `Uri`, `ContentResolver`, or `ContentValues` can fail without Robolectric/default values; move those cases to `androidTest` or isolate Android calls behind fakes.
-- For WorkManager androidTest code, inspect the installed `work-testing` AAR/JAR API once before guessing `TestListenableWorkerBuilder` signatures.
-- When `SearchIndexSyncerTest` fails on `android.util.Log`, stop rerunning JVM tests and either fake logging/platform calls or move the test to Android instrumentation.
+- `openspec update` takes no `--change`; run `openspec update` directly after checking `openspec update --help` once if needed.
 
 ### RTK Commands
 *~3,159 tokens/session saved*
@@ -253,14 +247,9 @@ defines the full policy.
 - `rtk pytest` may fail when `pytest` is absent; for simple scratch Python tests use `python3 -m unittest discover -s tests -v`.
 - `rtk ruby` is not available here; validate YAML with `python3 -c 'import yaml; yaml.safe_load(open(path))'`.
 
-### Release Workflow
-*~3,159 tokens/session saved*
-- Release workflow YAML validation should use `python3`/PyYAML; `ruby` and `rtk ruby` are unavailable in this environment.
-- For release-note research, inspect `.github/workflows/release.yml` and bounded `gh release/pr` output once instead of repeated broad `release` grep searches.
-
 ### Python Runtime
 *~2,100 tokens/session saved*
-- Use `python3`, not `python`; this environment repeatedly returned `zsh: command not found: python`.
+- Use `python3`, not `python`; this environment repeatedly returned `zsh: command not found: python` or could not import pipx packages.
 - For `headroom-ai` internals, use `/home/pedro/.local/share/pipx/venvs/headroom-ai/bin/python` because system `python3` may not import `headroom`.
 - In scratch smoke repos, run `python3 -m unittest discover -s tests -v` directly and only rerun after a code/test change.
 
@@ -270,15 +259,27 @@ defines the full policy.
 - Avoid repeating `headroom learn`, `headroom learn --help`, and short Python probes; inspect `headroom.learn.analyzer` once with the pipx venv Python.
 - Do not fan out repeated `headroom`/`learn` repo searches; if project code has no hits in one scoped search, switch to the installed package path.
 
+### OpenSpec House Style
+*~1,526 tokens/session saved*
+- For house-style schema smoke tests, fix `schema.yaml` metadata and template paths before running `openspec instructions proposal|plan`; bad schema/template paths caused repeated `smoke-house` failures.
+- `openspec instructions proposal` requires `--change`; running it without a change only returns a missing-option error.
+- Scratch smoke repos need a created change before `openspec status --change` or `openspec instructions`; do not probe nonexistent changes like `smoke-test`.
+
+### Samsung Search Tests
+*~4,500 tokens/session saved*
+- JVM unit tests that touch Android framework classes like `android.util.Log`, `Uri`, `ContentResolver`, or `ContentValues` can fail without Robolectric/default values; move those cases to `androidTest` or isolate Android calls behind fakes.
+- For WorkManager androidTest code, inspect the installed `work-testing` AAR/JAR API once before guessing `TestListenableWorkerBuilder` signatures.
+- When `SearchIndexSyncerTest` fails on `android.util.Log`, stop rerunning JVM tests and either fake logging/platform calls or move the test to Android instrumentation.
+
+### Release Workflow
+*~3,159 tokens/session saved*
+- Release workflow YAML validation should use `python3`/PyYAML; `ruby` and `rtk ruby` are unavailable in this environment.
+- For release-note research, inspect `.github/workflows/release.yml` and bounded `gh release/pr` output once instead of repeated broad `release` grep searches.
+
 ### Understand Dashboard
 *~700 tokens/session saved*
 - When launching the understand-anything dashboard, use `python3` in shell snippets and export `LOG_FILE`/`PID_FILE` in the same command that reads them.
 - If Vite tries to spawn a Windows browser path, keep the server URL from stdout and do not retry the dashboard launch loop.
 - Check an existing dashboard PID once before relaunching; avoid repeated PID-file polling when the URL is already known.
-
-### OpenSpec House Style
-*~1,526 tokens/session saved*
-- For house-style schema smoke tests, fix `schema.yaml` metadata and template paths before running `openspec instructions proposal|plan`; bad schema/template paths caused repeated `smoke-house` failures.
-- `openspec instructions proposal` requires `--change`; running it without a change only returns a missing-option error.
 
 <!-- headroom:learn:end -->
