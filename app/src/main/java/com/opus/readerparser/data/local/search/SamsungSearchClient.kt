@@ -2,10 +2,14 @@ package com.opus.readerparser.data.local.search
 
 import android.content.ContentResolver
 import android.content.ContentValues
+import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.annotation.VisibleForTesting
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -86,6 +90,47 @@ open class SamsungSearchClient @Inject constructor(
     }
 
     /**
+     * Queries Samsung Search for matching documents.
+     */
+    open suspend fun query(query: String): SamsungSearchQueryResult = withContext(Dispatchers.IO) {
+        val trimmedQuery = query.trim()
+        if (trimmedQuery.isBlank()) return@withContext SamsungSearchQueryResult.Success(emptyList())
+
+        try {
+            val cursor = delegate.query(
+                SCHEMA_URI,
+                SEARCH_PROJECTION,
+                SEARCH_SELECTION,
+                arrayOf("%$trimmedQuery%", "%$trimmedQuery%", "%$trimmedQuery%"),
+                null,
+            )
+            if (cursor == null) {
+                SamsungSearchQueryResult.Failure("Samsung Search query returned null cursor")
+            } else {
+                cursor.use { samsungCursor ->
+                    val idIndex = samsungCursor.getColumnIndexOrThrow(COLUMN_ID)
+                    val titleIndex = samsungCursor.getColumnIndexOrThrow(COLUMN_TITLE)
+                    val sourceUrlIndex = samsungCursor.getColumnIndexOrThrow(COLUMN_SOURCE_URL)
+                    val hits = buildList {
+                        while (samsungCursor.moveToNext()) {
+                            val id = samsungCursor.getString(idIndex) ?: continue
+                            val title = samsungCursor.getString(titleIndex) ?: ""
+                            val sourceUrl = samsungCursor.getString(sourceUrlIndex) ?: continue
+                            add(SamsungSearchHit(id = id, title = title, sourceUrl = sourceUrl))
+                        }
+                    }
+                    SamsungSearchQueryResult.Success(hits)
+                }
+            }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Log.w(TAG, "Samsung Search query failed", e)
+            SamsungSearchQueryResult.Failure(e.message ?: "Samsung Search query failed")
+        }
+    }
+
+    /**
      * Deletes all documents from the search index.
      *
      * @return `true` if the delete succeeded, `false` on failure.
@@ -107,6 +152,11 @@ open class SamsungSearchClient @Inject constructor(
         private const val METHOD_REQUEST_API_VERSION = "request_search_api_version"
         private const val METHOD_REGISTER_SCHEMA = "register_schema"
         private const val BATCH_SIZE = 100
+        private const val COLUMN_ID = "_id"
+        private const val COLUMN_TITLE = "title"
+        private const val COLUMN_SOURCE_URL = "source_url"
+        private const val SEARCH_SELECTION = "title LIKE ? OR author LIKE ? OR genres LIKE ?"
+        private val SEARCH_PROJECTION = arrayOf(COLUMN_ID, COLUMN_TITLE, COLUMN_SOURCE_URL)
 
         /**
          * URI for the Samsung Search authority. Lazy to avoid `Uri.parse()`
@@ -135,6 +185,7 @@ open class SamsungSearchClient @Inject constructor(
 interface SearchProviderDelegate {
     fun getType(uri: Uri): String?
     fun call(authority: Uri, method: String, arg: String?, extras: Bundle?): Bundle?
+    fun query(uri: Uri, projection: Array<String>?, selection: String?, selectionArgs: Array<String>?, sortOrder: String?): Cursor?
     fun bulkInsert(uri: Uri, values: Array<ContentValues>): Int
     fun delete(uri: Uri, where: String?, selectionArgs: Array<String?>?): Int
 }
@@ -151,9 +202,28 @@ class ContentResolverDelegate(
     override fun call(authority: Uri, method: String, arg: String?, extras: Bundle?): Bundle? =
         resolver.call(authority, method, arg, extras)
 
+    override fun query(
+        uri: Uri,
+        projection: Array<String>?,
+        selection: String?,
+        selectionArgs: Array<String>?,
+        sortOrder: String?,
+    ): Cursor? = resolver.query(uri, projection, selection, selectionArgs, sortOrder)
+
     override fun bulkInsert(uri: Uri, values: Array<ContentValues>): Int =
         resolver.bulkInsert(uri, values)
 
     override fun delete(uri: Uri, where: String?, selectionArgs: Array<String?>?): Int =
         resolver.delete(uri, where, selectionArgs)
 }
+
+sealed interface SamsungSearchQueryResult {
+    data class Success(val hits: List<SamsungSearchHit>) : SamsungSearchQueryResult
+    data class Failure(val message: String) : SamsungSearchQueryResult
+}
+
+data class SamsungSearchHit(
+    val id: String,
+    val title: String,
+    val sourceUrl: String,
+)

@@ -1,6 +1,7 @@
 package com.opus.readerparser.data.local.search
 
 import android.content.ContentValues
+import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -56,6 +57,9 @@ class SearchIndexSyncerTest {
 
         override suspend fun getIndexableSeries(): List<SeriesEntity> = backingStore.toList()
 
+        override suspend fun getLibraryIndexableSeries(sourceId: Long, url: String): SeriesEntity? =
+            backingStore.find { it.sourceId == sourceId && it.url == url && it.inLibrary }
+
         // --- unused DAO methods ---
         override fun observeLibrary(): Flow<List<SeriesEntity>> = emptyFlow()
         override suspend fun getByUrl(sourceId: Long, url: String): SeriesEntity? = null
@@ -108,6 +112,13 @@ class SearchIndexSyncerTest {
     private class FakeSearchProviderDelegate : SearchProviderDelegate {
         override fun getType(uri: Uri): String? = null
         override fun call(authority: Uri, method: String, arg: String?, extras: Bundle?): Bundle? = null
+        override fun query(
+            uri: Uri,
+            projection: Array<String>?,
+            selection: String?,
+            selectionArgs: Array<String>?,
+            sortOrder: String?,
+        ): Cursor? = null
         override fun bulkInsert(uri: Uri, values: Array<ContentValues>): Int = values.size
         override fun delete(uri: Uri, where: String?, selectionArgs: Array<String?>?): Int = 0
     }

@@ -2,9 +2,11 @@ package com.opus.readerparser.fakes
 
 import com.opus.readerparser.domain.SeriesRepository
 import com.opus.readerparser.domain.model.FilterList
+import com.opus.readerparser.domain.model.LibrarySearchResult
 import com.opus.readerparser.domain.model.Series
 import com.opus.readerparser.domain.model.SeriesPage
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
@@ -23,6 +25,8 @@ class FakeSeriesRepository : SeriesRepository {
     var popularResult: SeriesPage = SeriesPage(emptyList(), false)
     var latestResult: SeriesPage = SeriesPage(emptyList(), false)
     var searchResult: SeriesPage = SeriesPage(emptyList(), false)
+    var searchLibraryResult: LibrarySearchResult = LibrarySearchResult.Success(emptyList())
+    var searchLibraryHandler: suspend (String) -> LibrarySearchResult = { searchLibraryResult }
     var refreshDetailsResult: (Series) -> Series = { it }
     var isInLibraryResult: (Long, String) -> Boolean = { _, _ -> false }
 
@@ -30,6 +34,7 @@ class FakeSeriesRepository : SeriesRepository {
     val fetchPopularCalls: MutableList<Pair<Long, Int>> = mutableListOf()
     val fetchLatestCalls: MutableList<Pair<Long, Int>> = mutableListOf()
     val searchCalls: MutableList<SearchCall> = mutableListOf()
+    val searchLibraryCalls: MutableList<String> = mutableListOf()
     val refreshDetailsCalls: MutableList<Series> = mutableListOf()
     val addToLibraryCalls: MutableList<Series> = mutableListOf()
     val removeFromLibraryCalls: MutableList<Series> = mutableListOf()
@@ -37,8 +42,15 @@ class FakeSeriesRepository : SeriesRepository {
 
     // -- library state --
     private val _library = MutableStateFlow<List<Series>>(emptyList())
+    private val _librarySearchInvalidations = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
     override fun observeLibrary(): Flow<List<Series>> = _library
+
+    override fun observeLibrarySearchInvalidations(): Flow<Unit> = _librarySearchInvalidations
+
+    fun emitLibrarySearchInvalidation() {
+        _librarySearchInvalidations.tryEmit(Unit)
+    }
 
     override suspend fun fetchPopular(sourceId: Long, page: Int): SeriesPage {
         fetchPopularCalls.add(sourceId to page)
@@ -60,6 +72,11 @@ class FakeSeriesRepository : SeriesRepository {
         return searchResult
     }
 
+    override suspend fun searchLibrary(query: String): LibrarySearchResult {
+        searchLibraryCalls.add(query)
+        return searchLibraryHandler(query)
+    }
+
     override suspend fun refreshDetails(series: Series): Series {
         refreshDetailsCalls.add(series)
         return refreshDetailsResult(series)
@@ -68,11 +85,13 @@ class FakeSeriesRepository : SeriesRepository {
     override suspend fun addToLibrary(series: Series) {
         addToLibraryCalls.add(series)
         _library.value = _library.value + series
+        _librarySearchInvalidations.tryEmit(Unit)
     }
 
     override suspend fun removeFromLibrary(series: Series) {
         removeFromLibraryCalls.add(series)
         _library.value = _library.value.filter { it.url != series.url || it.sourceId != series.sourceId }
+        _librarySearchInvalidations.tryEmit(Unit)
     }
 
     override suspend fun isInLibrary(sourceId: Long, url: String): Boolean {

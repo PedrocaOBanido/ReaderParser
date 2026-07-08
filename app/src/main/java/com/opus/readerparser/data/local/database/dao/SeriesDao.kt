@@ -19,6 +19,21 @@ interface SeriesDao {
     @Query("SELECT * FROM series WHERE sourceId = :sourceId")
     suspend fun getBySourceId(sourceId: Long): List<SeriesEntity>
 
+    @Query(
+        """
+        SELECT DISTINCT s.*
+        FROM series s
+        INNER JOIN chapters c
+          ON s.sourceId = c.sourceId AND s.url = c.seriesUrl
+        WHERE s.sourceId = :sourceId
+          AND s.url = :url
+          AND s.inLibrary = 1
+          AND c.downloaded = 1
+        LIMIT 1
+        """,
+    )
+    suspend fun getLibraryIndexableSeries(sourceId: Long, url: String): SeriesEntity?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(series: SeriesEntity)
 

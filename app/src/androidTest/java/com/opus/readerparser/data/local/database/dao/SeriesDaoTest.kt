@@ -59,6 +59,23 @@ class SeriesDaoTest {
         addedAt = addedAt,
     )
 
+    private fun chapterEntity(
+        sourceId: Long = 1L,
+        seriesUrl: String = "https://example.com/series/1",
+        url: String = "https://example.com/series/1/ch/1",
+        downloaded: Boolean = false,
+    ) = ChapterEntity(
+        sourceId = sourceId,
+        url = url,
+        seriesUrl = seriesUrl,
+        name = "Chapter 1",
+        number = 1f,
+        uploadDate = null,
+        read = false,
+        progress = 0f,
+        downloaded = downloaded,
+    )
+
     // --- observeLibrary ---
 
     @Test
@@ -131,6 +148,47 @@ class SeriesDaoTest {
 
         val result = dao.getByUrl(sourceId = 2L, url = "https://example.com/1")
         assertThat(result).isNull()
+    }
+
+    // --- getLibraryIndexableSeries ---
+
+    @Test
+    fun getLibraryIndexableSeries_returnsRowOnlyWhenInLibraryAndDownloaded() = runTest {
+        val series = seriesEntity(
+            sourceId = 1L,
+            url = "https://example.com/1",
+            title = "Downloadable",
+            inLibrary = true,
+            addedAt = 1000L,
+        )
+        dao.upsert(series)
+        database.chapterDao().upsertAll(listOf(chapterEntity(seriesUrl = series.url, downloaded = true)))
+
+        val result = dao.getLibraryIndexableSeries(sourceId = 1L, url = "https://example.com/1")
+
+        assertThat(result).isNotNull()
+        assertThat(result!!.url).isEqualTo("https://example.com/1")
+        assertThat(result.inLibrary).isTrue()
+    }
+
+    @Test
+    fun getLibraryIndexableSeries_returnsNullForNonLibraryOrNonDownloadedRows() = runTest {
+        val nonLibrary = seriesEntity(
+            sourceId = 1L,
+            url = "https://example.com/non-library",
+            inLibrary = false,
+        )
+        val nonDownloaded = seriesEntity(
+            sourceId = 1L,
+            url = "https://example.com/non-downloaded",
+            inLibrary = true,
+        )
+        dao.upsertAll(listOf(nonLibrary, nonDownloaded))
+        database.chapterDao().upsertAll(listOf(chapterEntity(seriesUrl = nonLibrary.url, url = "https://example.com/non-library/ch/1", downloaded = true)))
+        database.chapterDao().upsertAll(listOf(chapterEntity(seriesUrl = nonDownloaded.url, url = "https://example.com/non-downloaded/ch/1", downloaded = false)))
+
+        assertThat(dao.getLibraryIndexableSeries(1L, nonLibrary.url)).isNull()
+        assertThat(dao.getLibraryIndexableSeries(1L, nonDownloaded.url)).isNull()
     }
 
     // --- upsert ---

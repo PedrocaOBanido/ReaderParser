@@ -3,16 +3,29 @@ package com.opus.readerparser.data.repository
 import com.opus.readerparser.data.local.database.dao.SeriesDao
 import com.opus.readerparser.data.local.database.entities.SeriesEntity
 import com.opus.readerparser.data.local.database.mappers.toEntity
+import com.opus.readerparser.data.local.search.SamsungSearchClient
+import com.opus.readerparser.data.local.search.SamsungSearchHit
+import com.opus.readerparser.data.local.search.SamsungSearchQueryResult
+import com.opus.readerparser.data.local.search.SamsungSearchSchema
+import com.opus.readerparser.data.local.search.SearchProviderDelegate
 import com.opus.readerparser.data.source.SourceRegistry
 import com.opus.readerparser.domain.model.ContentType
 import com.opus.readerparser.domain.model.FilterList
+import com.opus.readerparser.domain.model.LibrarySearchResult
 import com.opus.readerparser.domain.model.Series
 import com.opus.readerparser.domain.model.SeriesPage
 import com.opus.readerparser.fakes.FakeSource
 import com.opus.readerparser.testutil.TestFixtures
+import android.content.ContentValues
+import android.database.Cursor
+import android.net.Uri
+import android.os.Bundle
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -28,14 +41,22 @@ import org.junit.Test
  * network operations and to [SeriesDao] for persistence, and that source
  * exceptions propagate without being caught or wrapped.
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 class SeriesRepositoryImplTest {
 
     private class FakeSeriesDao : SeriesDao {
 
         private val store = mutableListOf<SeriesEntity>()
+        private val downloadedKeys = mutableSetOf<Pair<Long, String>>()
+        private val libraryFlow = MutableStateFlow<List<SeriesEntity>>(emptyList())
+        private val indexableFlow = MutableStateFlow<List<SeriesEntity>>(emptyList())
 
-        override fun observeLibrary(): Flow<List<SeriesEntity>> =
-            flowOf(store.filter { it.inLibrary })
+        private fun refreshFlows() {
+            libraryFlow.value = store.filter { it.inLibrary }
+            indexableFlow.value = store.filter { it.inLibrary && downloadedKeys.contains(it.sourceId to it.url) }
+        }
+
+        override fun observeLibrary(): Flow<List<SeriesEntity>> = libraryFlow
 
         override suspend fun getByUrl(sourceId: Long, url: String): SeriesEntity? =
             store.find { it.sourceId == sourceId && it.url == url }
@@ -43,9 +64,25 @@ class SeriesRepositoryImplTest {
         override suspend fun getBySourceId(sourceId: Long): List<SeriesEntity> =
             store.filter { it.sourceId == sourceId }
 
+        override suspend fun getLibraryIndexableSeries(sourceId: Long, url: String): SeriesEntity? =
+            store.find { it.sourceId == sourceId && it.url == url && it.inLibrary && downloadedKeys.contains(sourceId to url) }
+
         override suspend fun upsert(series: SeriesEntity) {
             val idx = store.indexOfFirst { it.sourceId == series.sourceId && it.url == series.url }
             if (idx >= 0) store[idx] = series else store.add(series)
+            refreshFlows()
+        }
+
+        fun markDownloaded(sourceId: Long, url: String) {
+            downloadedKeys.add(sourceId to url)
+            refreshFlows()
+        }
+
+        fun upsertLibraryIndexable(series: SeriesEntity) {
+            val stored = series.copy(inLibrary = true)
+            val idx = store.indexOfFirst { it.sourceId == stored.sourceId && it.url == stored.url }
+            if (idx >= 0) store[idx] = stored else store.add(stored)
+            markDownloaded(series.sourceId, series.url)
         }
 
         override suspend fun upsertAll(series: List<SeriesEntity>) {
@@ -56,6 +93,7 @@ class SeriesRepositoryImplTest {
             val idx = store.indexOfFirst { it.sourceId == sourceId && it.url == url }
             if (idx >= 0) {
                 store[idx] = store[idx].copy(inLibrary = true, addedAt = addedAt)
+                refreshFlows()
             }
         }
 
@@ -63,6 +101,7 @@ class SeriesRepositoryImplTest {
             val idx = store.indexOfFirst { it.sourceId == sourceId && it.url == url }
             if (idx >= 0) {
                 store[idx] = store[idx].copy(inLibrary = false, addedAt = null)
+                refreshFlows()
             }
         }
 
@@ -85,6 +124,7 @@ class SeriesRepositoryImplTest {
                     description = description, coverUrl = coverUrl,
                     genresJson = genresJson, status = status, type = type,
                 )
+                refreshFlows()
                 1
             } else {
                 0
@@ -93,15 +133,17 @@ class SeriesRepositoryImplTest {
 
         override suspend fun insert(series: SeriesEntity) {
             store.add(series)
+            refreshFlows()
         }
 
         override suspend fun delete(sourceId: Long, url: String) {
             store.removeAll { it.sourceId == sourceId && it.url == url }
+            refreshFlows()
         }
 
-        override fun observeIndexableSeries(): Flow<List<SeriesEntity>> = flowOf(emptyList())
+        override fun observeIndexableSeries(): Flow<List<SeriesEntity>> = indexableFlow
 
-        override suspend fun getIndexableSeries(): List<SeriesEntity> = emptyList()
+        override suspend fun getIndexableSeries(): List<SeriesEntity> = indexableFlow.value
     }
 
     // ---- Test fixtures ----
@@ -111,7 +153,34 @@ class SeriesRepositoryImplTest {
 
     private val fakeDao = FakeSeriesDao()
 
-    private val repository = SeriesRepositoryImpl(sourceRegistry, fakeDao)
+    private class FakeSearchProviderDelegate : SearchProviderDelegate {
+        override fun getType(uri: Uri): String? = null
+        override fun call(authority: Uri, method: String, arg: String?, extras: Bundle?): Bundle? = null
+        override fun query(
+            uri: Uri,
+            projection: Array<String>?,
+            selection: String?,
+            selectionArgs: Array<String>?,
+            sortOrder: String?,
+        ): Cursor? = null
+        override fun bulkInsert(uri: Uri, values: Array<ContentValues>): Int = values.size
+        override fun delete(uri: Uri, where: String?, selectionArgs: Array<String?>?): Int = 0
+    }
+
+    private val fakeSearchClient = object : SamsungSearchClient(
+        FakeSearchProviderDelegate(),
+        SamsungSearchSchema.fake(ByteArray(0)),
+    ) {
+        var queryResult: SamsungSearchQueryResult = SamsungSearchQueryResult.Success(emptyList())
+        val queryCalls = mutableListOf<String>()
+
+        override suspend fun query(query: String): SamsungSearchQueryResult {
+            queryCalls.add(query)
+            return queryResult
+        }
+    }
+
+    private val repository = SeriesRepositoryImpl(sourceRegistry, fakeDao, fakeSearchClient)
 
     private val testSeries = TestFixtures.testSeries(sourceId = fakeSource.id)
 
@@ -136,6 +205,29 @@ class SeriesRepositoryImplTest {
     fun `observeLibrary returns empty list when nothing is in library`() = runTest {
         val result = repository.observeLibrary().first()
         assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun `observeLibrarySearchInvalidations emits on library and indexable changes`() = runTest {
+        val series = testSeries.toEntity()
+
+        val invalidations = mutableListOf<Unit>()
+        val job = launch {
+            repository.observeLibrarySearchInvalidations().collect { invalidations.add(it) }
+        }
+
+        advanceUntilIdle()
+
+        fakeDao.upsert(series.copy(inLibrary = true, addedAt = 1L, title = "Library"))
+        advanceUntilIdle()
+        assertEquals(1, invalidations.size)
+
+        fakeDao.markDownloaded(series.sourceId, series.url)
+
+        advanceUntilIdle()
+        job.cancel()
+
+        assertEquals(2, invalidations.size)
     }
 
     // -----------------------------------------------------------------
@@ -322,6 +414,80 @@ class SeriesRepositoryImplTest {
         assertEquals(0, result.series.size)
     }
 
+    @Test
+    fun `searchLibrary maps Samsung hits to local library indexable rows in provider order`() = runTest {
+        val first = testSeries.toEntity().copy(
+            url = "https://test.invalid/first",
+            title = "Local First Title",
+        )
+        val second = testSeries.toEntity().copy(
+            url = "https://test.invalid/second",
+            title = "Local Second Title",
+        )
+        fakeDao.upsertLibraryIndexable(first)
+        fakeDao.upsertLibraryIndexable(second)
+
+        fakeSearchClient.queryResult = SamsungSearchQueryResult.Success(
+            listOf(
+                SamsungSearchHit(id = "${second.sourceId}:${second.url}", title = "Remote Second", sourceUrl = "readerparser://series/${second.sourceId}/${second.url}"),
+                SamsungSearchHit(id = "${first.sourceId}:${first.url}", title = "Remote First", sourceUrl = "readerparser://series/${first.sourceId}/${first.url}"),
+            ),
+        )
+
+        when (val result = repository.searchLibrary("query")) {
+            is LibrarySearchResult.Success -> {
+                assertEquals(listOf("Local Second Title", "Local First Title"), result.series.map { it.title })
+            }
+            is LibrarySearchResult.Failure -> fail("Expected success but got failure: ${result.message}")
+        }
+
+        assertEquals(listOf("query"), fakeSearchClient.queryCalls)
+    }
+
+    @Test
+    fun `searchLibrary filters out non-library and non-indexable hits`() = runTest {
+        val indexable = testSeries.toEntity().copy(
+            url = "https://test.invalid/indexable",
+            title = "Indexable",
+        )
+        val nonLibrary = testSeries.toEntity().copy(
+            url = "https://test.invalid/not-library",
+            title = "Not Library",
+        )
+        val nonDownloaded = testSeries.toEntity().copy(
+            url = "https://test.invalid/not-downloaded",
+            title = "Not Downloaded",
+        )
+        fakeDao.upsertLibraryIndexable(indexable)
+        fakeDao.upsert(nonLibrary)
+        fakeDao.upsert(nonDownloaded.copy(inLibrary = true))
+
+        fakeSearchClient.queryResult = SamsungSearchQueryResult.Success(
+            listOf(
+                SamsungSearchHit(id = "${nonLibrary.sourceId}:${nonLibrary.url}", title = "Remote Non Library", sourceUrl = "readerparser://series/${nonLibrary.sourceId}/${nonLibrary.url}"),
+                SamsungSearchHit(id = "${nonDownloaded.sourceId}:${nonDownloaded.url}", title = "Remote Non Downloaded", sourceUrl = "readerparser://series/${nonDownloaded.sourceId}/${nonDownloaded.url}"),
+                SamsungSearchHit(id = "${indexable.sourceId}:${indexable.url}", title = "Remote Indexable", sourceUrl = "readerparser://series/${indexable.sourceId}/${indexable.url}"),
+            ),
+        )
+
+        when (val result = repository.searchLibrary("query")) {
+            is LibrarySearchResult.Success -> {
+                assertEquals(listOf("Indexable"), result.series.map { it.title })
+            }
+            is LibrarySearchResult.Failure -> fail("Expected success but got failure: ${result.message}")
+        }
+    }
+
+    @Test
+    fun `searchLibrary surfaces provider failure`() = runTest {
+        fakeSearchClient.queryResult = SamsungSearchQueryResult.Failure("provider down")
+
+        when (val result = repository.searchLibrary("query")) {
+            is LibrarySearchResult.Success -> fail("Expected failure but got success")
+            is LibrarySearchResult.Failure -> assertEquals("provider down", result.message)
+        }
+    }
+
     // -----------------------------------------------------------------
     // refreshDetails
     // -----------------------------------------------------------------
@@ -451,7 +617,7 @@ class SeriesRepositoryImplTest {
                 throw RuntimeException("Source error")
         }
         val registry = SourceRegistry(mapOf(throwingSource.id to throwingSource))
-        val repo = SeriesRepositoryImpl(registry, fakeDao)
+        val repo = SeriesRepositoryImpl(registry, fakeDao, fakeSearchClient)
 
         try {
             repo.fetchPopular(throwingSource.id, 1)
@@ -468,7 +634,7 @@ class SeriesRepositoryImplTest {
                 throw IllegalStateException("Latest failed")
         }
         val registry = SourceRegistry(mapOf(throwingSource.id to throwingSource))
-        val repo = SeriesRepositoryImpl(registry, fakeDao)
+        val repo = SeriesRepositoryImpl(registry, fakeDao, fakeSearchClient)
 
         try {
             repo.fetchLatest(throwingSource.id, 1)
@@ -485,7 +651,7 @@ class SeriesRepositoryImplTest {
                 throw RuntimeException("Search error")
         }
         val registry = SourceRegistry(mapOf(throwingSource.id to throwingSource))
-        val repo = SeriesRepositoryImpl(registry, fakeDao)
+        val repo = SeriesRepositoryImpl(registry, fakeDao, fakeSearchClient)
 
         try {
             repo.search(throwingSource.id, "q", 1, FilterList())
@@ -502,7 +668,7 @@ class SeriesRepositoryImplTest {
                 throw RuntimeException("Details error")
         }
         val registry = SourceRegistry(mapOf(throwingSource.id to throwingSource))
-        val repo = SeriesRepositoryImpl(registry, fakeDao)
+        val repo = SeriesRepositoryImpl(registry, fakeDao, fakeSearchClient)
         val series = TestFixtures.testSeries(sourceId = throwingSource.id)
 
         try {

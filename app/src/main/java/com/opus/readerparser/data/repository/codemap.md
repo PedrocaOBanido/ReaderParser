@@ -11,7 +11,7 @@ domain interfaces; Hilt wires the impls.
 
 | File | Implements | Role |
 |---|---|---|
-| `SeriesRepositoryImpl.kt` | `SeriesRepository` | Browsing (popular/latest/search), library CRUD, detail refresh |
+| `SeriesRepositoryImpl.kt` | `SeriesRepository` | Browsing (popular/latest/search), library CRUD, detail refresh, library-search invalidation |
 | `ChapterRepositoryImpl.kt` | `ChapterRepository` | Chapter list sync, content retrieval, read/progress state |
 | `DownloadRepositoryImpl.kt` | `DownloadRepository` | Download queue observation, cancel/retry |
 | `SourceRepositoryImpl.kt` | `SourceRepository` | Returns metadata for all registered sources |
@@ -88,9 +88,17 @@ BrowseViewModel.fetchPopular(sourceId, page)
 ```
 LibraryViewModel
   → SeriesRepositoryImpl.observeLibrary()
-     → seriesDao.observeLibrary()              ← Room Flow
-     → .map { it.toDomain() }                  ← entity→domain
-     → Flow<List<Series>>                      ← to ViewModel
+      → seriesDao.observeLibrary()              ← Room Flow
+      → .map { it.toDomain() }                  ← entity→domain
+      → Flow<List<Series>>                      ← to ViewModel
+```
+
+### Example: library search invalidation
+```
+LibraryViewModel
+  → SeriesRepositoryImpl.observeLibrarySearchInvalidations()
+      → combine(seriesDao.observeLibrary(), seriesDao.observeIndexableSeries())
+      → Flow<Unit>                               ← active search refresh trigger
 ```
 
 ## Integration
