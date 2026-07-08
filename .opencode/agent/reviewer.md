@@ -1,7 +1,7 @@
 ---
 description: Read-only code reviewer. Does not edit files. Use before merging or as a sanity check.
 mode: subagent
-model: openai/gpt-5.4
+model: openai/gpt-5.5
 variant: xhigh
 temperature: 0.1
 permission:

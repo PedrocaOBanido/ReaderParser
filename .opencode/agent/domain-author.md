@@ -1,8 +1,8 @@
 ---
 description: Authors domain models, the Source interface, HtmlSource base class, SourceRegistry, and computeSourceId. Follows TDD — tests first, then implementations. Never violates repo non-negotiables.
 mode: subagent
-model: opencode-go/deepseek-v4-flash
-variant: high
+model: openai/gpt-5.4-mini
+variant: xhigh
 temperature: 0.1
 permission:
   skill: deny
