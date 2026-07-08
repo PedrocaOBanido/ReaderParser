@@ -70,9 +70,13 @@ jobs:
             APK_KIND="unsigned"
           fi
 
-          echo "path=$APK_PATH" >> "$GITHUB_OUTPUT"
+          VERSION="${GITHUB_REF_NAME#v}"
+          ASSET_PATH="$PWD/ReaderParser${VERSION}.apk"
+          cp "$APK_PATH" "$ASSET_PATH"
+
+          echo "path=$ASSET_PATH" >> "$GITHUB_OUTPUT"
           echo "kind=$APK_KIND" >> "$GITHUB_OUTPUT"
-          echo "Selected $APK_KIND APK for a ${{ steps.signing.outputs.mode }} build: $APK_PATH"
+          echo "Selected $APK_KIND APK for a ${{ steps.signing.outputs.mode }} build: $ASSET_PATH"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
