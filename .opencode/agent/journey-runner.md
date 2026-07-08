@@ -1,8 +1,8 @@
 ---
 description: Provisions the emulator, installs the debug APK, and executes journey XML specs against the running device. Reads source, runs the android CLI and adb. Loads the android-cli skill.
 mode: subagent
-model: opencode-go/deepseek-v4-flash
-variant: high
+model: openai/gpt-5.4-mini
+variant: low
 temperature: 0.1
 permission:
   edit: deny

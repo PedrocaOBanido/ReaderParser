@@ -1,8 +1,8 @@
 ---
 description: Scaffolds Compose screens following the project's strict four-file pattern. Asks for screen purpose before writing state fields.
 mode: subagent
-model: opencode-go/deepseek-v4-flash
-variant: high
+model: openai/gpt-5.4-mini
+variant: xhigh
 temperature: 0.1
 permission:
   skill: deny

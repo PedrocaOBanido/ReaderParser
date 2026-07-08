@@ -1,8 +1,8 @@
 ---
 description: Writes Source plugins for new sites. Extends HtmlSource, registers in DI, scaffolds tests with HTML fixtures. Refuses to invent CSS selectors.
 mode: subagent
-model: opencode-go/deepseek-v4-flash
-variant: high
+model: openai/gpt-5.4-mini
+variant: xhigh
 temperature: 0.1
 permission:
   skill: deny
