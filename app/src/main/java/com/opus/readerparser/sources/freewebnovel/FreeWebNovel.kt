@@ -10,6 +10,14 @@ import com.opus.readerparser.domain.model.Series
 import com.opus.readerparser.domain.model.SeriesPage
 import com.opus.readerparser.domain.model.SeriesStatus
 import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.statement.bodyAsText
+import kotlinx.coroutines.CancellationException
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.Json
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
@@ -218,6 +226,92 @@ class FreeWebNovel(
      * Per-row dates are not available, so [Chapter.uploadDate] is `null`.
      */
     override fun chapterListSelector(): String = "ul#idData a.con[href*=\"/chapter-\"]"
+
+    @Serializable
+    private data class ChapterListAjaxResponse(
+        val code: Int = 0,
+        val html: String = "",
+        val page: Int = 0,
+        val pageSize: Int = 0,
+        val totalPage: Int = 0,
+        val totalChapters: Int = 0,
+    )
+
+    companion object {
+        private val json = Json { ignoreUnknownKeys = true }
+        private const val chapterListAjaxPageSize = 200
+    }
+
+    override suspend fun getChapterList(series: Series): List<Chapter> {
+        val page1Ajax = fetchOptionalChapterListAjax(series.url, 1)
+        if (page1Ajax?.html?.isNotBlank() == true) {
+            return buildChapterListFromAjax(series, page1Ajax)
+        }
+
+        val doc = fetchDoc(series.url)
+        return doc.select(chapterListSelector()).map { chapterFromElement(it, series) }
+    }
+
+    private suspend fun fetchChapterListAjax(seriesUrl: String, page: Int): ChapterListAjaxResponse? {
+        val ajaxUrl = "$seriesUrl?ajax=chapters&page=$page&pageSize=$chapterListAjaxPageSize"
+        val responseBody = client.get(ajaxUrl) {
+            header("X-Requested-With", "XMLHttpRequest")
+        }.bodyAsText()
+        return decodeChapterListAjaxResponse(responseBody)
+    }
+
+    private suspend fun buildChapterListFromAjax(series: Series, page1: ChapterListAjaxResponse): List<Chapter> {
+        val allChapters = mutableListOf<Chapter>()
+        // ponytail: url dedup is cheaper than full Chapter equality
+        val seenUrls = mutableSetOf<String>()
+
+        appendAjaxChapters(series, page1.html, allChapters, seenUrls)
+
+        for (page in 2..page1.totalPage.coerceAtLeast(1)) {
+            val ajaxResponse = fetchOptionalChapterListAjax(series.url, page)
+                ?: break
+            if (ajaxResponse.html.isBlank()) break
+            val beforeCount = allChapters.size
+            appendAjaxChapters(series, ajaxResponse.html, allChapters, seenUrls)
+            if (allChapters.size == beforeCount) break
+        }
+
+        return allChapters
+    }
+
+    private suspend fun fetchOptionalChapterListAjax(
+        seriesUrl: String,
+        page: Int,
+    ): ChapterListAjaxResponse? = try {
+        fetchChapterListAjax(seriesUrl, page)
+    } catch (e: CancellationException) {
+        throw e
+    } catch (_: Exception) {
+        null
+    }
+
+    private fun appendAjaxChapters(
+        series: Series,
+        html: String,
+        allChapters: MutableList<Chapter>,
+        seenUrls: MutableSet<String>,
+    ) {
+        val ajaxDoc = Jsoup.parse(html, series.url)
+        // ponytail: AJAX html fragment has bare <li> rows, no wrapping <ul id="idData">
+        ajaxDoc.select("a.con[href*=\"/chapter-\"]")
+            .map { chapterFromElement(it, series) }
+            .filter { it.url !in seenUrls }
+            .forEach {
+                seenUrls += it.url
+                allChapters += it
+            }
+    }
+
+    private fun decodeChapterListAjaxResponse(body: String): ChapterListAjaxResponse? = try {
+        json.decodeFromString<ChapterListAjaxResponse>(body)
+    } catch (_: SerializationException) {
+        null
+    }
 
     /** Extracts a [Chapter] from a chapter-list row. */
     override fun chapterFromElement(el: Element, series: Series): Chapter {

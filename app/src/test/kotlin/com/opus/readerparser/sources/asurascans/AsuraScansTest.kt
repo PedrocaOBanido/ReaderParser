@@ -13,6 +13,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -74,21 +75,62 @@ class AsuraScansTest {
     // =========================================================================
 
     @Test
-    fun `getPopular parses series cards from browse page`() = runTest {
-        val html = readFixture("fixtures/asurascans/popular.html")
-        val source = asuraScans(html)
+    fun `getPopular page 1 and 2 request distinct urls and parse distinct content`() = runTest {
+        val page1Html = """
+            <html><body>
+              <div id="series-grid">
+                <div class="series-card">
+                  <a href="/comics/page-one-b6e039fe"><img src="https://cdn.asurascans.com/page-one.webp"/></a>
+                  <div class="p-3">
+                    <a href="/comics/page-one-b6e039fe"><h3>Page One</h3></a>
+                    <div><span>10 Chapters</span><span class="capitalize">Ongoing</span></div>
+                  </div>
+                </div>
+              </div>
+              <a href="/browse?page=2" aria-label="Next page">Next</a>
+            </body></html>
+        """.trimIndent()
+        val page2Html = """
+            <html><body>
+              <div id="series-grid">
+                <div class="series-card">
+                  <a href="/comics/page-two-b6e039fe"><img src="https://cdn.asurascans.com/page-two.webp"/></a>
+                  <div class="p-3">
+                    <a href="/comics/page-two-b6e039fe"><h3>Page Two</h3></a>
+                    <div><span>20 Chapters</span><span class="capitalize">Completed</span></div>
+                  </div>
+                </div>
+              </div>
+            </body></html>
+        """.trimIndent()
 
-        val result = source.getPopular(1)
+        val requestedUrls = mutableListOf<String>()
+        val source = AsuraScans(
+            mockHttpClient { request ->
+                requestedUrls += request.url.toString()
+                when {
+                    request.url.encodedPath == "/browse" && request.url.parameters["page"] == null -> respondHtml(page1Html)
+                    request.url.encodedPath == "/browse" && request.url.parameters["page"] == "2" -> respondHtml(page2Html)
+                    else -> error("Unexpected request: ${request.url}")
+                }
+            }
+        )
 
-        assertEquals(3, result.series.size)
+        val page1 = source.getPopular(1)
+        val page2 = source.getPopular(2)
 
-        val first = result.series[0]
-        assertEquals("Eternally Regressing Knight", first.title)
-        assertEquals(source.id, first.sourceId)
-        assertTrue(first.url.contains("/comics/eternally-regressing-knight-b6e039fe"))
-        assertNotNull(first.coverUrl)
-        assertTrue(first.coverUrl!!.contains("cdn.asurascans.com"))
-        assertEquals(SeriesStatus.ONGOING, first.status)
+        assertEquals(
+            listOf(
+                "https://asurascans.com/browse",
+                "https://asurascans.com/browse?page=2",
+            ),
+            requestedUrls,
+        )
+        assertEquals("Page One", page1.series.single().title)
+        assertEquals("Page Two", page2.series.single().title)
+        assertNotEquals(page1.series.single().title, page2.series.single().title)
+        assertTrue(page1.hasNextPage)
+        assertFalse(page2.hasNextPage)
     }
 
     @Test
@@ -97,6 +139,10 @@ class AsuraScansTest {
         val source = asuraScans(html)
 
         val result = source.getPopular(1)
+
+        assertEquals(3, result.series.size)
+        assertEquals("Eternally Regressing Knight", result.series[0].title)
+        assertEquals(source.id, result.series[0].sourceId)
         assertTrue("Fixture has Next page link", result.hasNextPage)
     }
 
@@ -131,12 +177,123 @@ class AsuraScansTest {
         assertFalse(result.hasNextPage)
     }
 
+    @Test
+    fun `getPopular and getLatest use distinct urls and return distinct content`() = runTest {
+        val popularHtml = """
+            <html><body>
+              <div id="series-grid">
+                <div class="series-card">
+                  <a href="/comics/popular-series-b6e039fe"><img src="https://cdn.asurascans.com/pop.webp"/></a>
+                  <div class="p-3">
+                    <a href="/comics/popular-series-b6e039fe"><h3>Popular Series</h3></a>
+                    <div><span>10 Chapters</span><span class="capitalize">Ongoing</span></div>
+                  </div>
+                </div>
+              </div>
+            </body></html>
+        """.trimIndent()
+
+        val latestHtml = """
+            <html><body>
+              <div class="grid grid-cols-12 gap-2 py-4 px-2 border-b border-[#312f40]">
+                <a href="/comics/latest-series-b6e039fe" class="col-span-4">
+                  <img src="https://cdn.asurascans.com/latest.webp" />
+                </a>
+                <div class="col-span-8 flex flex-col min-w-0">
+                  <a href="/comics/latest-series-b6e039fe" class="font-bold text-base line-clamp-1">Latest Series</a>
+                </div>
+              </div>
+            </body></html>
+        """.trimIndent()
+
+        val requestedUrls = mutableListOf<String>()
+        val source = AsuraScans(
+            mockHttpClient { request ->
+                requestedUrls += request.url.toString()
+                when {
+                    request.url.encodedPath == "/browse" -> respondHtml(popularHtml)
+                    request.url.encodedPath.isEmpty() -> respondHtml(latestHtml)
+                    else -> error("Unexpected request: ${request.url}")
+                }
+            }
+        )
+
+        val popular = source.getPopular(1)
+        val latest = source.getLatest(1)
+
+        assertEquals(listOf("https://asurascans.com/browse", "https://asurascans.com"), requestedUrls.map { it.removeSuffix("/") })
+        assertTrue("Popular series URL should not be blank", popular.series.single().url.isNotBlank())
+        assertTrue("Latest series URL should not be blank", latest.series.single().url.isNotBlank())
+        assertEquals("Popular Series", popular.series.single().title)
+        assertEquals("Latest Series", latest.series.single().title)
+        assertNotEquals(popular.series.single().url, latest.series.single().url)
+    }
+
     // =========================================================================
     // search
     // =========================================================================
 
     @Test
-    fun `search parses results using same card structure as popular`() = runTest {
+    fun `search page 1 and 2 request distinct urls and parse distinct content`() = runTest {
+        val page1Html = """
+            <html><body>
+              <div id="series-grid">
+                <div class="series-card">
+                  <a href="/comics/search-one-b6e039fe"><img src="https://cdn.asurascans.com/search-one.webp"/></a>
+                  <div class="p-3">
+                    <a href="/comics/search-one-b6e039fe"><h3>Search One</h3></a>
+                    <div><span>7 Chapters</span><span class="capitalize">Ongoing</span></div>
+                  </div>
+                </div>
+              </div>
+              <a href="/browse?search=solo%20leveling&page=2" aria-label="Next page">Next</a>
+            </body></html>
+        """.trimIndent()
+        val page2Html = """
+            <html><body>
+              <div id="series-grid">
+                <div class="series-card">
+                  <a href="/comics/search-two-b6e039fe"><img src="https://cdn.asurascans.com/search-two.webp"/></a>
+                  <div class="p-3">
+                    <a href="/comics/search-two-b6e039fe"><h3>Search Two</h3></a>
+                    <div><span>12 Chapters</span><span class="capitalize">Completed</span></div>
+                  </div>
+                </div>
+              </div>
+            </body></html>
+        """.trimIndent()
+
+        val requestedUrls = mutableListOf<String>()
+        val source = AsuraScans(
+            mockHttpClient { request ->
+                requestedUrls += request.url.toString()
+                when {
+                    request.url.encodedPath == "/browse" && request.url.parameters["search"] == "solo leveling" && request.url.parameters["page"] == null -> respondHtml(page1Html)
+                    request.url.encodedPath == "/browse" && request.url.parameters["search"] == "solo leveling" && request.url.parameters["page"] == "2" -> respondHtml(page2Html)
+                    else -> error("Unexpected request: ${request.url}")
+                }
+            }
+        )
+
+        val page1 = source.search("solo leveling", 1, FilterList())
+        val page2 = source.search("solo leveling", 2, FilterList())
+
+        assertEquals(
+            listOf(
+                "https://asurascans.com/browse?search=solo%20leveling",
+                "https://asurascans.com/browse?search=solo%20leveling&page=2",
+            ),
+            requestedUrls,
+        )
+        assertEquals("Search One", page1.series.single().title)
+        assertEquals("Search Two", page2.series.single().title)
+        assertNotEquals(page1.series.single().title, page2.series.single().title)
+        assertTrue(page1.hasNextPage)
+        assertFalse(page2.hasNextPage)
+    }
+
+    @Test
+    fun `search parses fixture-backed results`() = runTest {
         val html = readFixture("fixtures/asurascans/search.html")
         val source = asuraScans(html)
 
