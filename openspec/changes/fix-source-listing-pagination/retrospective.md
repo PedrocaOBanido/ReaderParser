@@ -1,7 +1,5 @@
 # Retrospective
 
-- Prior narrower pagination findings remain valid:
-  - FreeWebNovel popular/search are intentionally single-page.
-  - FreeWebNovel latest and AsuraScans popular/search have distinct page-aware behavior.
-  - BrowseViewModel already has load-more guard coverage.
-- The change is reopened with new scope: browse auto-load-on-scroll, FreeWebNovel chapter aggregation, and AsuraScans latest/popular regression proof.
+- Implemented three live-issue slices while keeping the Source contract unchanged.
+- Review loop caught FreeWebNovel selector/fixture false positives; fixes were committed separately.
+- Verification stayed targeted first, then finished with full unit and debug assemble success.
