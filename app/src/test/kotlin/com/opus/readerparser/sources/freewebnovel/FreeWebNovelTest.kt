@@ -10,6 +10,7 @@ import com.opus.readerparser.testutil.mockHttpClient
 import com.opus.readerparser.testutil.readFixture
 import com.opus.readerparser.testutil.respondHtml
 import io.ktor.client.engine.mock.respond
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.test.runTest
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
@@ -320,6 +321,50 @@ class FreeWebNovelTest {
 
     @Test
     fun `getChapterList fetches AJAX pages when total chapters exceed page size`() = runTest {
+        val page1Json = """{"code":200,"html":"<li><span class=\"glyphicon glyphicon-book right-5\"><\/span><a href=\"\/novel\/test-pagination\/chapter-1\" title=\"Chapter 1: One\" class=\"con\">Chapter 1: One<\/a><\/li><li><span class=\"glyphicon glyphicon-book right-5\"><\/span><a href=\"\/novel\/test-pagination\/chapter-2\" title=\"Chapter 2: Two\" class=\"con\">Chapter 2: Two<\/a><\/li>","page":1,"pageSize":200,"totalPage":2,"totalChapters":3}"""
+        val page2Json = """{"code":200,"html":"<li><span class=\"glyphicon glyphicon-book right-5\"><\/span><a href=\"\/novel\/test-pagination\/chapter-2\" title=\"Chapter 2: Two (dup)\" class=\"con\">Chapter 2: Two (dup)<\/a><\/li><li><span class=\"glyphicon glyphicon-book right-5\"><\/span><a href=\"\/novel\/test-pagination\/chapter-3\" title=\"Chapter 3: Three\" class=\"con\">Chapter 3: Three<\/a><\/li>","page":2,"pageSize":200,"totalPage":2,"totalChapters":3}"""
+
+        val requestedUrls = mutableListOf<String>()
+        val series = Series(
+            sourceId = computeSourceId("FreeWebNovel", "en", ContentType.NOVEL),
+            url = "https://freewebnovel.com/novel/test-pagination",
+            title = "Test Pagination",
+            type = ContentType.NOVEL,
+        )
+        val source = FreeWebNovel(
+            mockHttpClient { request ->
+                requestedUrls += request.url.toString()
+                when (request.url.toString()) {
+                    "https://freewebnovel.com/novel/test-pagination?ajax=chapters&page=1&pageSize=200" -> respond(
+                        content = page1Json,
+                        status = HttpStatusCode.OK,
+                        headers = headersOf("Content-Type", "application/json; charset=UTF-8"),
+                    )
+                    "https://freewebnovel.com/novel/test-pagination?ajax=chapters&page=2&pageSize=200" -> respond(
+                        content = page2Json,
+                        status = HttpStatusCode.OK,
+                        headers = headersOf("Content-Type", "application/json; charset=UTF-8"),
+                    )
+                    else -> error("Unexpected request: ${request.url}")
+                }
+            }
+        )
+
+        val chapters = source.getChapterList(series)
+
+        assertEquals(
+            listOf(
+                "https://freewebnovel.com/novel/test-pagination?ajax=chapters&page=1&pageSize=200",
+                "https://freewebnovel.com/novel/test-pagination?ajax=chapters&page=2&pageSize=200",
+            ),
+            requestedUrls,
+        )
+        assertEquals(3, chapters.size)
+        assertEquals(listOf("Chapter 1: One", "Chapter 2: Two", "Chapter 3: Three"), chapters.map { it.name })
+    }
+
+    @Test
+    fun `getChapterList falls back to page html when ajax page 1 is malformed`() = runTest {
         val page1Html = """
             <html><body>
               <ul class="ul-list5" id="idData">
@@ -328,7 +373,6 @@ class FreeWebNovelTest {
               </ul>
             </body></html>
         """.trimIndent()
-        val page2Json = """{"code":200,"html":"<li><span class=\"glyphicon glyphicon-book right-5\"><\/span><a href=\"\/novel\/test-pagination\/chapter-2\" title=\"Chapter 2: Two (dup)\" class=\"con\">Chapter 2: Two (dup)<\/a><\/li><li><span class=\"glyphicon glyphicon-book right-5\"><\/span><a href=\"\/novel\/test-pagination\/chapter-3\" title=\"Chapter 3: Three\" class=\"con\">Chapter 3: Three<\/a><\/li>","page":2,"pageSize":40,"totalPage":2,"totalChapters":80}"""
 
         val requestedUrls = mutableListOf<String>()
         val series = Series(
@@ -341,8 +385,8 @@ class FreeWebNovelTest {
             mockHttpClient { request ->
                 requestedUrls += request.url.toString()
                 when {
-                    request.url.toString().contains("ajax=chapters") -> respond(
-                        content = page2Json,
+                    request.url.toString() == "https://freewebnovel.com/novel/test-pagination?ajax=chapters&page=1&pageSize=200" -> respond(
+                        content = "{}",
                         status = HttpStatusCode.OK,
                         headers = headersOf("Content-Type", "application/json; charset=UTF-8"),
                     )
@@ -355,20 +399,86 @@ class FreeWebNovelTest {
 
         assertEquals(
             listOf(
+                "https://freewebnovel.com/novel/test-pagination?ajax=chapters&page=1&pageSize=200",
                 "https://freewebnovel.com/novel/test-pagination",
-                "https://freewebnovel.com/novel/test-pagination?ajax=chapters&page=2&pageSize=40",
-                "https://freewebnovel.com/novel/test-pagination?ajax=chapters&page=3&pageSize=40",
             ),
             requestedUrls,
         )
-        assertEquals(3, chapters.size)
-        assertEquals("Chapter 1: One", chapters[0].name)
-        assertEquals(1f, chapters[0].number)
-        assertEquals("Chapter 2: Two", chapters[1].name)
-        assertEquals(2f, chapters[1].number)
-        assertEquals("Chapter 3: Three", chapters[2].name)
-        assertEquals(3f, chapters[2].number)
-        assertTrue(chapters[2].url.contains("/chapter-3"))
+        assertEquals(listOf("Chapter 1: One", "Chapter 2: Two"), chapters.map { it.name })
+    }
+
+    @Test
+    fun `getChapterList stops when optional ajax page is malformed`() = runTest {
+        val page1Json = """{"code":200,"html":"<li><span class=\"glyphicon glyphicon-book right-5\"><\/span><a href=\"\/novel\/test-pagination\/chapter-1\" title=\"Chapter 1: One\" class=\"con\">Chapter 1: One<\/a><\/li><li><span class=\"glyphicon glyphicon-book right-5\"><\/span><a href=\"\/novel\/test-pagination\/chapter-2\" title=\"Chapter 2: Two\" class=\"con\">Chapter 2: Two<\/a><\/li>","page":1,"pageSize":200,"totalPage":2,"totalChapters":3}"""
+
+        val requestedUrls = mutableListOf<String>()
+        val series = Series(
+            sourceId = computeSourceId("FreeWebNovel", "en", ContentType.NOVEL),
+            url = "https://freewebnovel.com/novel/test-pagination",
+            title = "Test Pagination",
+            type = ContentType.NOVEL,
+        )
+        val source = FreeWebNovel(
+            mockHttpClient { request ->
+                requestedUrls += request.url.toString()
+                when (request.url.toString()) {
+                    "https://freewebnovel.com/novel/test-pagination?ajax=chapters&page=1&pageSize=200" -> respond(
+                        content = page1Json,
+                        status = HttpStatusCode.OK,
+                        headers = headersOf("Content-Type", "application/json; charset=UTF-8"),
+                    )
+                    "https://freewebnovel.com/novel/test-pagination?ajax=chapters&page=2&pageSize=200" -> respond(
+                        content = "{}",
+                        status = HttpStatusCode.OK,
+                        headers = headersOf("Content-Type", "application/json; charset=UTF-8"),
+                    )
+                    else -> error("Unexpected request: ${request.url}")
+                }
+            }
+        )
+
+        val chapters = source.getChapterList(series)
+
+        assertEquals(
+            listOf(
+                "https://freewebnovel.com/novel/test-pagination?ajax=chapters&page=1&pageSize=200",
+                "https://freewebnovel.com/novel/test-pagination?ajax=chapters&page=2&pageSize=200",
+            ),
+            requestedUrls,
+        )
+        assertEquals(listOf("Chapter 1: One", "Chapter 2: Two"), chapters.map { it.name })
+    }
+
+    @Test
+    fun `getChapterList rethrows cancellation from optional ajax pages`() = runTest {
+        val page1Json = """{"code":200,"html":"<li><span class=\"glyphicon glyphicon-book right-5\"><\/span><a href=\"\/novel\/test-pagination\/chapter-1\" title=\"Chapter 1: One\" class=\"con\">Chapter 1: One<\/a><\/li>","page":1,"pageSize":200,"totalPage":2,"totalChapters":2}"""
+
+        val series = Series(
+            sourceId = computeSourceId("FreeWebNovel", "en", ContentType.NOVEL),
+            url = "https://freewebnovel.com/novel/test-pagination",
+            title = "Test Pagination",
+            type = ContentType.NOVEL,
+        )
+        val source = FreeWebNovel(
+            mockHttpClient { request ->
+                when (request.url.toString()) {
+                    "https://freewebnovel.com/novel/test-pagination?ajax=chapters&page=1&pageSize=200" -> respond(
+                        content = page1Json,
+                        status = HttpStatusCode.OK,
+                        headers = headersOf("Content-Type", "application/json; charset=UTF-8"),
+                    )
+                    "https://freewebnovel.com/novel/test-pagination?ajax=chapters&page=2&pageSize=200" -> throw CancellationException("cancelled")
+                    else -> error("Unexpected request: ${request.url}")
+                }
+            }
+        )
+
+        try {
+            source.getChapterList(series)
+            throw AssertionError("Expected CancellationException")
+        } catch (e: CancellationException) {
+            assertEquals("cancelled", e.message)
+        }
     }
 
     // =========================================================================

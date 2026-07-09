@@ -13,7 +13,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.statement.bodyAsText
+import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -227,46 +229,88 @@ class FreeWebNovel(
 
     @Serializable
     private data class ChapterListAjaxResponse(
-        val code: Int,
-        val html: String,
-        val page: Int,
-        val pageSize: Int,
-        val totalPage: Int,
-        val totalChapters: Int,
+        val code: Int = 0,
+        val html: String = "",
+        val page: Int = 0,
+        val pageSize: Int = 0,
+        val totalPage: Int = 0,
+        val totalChapters: Int = 0,
     )
 
     companion object {
         private val json = Json { ignoreUnknownKeys = true }
+        private const val chapterListAjaxPageSize = 200
     }
 
     override suspend fun getChapterList(series: Series): List<Chapter> {
-        val doc = fetchDoc(series.url)
-        val page1Chapters = doc.select(chapterListSelector()).map { chapterFromElement(it, series) }
-        val pageSize = 40
-        val allChapters = mutableListOf<Chapter>().apply { addAll(page1Chapters) }
-        // ponytail: url dedup is cheaper than full Chapter equality
-        val seenUrls = page1Chapters.mapTo(mutableSetOf()) { it.url }
+        val page1Ajax = fetchOptionalChapterListAjax(series.url, 1)
+        if (page1Ajax?.html?.isNotBlank() == true) {
+            return buildChapterListFromAjax(series, page1Ajax)
+        }
 
-        var page = 2
-        while (true) {
-            val ajaxUrl = "${series.url}?ajax=chapters&page=$page&pageSize=$pageSize"
-            val responseBody = client.get(ajaxUrl) {
-                header("X-Requested-With", "XMLHttpRequest")
-            }.bodyAsText()
-            val ajaxResponse = json.decodeFromString<ChapterListAjaxResponse>(responseBody)
+        val doc = fetchDoc(series.url)
+        return doc.select(chapterListSelector()).map { chapterFromElement(it, series) }
+    }
+
+    private suspend fun fetchChapterListAjax(seriesUrl: String, page: Int): ChapterListAjaxResponse? {
+        val ajaxUrl = "$seriesUrl?ajax=chapters&page=$page&pageSize=$chapterListAjaxPageSize"
+        val responseBody = client.get(ajaxUrl) {
+            header("X-Requested-With", "XMLHttpRequest")
+        }.bodyAsText()
+        return decodeChapterListAjaxResponse(responseBody)
+    }
+
+    private suspend fun buildChapterListFromAjax(series: Series, page1: ChapterListAjaxResponse): List<Chapter> {
+        val allChapters = mutableListOf<Chapter>()
+        // ponytail: url dedup is cheaper than full Chapter equality
+        val seenUrls = mutableSetOf<String>()
+
+        appendAjaxChapters(series, page1.html, allChapters, seenUrls)
+
+        for (page in 2..page1.totalPage.coerceAtLeast(1)) {
+            val ajaxResponse = fetchOptionalChapterListAjax(series.url, page)
+                ?: break
             if (ajaxResponse.html.isBlank()) break
-            val ajaxDoc = Jsoup.parse(ajaxResponse.html, series.url)
-            // ponytail: AJAX html fragment has bare <li> rows, no wrapping <ul id="idData">
-            val pageChapters = ajaxDoc.select("a.con[href*=\"/chapter-\"]")
-                .map { chapterFromElement(it, series) }
-                .filter { it.url !in seenUrls }
-            if (pageChapters.isEmpty()) break
-            pageChapters.forEach { seenUrls += it.url }
-            allChapters.addAll(pageChapters)
-            page++
+            val beforeCount = allChapters.size
+            appendAjaxChapters(series, ajaxResponse.html, allChapters, seenUrls)
+            if (allChapters.size == beforeCount) break
         }
 
         return allChapters
+    }
+
+    private suspend fun fetchOptionalChapterListAjax(
+        seriesUrl: String,
+        page: Int,
+    ): ChapterListAjaxResponse? = try {
+        fetchChapterListAjax(seriesUrl, page)
+    } catch (e: CancellationException) {
+        throw e
+    } catch (_: Exception) {
+        null
+    }
+
+    private fun appendAjaxChapters(
+        series: Series,
+        html: String,
+        allChapters: MutableList<Chapter>,
+        seenUrls: MutableSet<String>,
+    ) {
+        val ajaxDoc = Jsoup.parse(html, series.url)
+        // ponytail: AJAX html fragment has bare <li> rows, no wrapping <ul id="idData">
+        ajaxDoc.select("a.con[href*=\"/chapter-\"]")
+            .map { chapterFromElement(it, series) }
+            .filter { it.url !in seenUrls }
+            .forEach {
+                seenUrls += it.url
+                allChapters += it
+            }
+    }
+
+    private fun decodeChapterListAjaxResponse(body: String): ChapterListAjaxResponse? = try {
+        json.decodeFromString<ChapterListAjaxResponse>(body)
+    } catch (_: SerializationException) {
+        null
     }
 
     /** Extracts a [Chapter] from a chapter-list row. */
