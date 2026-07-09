@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
@@ -34,10 +35,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -172,11 +175,28 @@ fun BrowseContent(
                         }
                     }
                     else -> {
+                        val gridState = rememberLazyGridState()
+
+                        LaunchedEffect(gridState, state.hasNextPage, state.isLoading, state.series.size, state.currentPage) {
+                            if (!state.hasNextPage) return@LaunchedEffect
+
+                            snapshotFlow {
+                                val layoutInfo = gridState.layoutInfo
+                                val lastVisibleIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
+                                lastVisibleIndex to layoutInfo.totalItemsCount
+                            }.collect { (lastVisibleIndex, totalItemsCount) ->
+                                if (state.error == null && state.hasNextPage && !state.isLoading && totalItemsCount > 0 && lastVisibleIndex >= totalItemsCount - 2) {
+                                    onAction(BrowseAction.LoadMore)
+                                }
+                            }
+                        }
+
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(2),
                             contentPadding = PaddingValues(GridItemSpacing),
                             horizontalArrangement = Arrangement.spacedBy(GridItemSpacing),
                             verticalArrangement = Arrangement.spacedBy(GridItemSpacing),
+                            state = gridState,
                             modifier = Modifier.testTag("series_list"),
                         ) {
                             items(state.series, key = { "${it.sourceId}|${it.url}" }) { series ->

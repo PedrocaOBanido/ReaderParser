@@ -1,14 +1,21 @@
 package com.opus.readerparser.ui.browse
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToIndex
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.opus.readerparser.domain.model.ContentType
 import com.opus.readerparser.domain.model.Series
 import com.opus.readerparser.domain.model.SourceInfo
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -66,6 +73,47 @@ class BrowseContentTest {
             )
         }
         composeRule.onNodeWithText("Click Me").performClick()
-        assert(opened == series)
+        assertEquals(series, opened)
+    }
+
+    @Test
+    fun scrollToEnd_dispatchesLoadMoreAutomatically() {
+        val actions = mutableListOf<BrowseAction>()
+        val series = List(12) { index ->
+            Series(sourceId = 1L, url = "url$index", title = "Series $index", type = ContentType.MANHWA)
+        }
+
+        composeRule.setContent {
+            Box(modifier = Modifier.size(400.dp, 800.dp)) {
+                BrowseContent(
+                    state = BrowseUiState(series = series, hasNextPage = true),
+                    onAction = actions::add,
+                )
+            }
+        }
+
+        assertTrue(actions.none { it is BrowseAction.LoadMore })
+        composeRule.onNodeWithTag("series_list").performScrollToIndex(series.lastIndex)
+        composeRule.waitUntil(timeoutMillis = 5_000) {
+            actions.any { it is BrowseAction.LoadMore }
+        }
+        assertTrue(actions.any { it is BrowseAction.LoadMore })
+    }
+
+    @Test
+    fun manualLoadMoreButton_remainsClickable() {
+        var loadMoreClicked = false
+
+        composeRule.setContent {
+            BrowseContent(
+                state = BrowseUiState(series = listOf(
+                    Series(sourceId = 1L, url = "url1", title = "Series 1", type = ContentType.MANHWA),
+                ), hasNextPage = true, isLoading = true),
+                onAction = { if (it is BrowseAction.LoadMore) loadMoreClicked = true },
+            )
+        }
+
+        composeRule.onNodeWithText("Load more").assertIsDisplayed().performClick()
+        assertTrue(loadMoreClicked)
     }
 }
