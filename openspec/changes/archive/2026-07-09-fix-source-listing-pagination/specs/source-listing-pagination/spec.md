@@ -4,7 +4,7 @@
 
 ### Requirement: Browse results auto-load when scrolled to the end
 
-Browse results should automatically request the next page when the user scrolls to the end, while still supporting a manual Load more fallback.
+Browse results MUST automatically request the next page when the user scrolls to the end, while still supporting a manual Load more fallback.
 
 #### Scenario: browse auto-loads next page on end-of-list
 
@@ -15,7 +15,7 @@ Browse results should automatically request the next page when the user scrolls 
 
 ### Requirement: FreeWebNovel chapters are fully aggregated across paginated chapter lists
 
-FreeWebNovel chapter lists must collect all chapters even when the source paginates the chapter list internally.
+FreeWebNovel chapter lists MUST collect all chapters even when the source paginates the chapter list internally.
 
 #### Scenario: FreeWebNovel chapter list walks multiple pages
 
@@ -26,7 +26,7 @@ FreeWebNovel chapter lists must collect all chapters even when the source pagina
 
 ### Requirement: Supported source listings request and parse the requested page
 
-Source listings that are paged must build a page-specific request for each page number and parse the matching page content.
+Source listings that are paged MUST build a page-specific request for each page number and parse the matching page content.
 
 #### Scenario: FreeWebNovel latest uses page-specific requests
 
@@ -51,7 +51,7 @@ Source listings that are paged must build a page-specific request for each page 
 
 ### Requirement: Terminal pages disable next-page navigation
 
-When a listing has no further page, the source must report that no next page is available.
+When a listing has no further page, the source MUST report that no next page is available.
 
 #### Scenario: End-of-list pages return hasNextPage=false
 
@@ -62,7 +62,7 @@ When a listing has no further page, the source must report that no next page is 
 
 ### Requirement: Single-page listings remain single-page
 
-Listings that are documented or observed as single-page must not expose a next page.
+Listings that are documented or observed as single-page MUST not expose a next page.
 
 #### Scenario: FreeWebNovel popular remains single-page
 
