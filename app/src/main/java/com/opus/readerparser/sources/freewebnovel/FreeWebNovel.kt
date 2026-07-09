@@ -10,6 +10,12 @@ import com.opus.readerparser.domain.model.Series
 import com.opus.readerparser.domain.model.SeriesPage
 import com.opus.readerparser.domain.model.SeriesStatus
 import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.statement.bodyAsText
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
@@ -218,6 +224,50 @@ class FreeWebNovel(
      * Per-row dates are not available, so [Chapter.uploadDate] is `null`.
      */
     override fun chapterListSelector(): String = "ul#idData a.con[href*=\"/chapter-\"]"
+
+    @Serializable
+    private data class ChapterListAjaxResponse(
+        val code: Int,
+        val html: String,
+        val page: Int,
+        val pageSize: Int,
+        val totalPage: Int,
+        val totalChapters: Int,
+    )
+
+    companion object {
+        private val json = Json { ignoreUnknownKeys = true }
+    }
+
+    override suspend fun getChapterList(series: Series): List<Chapter> {
+        val doc = fetchDoc(series.url)
+        val page1Chapters = doc.select(chapterListSelector()).map { chapterFromElement(it, series) }
+        val pageSize = 40
+        val allChapters = mutableListOf<Chapter>().apply { addAll(page1Chapters) }
+        // ponytail: url dedup is cheaper than full Chapter equality
+        val seenUrls = page1Chapters.mapTo(mutableSetOf()) { it.url }
+
+        var page = 2
+        while (true) {
+            val ajaxUrl = "${series.url}?ajax=chapters&page=$page&pageSize=$pageSize"
+            val responseBody = client.get(ajaxUrl) {
+                header("X-Requested-With", "XMLHttpRequest")
+            }.bodyAsText()
+            val ajaxResponse = json.decodeFromString<ChapterListAjaxResponse>(responseBody)
+            if (ajaxResponse.html.isBlank()) break
+            val ajaxDoc = Jsoup.parse(ajaxResponse.html, series.url)
+            // ponytail: AJAX html fragment has bare <li> rows, no wrapping <ul id="idData">
+            val pageChapters = ajaxDoc.select("a.con[href*=\"/chapter-\"]")
+                .map { chapterFromElement(it, series) }
+                .filter { it.url !in seenUrls }
+            if (pageChapters.isEmpty()) break
+            pageChapters.forEach { seenUrls += it.url }
+            allChapters.addAll(pageChapters)
+            page++
+        }
+
+        return allChapters
+    }
 
     /** Extracts a [Chapter] from a chapter-list row. */
     override fun chapterFromElement(el: Element, series: Series): Chapter {

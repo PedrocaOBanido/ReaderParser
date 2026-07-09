@@ -9,9 +9,13 @@ import com.opus.readerparser.domain.model.SeriesStatus
 import com.opus.readerparser.testutil.mockHttpClient
 import com.opus.readerparser.testutil.readFixture
 import com.opus.readerparser.testutil.respondHtml
+import io.ktor.client.engine.mock.respond
 import kotlinx.coroutines.test.runTest
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.headersOf
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -128,14 +132,60 @@ class FreeWebNovelTest {
     }
 
     @Test
-    fun `getLatest page 2 parses series`() = runTest {
-        // Reuse the same fixture (page 2 structure is identical)
-        val html = readFixture("fixtures/freewebnovel/latest.html")
-        val source = freeWebNovel(html)
+    fun `getLatest page 1 and 2 request distinct urls and parse distinct content`() = runTest {
+        val page1Html = """
+            <html><body>
+              <div class="ul-list1 ul-list1-2 ss-custom">
+                <div class="li-row">
+                  <div class="li"><div class="con">
+                    <div class="pic"><a href="/novel/page-one"><img src="https://cdn.freewebnovel.com/page-one.jpg"/></a></div>
+                    <div class="txt"><h3 class="tit"><a href="/novel/page-one">Page One</a></h3></div>
+                  </div></div>
+                </div>
+              </div>
+              <div class="pages"><a href="/sort/latest-release/2">&gt;&gt;</a></div>
+            </body></html>
+        """.trimIndent()
+        val page2Html = """
+            <html><body>
+              <div class="ul-list1 ul-list1-2 ss-custom">
+                <div class="li-row">
+                  <div class="li"><div class="con">
+                    <div class="pic"><a href="/novel/page-two"><img src="https://cdn.freewebnovel.com/page-two.jpg"/></a></div>
+                    <div class="txt"><h3 class="tit"><a href="/novel/page-two">Page Two</a></h3></div>
+                  </div></div>
+                </div>
+              </div>
+            </body></html>
+        """.trimIndent()
 
-        val result = source.getLatest(2)
+        val requestedUrls = mutableListOf<String>()
+        val source = FreeWebNovel(
+            mockHttpClient { request ->
+                requestedUrls += request.url.toString()
+                when (request.url.toString()) {
+                    "https://freewebnovel.com/sort/latest-release" -> respondHtml(page1Html)
+                    "https://freewebnovel.com/sort/latest-release/2" -> respondHtml(page2Html)
+                    else -> error("Unexpected request: ${request.url}")
+                }
+            }
+        )
 
-        assertEquals(20, result.series.size)
+        val page1 = source.getLatest(1)
+        val page2 = source.getLatest(2)
+
+        assertEquals(
+            listOf(
+                "https://freewebnovel.com/sort/latest-release",
+                "https://freewebnovel.com/sort/latest-release/2",
+            ),
+            requestedUrls,
+        )
+        assertEquals("Page One", page1.series.single().title)
+        assertEquals("Page Two", page2.series.single().title)
+        assertNotEquals(page1.series.single().title, page2.series.single().title)
+        assertTrue(page1.hasNextPage)
+        assertFalse(page2.hasNextPage)
     }
 
     @Test
@@ -154,15 +204,30 @@ class FreeWebNovelTest {
     // =========================================================================
 
     @Test
-    fun `search parses results using same card structure as popular`() = runTest {
-        val html = readFixture("fixtures/freewebnovel/popular.html")
-        val source = freeWebNovel(html)
+    fun `search remains single-page across page 1 and page 2`() = runTest {
+        val html = readFixture("fixtures/freewebnovel/search.html")
+        val requestedUrls = mutableListOf<String>()
+        val source = FreeWebNovel(
+            mockHttpClient { request ->
+                requestedUrls += request.url.toString()
+                respondHtml(html)
+            }
+        )
 
-        val result = source.search("shadow", 1, FilterList())
+        val page1 = source.search("shadow", 1, FilterList())
+        val page2 = source.search("shadow", 2, FilterList())
 
-        assertEquals(50, result.series.size)
-        assertEquals("Invincible", result.series[0].title)
-        assertEquals(source.id, result.series[0].sourceId)
+        assertEquals(
+            listOf(
+                "https://freewebnovel.com/search?searchkey=shadow",
+                "https://freewebnovel.com/search?searchkey=shadow",
+            ),
+            requestedUrls,
+        )
+        assertTrue(page1.series.isNotEmpty())
+        assertEquals(page1.series.map { it.title }, page2.series.map { it.title })
+        assertFalse(page1.hasNextPage)
+        assertFalse(page2.hasNextPage)
     }
 
     // =========================================================================
@@ -251,6 +316,59 @@ class FreeWebNovelTest {
 
         // Middle chapter — should have null uploadDate (no dates in the list)
         assertNull(chapters[400].uploadDate)
+    }
+
+    @Test
+    fun `getChapterList fetches AJAX pages when total chapters exceed page size`() = runTest {
+        val page1Html = """
+            <html><body>
+              <ul class="ul-list5" id="idData">
+                <li><span class="glyphicon glyphicon-book right-5"></span><a href="/novel/test-pagination/chapter-1" title="Chapter 1: One" class="con">Chapter 1: One</a></li>
+                <li><span class="glyphicon glyphicon-book right-5"></span><a href="/novel/test-pagination/chapter-2" title="Chapter 2: Two" class="con">Chapter 2: Two</a></li>
+              </ul>
+            </body></html>
+        """.trimIndent()
+        val page2Json = """{"code":200,"html":"<li><span class=\"glyphicon glyphicon-book right-5\"><\/span><a href=\"\/novel\/test-pagination\/chapter-2\" title=\"Chapter 2: Two (dup)\" class=\"con\">Chapter 2: Two (dup)<\/a><\/li><li><span class=\"glyphicon glyphicon-book right-5\"><\/span><a href=\"\/novel\/test-pagination\/chapter-3\" title=\"Chapter 3: Three\" class=\"con\">Chapter 3: Three<\/a><\/li>","page":2,"pageSize":40,"totalPage":2,"totalChapters":80}"""
+
+        val requestedUrls = mutableListOf<String>()
+        val series = Series(
+            sourceId = computeSourceId("FreeWebNovel", "en", ContentType.NOVEL),
+            url = "https://freewebnovel.com/novel/test-pagination",
+            title = "Test Pagination",
+            type = ContentType.NOVEL,
+        )
+        val source = FreeWebNovel(
+            mockHttpClient { request ->
+                requestedUrls += request.url.toString()
+                when {
+                    request.url.toString().contains("ajax=chapters") -> respond(
+                        content = page2Json,
+                        status = HttpStatusCode.OK,
+                        headers = headersOf("Content-Type", "application/json; charset=UTF-8"),
+                    )
+                    else -> respondHtml(page1Html)
+                }
+            }
+        )
+
+        val chapters = source.getChapterList(series)
+
+        assertEquals(
+            listOf(
+                "https://freewebnovel.com/novel/test-pagination",
+                "https://freewebnovel.com/novel/test-pagination?ajax=chapters&page=2&pageSize=40",
+                "https://freewebnovel.com/novel/test-pagination?ajax=chapters&page=3&pageSize=40",
+            ),
+            requestedUrls,
+        )
+        assertEquals(3, chapters.size)
+        assertEquals("Chapter 1: One", chapters[0].name)
+        assertEquals(1f, chapters[0].number)
+        assertEquals("Chapter 2: Two", chapters[1].name)
+        assertEquals(2f, chapters[1].number)
+        assertEquals("Chapter 3: Three", chapters[2].name)
+        assertEquals(3f, chapters[2].number)
+        assertTrue(chapters[2].url.contains("/chapter-3"))
     }
 
     // =========================================================================
@@ -352,7 +470,17 @@ class FreeWebNovelTest {
     // =========================================================================
 
     private fun freeWebNovel(html: String): FreeWebNovel {
-        val client = mockHttpClient { respondHtml(html) }
+        val client = mockHttpClient { request ->
+            if (request.url.toString().contains("ajax=chapters")) {
+                respond(
+                    content = """{"code":200,"html":"","page":2,"pageSize":40,"totalPage":22,"totalChapters":876}""",
+                    status = HttpStatusCode.OK,
+                    headers = headersOf("Content-Type", "application/json; charset=UTF-8"),
+                )
+            } else {
+                respondHtml(html)
+            }
+        }
         return FreeWebNovel(client)
     }
 }
