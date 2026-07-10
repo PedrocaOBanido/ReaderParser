@@ -9,9 +9,7 @@ delegation/tool discipline.
 
 - Read `architecture.md` for layer rules, contracts, invariants, and
   architectural decisions.
-- Read `codemap.md` for current repository structure, entry points, and
   directory maps.
-- Read a folder's `codemap.md` for local implementation details inside that
   area.
 
 ## Non-negotiables
@@ -199,9 +197,7 @@ defines the full policy.
 - Read the nearest relevant `AGENTS.md` before broad exploration.
 - Read `architecture.md` when changing layers, contracts, invariants, or core
   data flow.
-- Read `codemap.md` when you need the current structure, entry points, or a
   repository-wide navigation map.
-- Read the nearest folder `codemap.md` before broad edits inside that area.
 - Do not load whole-repo docs by default.
 
 <!-- headroom:learn:start -->
