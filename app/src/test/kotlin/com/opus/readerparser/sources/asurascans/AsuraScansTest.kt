@@ -333,6 +333,39 @@ class AsuraScansTest {
         assertNotNull("Cover URL should be present", result.coverUrl)
     }
 
+    @Test
+    fun `getSeriesDetails prefers extracted detail title`() = runTest {
+        val source = asuraScans(readFixture("fixtures/asurascans/series_detail.html"))
+
+        val result = source.getSeriesDetails(
+            Series(source.id, "https://asurascans.com/comics/eternally-regressing-knight-b6e039fe", "Listing title", type = ContentType.MANHWA),
+        )
+
+        assertEquals("Eternally Regressing Knight", result.title)
+    }
+
+    @Test
+    fun `getSeriesDetails falls back to nonblank incoming title when detail title is blank`() = runTest {
+        val source = asuraScans("<html><body><article></article></body></html>")
+
+        val result = source.getSeriesDetails(
+            Series(source.id, "https://asurascans.com/comics/test", "Listing title", type = ContentType.MANHWA),
+        )
+
+        assertEquals("Listing title", result.title)
+    }
+
+    @Test
+    fun `getSeriesDetails does not use blank incoming title when detail title is blank`() = runTest {
+        val source = asuraScans("<html><body><article></article></body></html>")
+
+        val result = source.getSeriesDetails(
+            Series(source.id, "https://asurascans.com/comics/test", "   ", type = ContentType.MANHWA),
+        )
+
+        assertEquals("", result.title)
+    }
+
     // =========================================================================
     // getChapterList
     // =========================================================================

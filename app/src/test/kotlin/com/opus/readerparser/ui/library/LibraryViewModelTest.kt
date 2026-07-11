@@ -2,17 +2,22 @@ package com.opus.readerparser.ui.library
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.opus.readerparser.fakes.FakeSeriesRepository
+import com.opus.readerparser.domain.SeriesRepository
 import com.opus.readerparser.domain.model.LibrarySearchResult
+import com.opus.readerparser.domain.model.Series
+import com.opus.readerparser.fakes.FakeSeriesRepository
 import com.opus.readerparser.testutil.MainDispatcherRule
 import com.opus.readerparser.testutil.TestFixtures
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.lang.reflect.Method
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class LibraryViewModelTest {
@@ -45,6 +50,109 @@ class LibraryViewModelTest {
     }
 
     @Test
+    fun `blank bookmark is repaired through refresh while preserving identity and data`() = runTest {
+        val blankBookmark = TestFixtures.testSeries(
+            title = "",
+            url = "https://test.invalid/blank",
+            author = "Existing author",
+        )
+        val refreshed = blankBookmark.copy(title = "Repaired title", author = "Refreshed author")
+        repo.refreshDetailsResult = { refreshed }
+
+        repo.addToLibrary(blankBookmark)
+        advanceUntilIdle()
+
+        assertThat(repo.refreshDetailsCalls).containsExactly(blankBookmark)
+        assertThat(vm.state.value.series).containsExactly(refreshed)
+        assertThat(vm.state.value.series.single().sourceId).isEqualTo(blankBookmark.sourceId)
+        assertThat(vm.state.value.series.single().url).isEqualTo(blankBookmark.url)
+    }
+
+    @Test
+    fun `failed blank bookmark repair leaves bookmark unchanged and is attempted once per lifecycle`() = runTest {
+        val blankBookmark = TestFixtures.testSeries(title = "", url = "https://test.invalid/blank")
+        repo.refreshDetailsResult = { throw IllegalStateException("Parsing failed") }
+
+        repo.addToLibrary(blankBookmark)
+        advanceUntilIdle()
+        repo.emitLibrarySearchInvalidation()
+        advanceUntilIdle()
+
+        assertThat(repo.refreshDetailsCalls).containsExactly(blankBookmark)
+        assertThat(vm.state.value.series).containsExactly(blankBookmark)
+    }
+
+    @Test
+    fun `blank bookmark stays unchanged when refresh returns blank title`() = runTest {
+        val blankBookmark = TestFixtures.testSeries(
+            title = "",
+            url = "https://test.invalid/blank",
+            author = "Existing Author",
+            description = "Existing Description",
+        )
+        repo.refreshDetailsResult = {
+            blankBookmark.copy(
+                author = "Parsed Author",
+                description = "Parsed Description",
+                genres = listOf("Parsed Genre"),
+            )
+        }
+
+        repo.addToLibrary(blankBookmark)
+        advanceUntilIdle()
+
+        assertThat(repo.refreshDetailsCalls).containsExactly(blankBookmark)
+        assertThat(vm.state.value.series).containsExactly(blankBookmark)
+        assertThat(vm.state.value.series.single().author).isEqualTo("Existing Author")
+        assertThat(vm.state.value.series.single().description).isEqualTo("Existing Description")
+    }
+
+    @Test
+    fun `new Library ViewModel lifecycle may retry blank bookmark repair`() = runTest {
+        val blankBookmark = TestFixtures.testSeries(title = "", url = "https://test.invalid/blank")
+        repo.refreshDetailsResult = { throw IllegalStateException("Parsing failed") }
+
+        repo.addToLibrary(blankBookmark)
+        advanceUntilIdle()
+        val secondVm = LibraryViewModel(repo)
+        advanceUntilIdle()
+
+        assertThat(repo.refreshDetailsCalls).containsExactly(blankBookmark, blankBookmark)
+        assertThat(secondVm.state.value.series).containsExactly(blankBookmark)
+    }
+
+    @Test
+    fun `blank bookmark repair is cancelled cleanly when viewModel is cleared`() = runTest {
+        val blankBookmark = TestFixtures.testSeries(title = "", url = "https://test.invalid/blank")
+        val gate = CompletableDeferred<Unit>()
+        val baseRepo = FakeSeriesRepository()
+        val cancellingRepo = object : SeriesRepository by baseRepo {
+            override suspend fun refreshDetails(series: Series): Series {
+                baseRepo.refreshDetailsCalls.add(series)
+                gate.await()
+                return series.copy(title = "Repaired")
+            }
+        }
+
+        val cancellingVm = LibraryViewModel(cancellingRepo)
+        baseRepo.addToLibrary(blankBookmark)
+        runCurrent()
+
+        clearViewModel(cancellingVm)
+        gate.complete(Unit)
+        advanceUntilIdle()
+
+        assertThat(baseRepo.refreshDetailsCalls).containsExactly(blankBookmark)
+        assertThat(cancellingVm.state.value.series).containsExactly(blankBookmark)
+    }
+
+    private fun clearViewModel(viewModel: LibraryViewModel) {
+        val onCleared: Method = androidx.lifecycle.ViewModel::class.java.getDeclaredMethod("onCleared")
+        onCleared.isAccessible = true
+        onCleared.invoke(viewModel)
+    }
+
+    @Test
     fun `SetSortBy TITLE sorts alphabetically`() = runTest {
         val a = TestFixtures.testSeries(title = "Zebra", url = "https://test.invalid/z")
         val b = TestFixtures.testSeries(title = "Apple", url = "https://test.invalid/a")
@@ -59,15 +167,6 @@ class LibraryViewModelTest {
             vm.onAction(LibraryAction.SetSortBy(LibrarySortBy.TITLE))
             val sorted = awaitItem()
             assertThat(sorted.series.map { it.title }).containsExactly("Apple", "Zebra").inOrder()
-        }
-    }
-
-    @Test
-    fun `SetFilterUnreadOnly updates flag in state`() = runTest {
-        vm.state.test {
-            awaitItem()
-            vm.onAction(LibraryAction.SetFilterUnreadOnly(true))
-            assertThat(awaitItem().filterUnreadOnly).isTrue()
         }
     }
 

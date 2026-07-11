@@ -12,6 +12,7 @@ data class BrowseUiState(
     val series: List<Series> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
+    val retryAvailable: Boolean = false,
     val hasNextPage: Boolean = false,
     val currentPage: Int = 1,
     val searchQuery: String = "",
@@ -23,6 +24,7 @@ sealed interface BrowseAction {
     data object LoadMore : BrowseAction
     data class SetSearchQuery(val query: String) : BrowseAction
     data object Search : BrowseAction
+    data object Retry : BrowseAction
     data class OpenSeries(val series: Series) : BrowseAction
 }
 

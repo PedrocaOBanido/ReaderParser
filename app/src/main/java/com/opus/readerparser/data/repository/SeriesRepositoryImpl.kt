@@ -85,12 +85,17 @@ class SeriesRepositoryImpl @Inject constructor(
 
     override suspend fun refreshDetails(series: Series): Series {
         val updated = sourceRegistry[series.sourceId].getSeriesDetails(series)
-        saveSeries(updated)
+        if (updated.title.isNotBlank()) {
+            saveSeries(updated)
+        }
         return updated
     }
 
     override suspend fun addToLibrary(series: Series) {
         val toSave = if (series.title.isBlank()) refreshDetails(series) else series
+        if (toSave.title.isBlank() && seriesDao.getByUrl(toSave.sourceId, toSave.url) == null) {
+            seriesDao.insert(toSave.toEntity())
+        }
         seriesDao.addToLibrary(toSave.sourceId, toSave.url, System.currentTimeMillis())
     }
 

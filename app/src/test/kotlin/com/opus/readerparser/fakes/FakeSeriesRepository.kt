@@ -25,6 +25,9 @@ class FakeSeriesRepository : SeriesRepository {
     var popularResult: SeriesPage = SeriesPage(emptyList(), false)
     var latestResult: SeriesPage = SeriesPage(emptyList(), false)
     var searchResult: SeriesPage = SeriesPage(emptyList(), false)
+    var fetchPopularHandler: suspend (Long, Int) -> SeriesPage = { _, _ -> popularResult }
+    var fetchLatestHandler: suspend (Long, Int) -> SeriesPage = { _, _ -> latestResult }
+    var searchHandler: suspend (Long, String, Int, FilterList) -> SeriesPage = { _, _, _, _ -> searchResult }
     var searchLibraryResult: LibrarySearchResult = LibrarySearchResult.Success(emptyList())
     var searchLibraryHandler: suspend (String) -> LibrarySearchResult = { searchLibraryResult }
     var refreshDetailsResult: (Series) -> Series = { it }
@@ -54,12 +57,12 @@ class FakeSeriesRepository : SeriesRepository {
 
     override suspend fun fetchPopular(sourceId: Long, page: Int): SeriesPage {
         fetchPopularCalls.add(sourceId to page)
-        return popularResult
+        return fetchPopularHandler(sourceId, page)
     }
 
     override suspend fun fetchLatest(sourceId: Long, page: Int): SeriesPage {
         fetchLatestCalls.add(sourceId to page)
-        return latestResult
+        return fetchLatestHandler(sourceId, page)
     }
 
     override suspend fun search(
@@ -69,7 +72,7 @@ class FakeSeriesRepository : SeriesRepository {
         filters: FilterList,
     ): SeriesPage {
         searchCalls.add(SearchCall(sourceId, query, page, filters))
-        return searchResult
+        return searchHandler(sourceId, query, page, filters)
     }
 
     override suspend fun searchLibrary(query: String): LibrarySearchResult {
@@ -79,7 +82,13 @@ class FakeSeriesRepository : SeriesRepository {
 
     override suspend fun refreshDetails(series: Series): Series {
         refreshDetailsCalls.add(series)
-        return refreshDetailsResult(series)
+        return refreshDetailsResult(series).also { refreshed ->
+            if (refreshed.title.isNotBlank()) {
+                _library.value = _library.value.map { existing ->
+                    if (existing.sourceId == refreshed.sourceId && existing.url == refreshed.url) refreshed else existing
+                }
+            }
+        }
     }
 
     override suspend fun addToLibrary(series: Series) {

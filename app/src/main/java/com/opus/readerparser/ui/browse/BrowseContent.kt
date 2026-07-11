@@ -1,24 +1,21 @@
 package com.opus.readerparser.ui.browse
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -43,22 +40,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.ColorPainter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
 import com.opus.readerparser.domain.model.ContentType
 import com.opus.readerparser.domain.model.Series
 import com.opus.readerparser.domain.model.SourceInfo
+import com.opus.readerparser.ui.components.SeriesCatalogGrid
 import com.opus.readerparser.ui.theme.ReaderParserTheme
-
-private val GridContentPadding = PaddingValues(8.dp)
-private val GridItemSpacing = 8.dp
+import kotlinx.coroutines.flow.collect
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -98,7 +90,7 @@ fun BrowseContent(
                             .fillMaxWidth()
                             .menuAnchor(MenuAnchorType.PrimaryNotEditable),
                     )
-                    ExposedDropdownMenu(
+                    DropdownMenu(
                         expanded = sourceMenuExpanded,
                         onDismissRequest = { sourceMenuExpanded = false },
                     ) {
@@ -141,6 +133,8 @@ fun BrowseContent(
                         label = { Text("Search") },
                         modifier = Modifier.weight(1f),
                         singleLine = true,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                        keyboardActions = KeyboardActions(onSearch = { onAction(BrowseAction.Search) }),
                     )
                     IconButton(onClick = { onAction(BrowseAction.Search) }) {
                         Icon(Icons.Filled.Search, contentDescription = "Search")
@@ -169,8 +163,10 @@ fun BrowseContent(
                                 color = MaterialTheme.colorScheme.error,
                                 textAlign = TextAlign.Center,
                             )
-                            TextButton(onClick = { /* retry would re-trigger current mode */ }) {
-                                Text("Retry")
+                            if (state.retryAvailable) {
+                                TextButton(onClick = { onAction(BrowseAction.Retry) }) {
+                                    Text("Retry")
+                                }
                             }
                         }
                     }
@@ -191,30 +187,56 @@ fun BrowseContent(
                             }
                         }
 
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(2),
-                            contentPadding = PaddingValues(GridItemSpacing),
-                            horizontalArrangement = Arrangement.spacedBy(GridItemSpacing),
-                            verticalArrangement = Arrangement.spacedBy(GridItemSpacing),
-                            state = gridState,
-                            modifier = Modifier.testTag("series_list"),
+                        SeriesCatalogGrid(
+                            series = state.series,
+                            onSeriesClick = { series -> onAction(BrowseAction.OpenSeries(series)) },
+                            gridState = gridState,
                         ) {
-                            items(state.series, key = { "${it.sourceId}|${it.url}" }) { series ->
-                                BrowseSeriesCard(
-                                    series = series,
-                                    onClick = { onAction(BrowseAction.OpenSeries(series)) },
-                                )
-                            }
-                            if (state.hasNextPage) {
-                                item(span = { GridItemSpan(2) }) {
+                            if (state.isLoading && state.series.isNotEmpty()) {
+                                item(span = { GridItemSpan(maxLineSpan) }) {
                                     Box(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(16.dp),
                                         contentAlignment = Alignment.Center,
                                     ) {
-                                        Button(onClick = { onAction(BrowseAction.LoadMore) }) {
-                                            Text("Load more")
+                                        CircularProgressIndicator(
+                                            modifier = Modifier
+                                                .size(20.dp)
+                                                .testTag("pagination_loading"),
+                                            strokeWidth = 2.dp,
+                                        )
+                                    }
+                                }
+                            }
+                            if (state.error != null && state.retryAvailable) {
+                                item(span = { GridItemSpan(maxLineSpan) }) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp),
+                                        contentAlignment = Alignment.Center,
+                                    ) {
+                                        TextButton(onClick = { onAction(BrowseAction.Retry) }) {
+                                            Text("Retry")
+                                        }
+                                    }
+                                }
+                            }
+                            if (state.hasNextPage && (state.error == null || !state.retryAvailable)) {
+                                item(span = { GridItemSpan(maxLineSpan) }) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp),
+                                        contentAlignment = Alignment.Center,
+                                    ) {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Button(
+                                                onClick = { onAction(BrowseAction.LoadMore) },
+                                            ) {
+                                                Text("Load more")
+                                            }
                                         }
                                     }
                                 }
@@ -223,37 +245,6 @@ fun BrowseContent(
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun BrowseSeriesCard(
-    series: Series,
-    onClick: () -> Unit,
-) {
-    Card(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Column {
-            AsyncImage(
-                model = series.coverUrl,
-                contentDescription = series.title,
-                contentScale = ContentScale.Crop,
-                placeholder = ColorPainter(Color.LightGray),
-                error = ColorPainter(Color.Gray),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(2f / 3f),
-            )
-            Text(
-                text = series.title,
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(8.dp),
-            )
         }
     }
 }

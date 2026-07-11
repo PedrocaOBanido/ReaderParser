@@ -32,11 +32,29 @@ class LibraryViewModel @Inject constructor(
     private var allLibrarySeries: List<Series> = emptyList()
     private var searchGeneration: Long = 0
     private var searchJob: kotlinx.coroutines.Job? = null
+    private val attemptedRepairs = mutableSetOf<Pair<Long, String>>()
 
     init {
         viewModelScope.launch {
             seriesRepository.observeLibrary().collect { library ->
                 allLibrarySeries = library
+
+                // Repair blank bookmarked titles once per lifecycle
+                val blankBooks = library.filter { it.title.isBlank() }
+                for (blankBook in blankBooks) {
+                    val key = blankBook.sourceId to blankBook.url
+                    if (key !in attemptedRepairs) {
+                        attemptedRepairs.add(key)
+                        launch {
+                            try {
+                                seriesRepository.refreshDetails(blankBook)
+                            } catch (_: Exception) {
+                                // Swallow — bookmark stays unchanged; retry next lifecycle
+                            }
+                        }
+                    }
+                }
+
                 val currentQuery = _state.value.searchQuery.trim()
                 if (currentQuery.isBlank()) {
                     _state.update { current ->
@@ -76,14 +94,6 @@ class LibraryViewModel @Inject constructor(
                     current.series
                 }
                 current.copy(sortBy = action.sortBy, series = series)
-            }
-            is LibraryAction.SetFilterUnreadOnly -> _state.update { current ->
-                val series = if (current.searchQuery.isBlank()) {
-                    filterAndSort(allLibrarySeries, current.sortBy)
-                } else {
-                    current.series
-                }
-                current.copy(filterUnreadOnly = action.enabled, series = series)
             }
             is LibraryAction.SetSearchQuery -> handleSearchQuery(action.query)
         }
@@ -140,9 +150,8 @@ class LibraryViewModel @Inject constructor(
                         }
                     }
                 }
-            } catch (e: CancellationException) {
-                throw e
             } catch (e: Exception) {
+                if (e is CancellationException) throw e
                 if (requestId == searchGeneration) {
                     _state.update { current ->
                         current.copy(

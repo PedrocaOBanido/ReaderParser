@@ -14,6 +14,7 @@ import com.opus.readerparser.domain.model.FilterList
 import com.opus.readerparser.domain.model.LibrarySearchResult
 import com.opus.readerparser.domain.model.Series
 import com.opus.readerparser.domain.model.SeriesPage
+import com.opus.readerparser.domain.model.SeriesStatus
 import com.opus.readerparser.fakes.FakeSource
 import com.opus.readerparser.testutil.TestFixtures
 import android.content.ContentValues
@@ -531,6 +532,64 @@ class SeriesRepositoryImplTest {
         assertEquals(1000L, stored.addedAt)
     }
 
+    @Test
+    fun `refreshDetails repairs blank library title while preserving bookmark identity and data`() = runTest {
+        val blankBookmark = testSeries.copy(title = "", author = "Existing author")
+        val savedBookmark = blankBookmark.toEntity().copy(inLibrary = true, addedAt = 1000L)
+        fakeDao.upsert(savedBookmark)
+        fakeSource.seriesDetailsResult = {
+            testSeries.copy(title = "Repaired title", author = "Refreshed author")
+        }
+
+        repository.refreshDetails(blankBookmark)
+
+        val stored = fakeDao.getByUrl(blankBookmark.sourceId, blankBookmark.url)!!
+        assertEquals(blankBookmark.sourceId, stored.sourceId)
+        assertEquals(blankBookmark.url, stored.url)
+        assertEquals("Repaired title", stored.title)
+        assertEquals("Refreshed author", stored.author)
+        assertTrue(stored.inLibrary)
+        assertEquals(1000L, stored.addedAt)
+    }
+
+    @Test
+    fun `refreshDetails does not overwrite bookmark metadata when parsed title is blank`() = runTest {
+        val blankBookmark = testSeries.copy(title = "", author = "Existing Author")
+        val savedBookmark = blankBookmark.toEntity().copy(inLibrary = true, addedAt = 1000L)
+        fakeDao.upsert(savedBookmark)
+        val parsedSeries = blankBookmark.copy(
+            author = "Parsed Author",
+            artist = "Parsed Artist",
+            description = "Parsed description",
+            coverUrl = "https://test.invalid/cover.jpg",
+            genres = listOf("Parsed Genre"),
+            status = SeriesStatus.COMPLETED,
+        )
+        fakeSource.seriesDetailsResult = { parsedSeries }
+
+        val result = repository.refreshDetails(blankBookmark)
+
+        assertEquals(parsedSeries, result)
+        assertEquals(savedBookmark, fakeDao.getByUrl(blankBookmark.sourceId, blankBookmark.url))
+    }
+
+    @Test
+    fun `refreshDetails failure leaves blank library bookmark unchanged`() = runTest {
+        val blankBookmark = testSeries.copy(title = "", author = "Existing author")
+        val savedBookmark = blankBookmark.toEntity().copy(inLibrary = true, addedAt = 1000L)
+        fakeDao.upsert(savedBookmark)
+        fakeSource.seriesDetailsResult = { throw IllegalStateException("Parsing failed") }
+
+        try {
+            repository.refreshDetails(blankBookmark)
+            fail("Expected refresh failure")
+        } catch (expected: IllegalStateException) {
+            assertEquals("Parsing failed", expected.message)
+        }
+
+        assertEquals(savedBookmark, fakeDao.getByUrl(blankBookmark.sourceId, blankBookmark.url))
+    }
+
     // -----------------------------------------------------------------
     // addToLibrary
     // -----------------------------------------------------------------
@@ -577,6 +636,21 @@ class SeriesRepositoryImplTest {
 
         // Source should have been called with the stub
         assertEquals(listOf(stubSeries), fakeSource.getSeriesDetailsCalls)
+    }
+
+    @Test
+    fun `addToLibrary inserts blank title series when refresh cannot fix title`() = runTest {
+        val stubSeries = testSeries.copy(title = "", author = "Existing author")
+        val refreshed = stubSeries.copy(author = "Parsed author")
+        fakeSource.seriesDetailsResult = { refreshed }
+
+        repository.addToLibrary(stubSeries)
+
+        val stored = fakeDao.getByUrl(testSeries.sourceId, testSeries.url)
+        assertNotNull("expected blank-title series to be inserted", stored)
+        assertTrue(stored!!.inLibrary)
+        assertEquals("", stored.title)
+        assertEquals("Parsed author", stored.author)
     }
 
     @Test

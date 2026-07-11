@@ -193,8 +193,12 @@ class FreeWebNovel(
         )
         val status = parseDetailStatus(statusEl?.text()?.trim())
         val coverUrl = doc.selectFirst(".m-book1 .pic img")?.absUrl("src")
+        val extractedTitle = doc.selectFirst("h1.tit")?.text()?.trim().orEmpty()
+        val title = if (extractedTitle.isNotBlank()) extractedTitle
+                    else series.title.takeIf { it.isNotBlank() } ?: ""
 
         return series.copy(
+            title = title,
             author = author,
             description = description,
             genres = genres,

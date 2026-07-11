@@ -213,8 +213,12 @@ class AsuraScans(
         }
         val status = parseStatus(statusEl?.text()?.trim())
         val coverUrl = doc.selectFirst("#desktop-cover-container img")?.absUrl("src")
+        val extractedTitle = doc.selectFirst("article h1")?.text()?.trim().orEmpty()
+        val title = if (extractedTitle.isNotBlank()) extractedTitle
+                    else series.title.takeIf { it.isNotBlank() } ?: ""
 
         return series.copy(
+            title = title,
             author = author,
             artist = artist,
             description = description,

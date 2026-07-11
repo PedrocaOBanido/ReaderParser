@@ -264,6 +264,39 @@ class FreeWebNovelTest {
     }
 
     @Test
+    fun `getSeriesDetails prefers extracted detail title`() = runTest {
+        val source = freeWebNovel(readFixture("fixtures/freewebnovel/series.html"))
+
+        val result = source.getSeriesDetails(
+            Series(source.id, "https://freewebnovel.com/novel/advent-of-the-three-calamities", "Listing title", type = ContentType.NOVEL),
+        )
+
+        assertEquals("Advent of the Three Calamities", result.title)
+    }
+
+    @Test
+    fun `getSeriesDetails falls back to nonblank incoming title when detail title is blank`() = runTest {
+        val source = freeWebNovel("<html><body><div class=\"m-desc\"></div></body></html>")
+
+        val result = source.getSeriesDetails(
+            Series(source.id, "https://freewebnovel.com/novel/test", "Listing title", type = ContentType.NOVEL),
+        )
+
+        assertEquals("Listing title", result.title)
+    }
+
+    @Test
+    fun `getSeriesDetails does not use blank incoming title when detail title is blank`() = runTest {
+        val source = freeWebNovel("<html><body><div class=\"m-desc\"></div></body></html>")
+
+        val result = source.getSeriesDetails(
+            Series(source.id, "https://freewebnovel.com/novel/test", "   ", type = ContentType.NOVEL),
+        )
+
+        assertEquals("", result.title)
+    }
+
+    @Test
     fun `getSeriesDetails returns COMPLETED status from completed series page`() = runTest {
         val html = readFixture("fixtures/freewebnovel/series_completed.html")
         val source = freeWebNovel(html)
