@@ -34,5 +34,5 @@
 ## 6. Final verification
 
 - [x] 6.1 Run the targeted source parser, Library repository/ViewModel, Browse ViewModel, and Compose UI tests added or updated for this change.
-- [ ] 6.2 Run `./gradlew :app:testDebugUnitTest`.
-- [ ] 6.3 Run `./gradlew :app:assembleDebug`.
+- [x] 6.2 Run `./gradlew :app:testDebugUnitTest`.
+- [x] 6.3 Run `./gradlew :app:assembleDebug`.
