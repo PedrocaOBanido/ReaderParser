@@ -1,28 +1,39 @@
-## Requirements
+## Purpose
 
+Defines how downloaded chapters are served to readers, including cache-first loading, download state awareness, and fallback to network when local content is unavailable.
+## Requirements
 ### Requirement: Readers prefer local content
 
-Both the novel reader and the manhwa reader SHALL check `DownloadStore` for a
-locally cached copy of the chapter before fetching from the network. If a local
-copy exists, it SHALL be returned immediately without a network call.
+The unified Reader SHALL check `DownloadStore` for a locally cached copy of the chapter before fetching from the network, regardless of whether the route content type is NOVEL or MANHWA. If a local copy exists and matches the route content type, it SHALL be returned immediately without a network call. A non-null downloaded payload with the wrong `ChapterContent` variant SHALL be treated as invalid for that route and SHALL trigger one forced network fetch that bypasses the downloaded payload.
 
-#### Scenario: Novel reader serves cached chapter
-- **WHEN** the novel reader loads a chapter that has been previously downloaded
-- **THEN** `DownloadStore.read(chapter)` is called
-- **AND** if it returns non-null `ChapterContent.Text`, that content is
-  displayed without any network request
+#### Scenario: Reader serves cached novel chapter
 
-#### Scenario: Manhwa reader serves cached chapter
-- **WHEN** the manhwa reader loads a chapter that has been previously downloaded
-- **THEN** `DownloadStore.read(chapter)` is called
-- **AND** if it returns non-null `ChapterContent.Pages`, those pages are
-  displayed without any network request
+- **WHEN** Reader loads a NOVEL chapter that has been previously downloaded
+- **THEN** `DownloadStore.read(chapter)` SHALL be called
+- **AND** if it returns matching `ChapterContent.Text`, that content SHALL be displayed without a network request
 
-#### Scenario: Fallback to network when not downloaded
-- **WHEN** a reader loads a chapter and `DownloadStore.read(chapter)` returns
-  null
-- **THEN** the reader SHALL fall back to fetching content from the source via
-  `chapterRepository.getContent(chapter)`
+#### Scenario: Reader serves cached manhwa chapter
+
+- **WHEN** Reader loads a MANHWA chapter that has been previously downloaded
+- **THEN** `DownloadStore.read(chapter)` SHALL be called
+- **AND** if it returns matching `ChapterContent.Pages`, those pages SHALL be displayed without a network request
+
+#### Scenario: Reader falls back to network when not downloaded
+
+- **WHEN** Reader loads a chapter and `DownloadStore.read(chapter)` returns null
+- **THEN** Reader SHALL fall back to fetching content through `chapterRepository.getContent(chapter)`
+
+#### Scenario: Downloaded content variant mismatches the route
+
+- **WHEN** `DownloadStore.read(chapter)` returns a non-null content variant that does not match the Reader route content type
+- **THEN** Reader SHALL NOT display the downloaded payload
+- **AND** it SHALL perform one forced network fetch for that chapter
+
+#### Scenario: Forced response remains mismatched
+
+- **WHEN** the forced network fetch also returns a content variant that does not match the Reader route content type
+- **THEN** Reader SHALL expose a retryable unexpected-content error
+- **AND** it SHALL NOT loop forced network requests automatically
 
 ### Requirement: Downloaded indicator on chapters
 
@@ -45,3 +56,4 @@ chapter list or the Downloads screen.
 - **THEN** the chapter's files are removed from `DownloadStore`
 - **AND** the chapter's `downloaded` flag is set to false
 - **AND** the item is removed from the download queue
+

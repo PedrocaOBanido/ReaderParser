@@ -51,7 +51,7 @@ Ktor + Jsoup to fetch and parse remote content.
 - **Data orchestration:** `data/repository/` is the only layer allowed to coordinate `SourceRegistry` and local storage.
 - **Plugin model:** site integrations live under `sources/`, usually extending `HtmlSource`.
 - **Persistence split:** Room stores structured metadata/progress, DataStore stores app settings, filesystem stores downloaded chapter payloads.
-- **Reader split:** novel and manhwa readers are distinct feature folders and distinct navigation targets.
+- **Unified reader:** one Reader screen in `ui/reader/` renders both text and image content through dedicated renderers.
 - **Identity rule:** series and chapters are identified by `(sourceId, url)` across layers.
 
 ## Primary Runtime Flow
@@ -94,14 +94,12 @@ Ktor + Jsoup to fetch and parse remote content.
 | `app/src/main/java/com/opus/readerparser/domain/model/` | This is the **pure-Kotlin domain model** layer. | [View Map](app/src/main/java/com/opus/readerparser/domain/model/codemap.md) |
 | `app/src/main/java/com/opus/readerparser/sources/` | This directory holds all **source plugin implementations** — one subdirectory per supported site (e.g., `asurascans/`). | [View Map](app/src/main/java/com/opus/readerparser/sources/codemap.md) |
 | `app/src/main/java/com/opus/readerparser/sources/asurascans/` | Provides the source plugin for **Asura Scans** — a manhwa scanlation aggregation site (`https://asurascans.com/`). | [View Map](app/src/main/java/com/opus/readerparser/sources/asurascans/codemap.md) |
-| `app/src/main/java/com/opus/readerparser/ui/` | Houses all Jetpack Compose UI code: seven screens, shared components, navigation graph, and Material 3 theme. | [View Map](app/src/main/java/com/opus/readerparser/ui/codemap.md) |
+| `app/src/main/java/com/opus/readerparser/ui/` | Houses all Jetpack Compose UI code: six screens, shared components, navigation graph, and Material 3 theme. | [View Map](app/src/main/java/com/opus/readerparser/ui/codemap.md) |
 | `app/src/main/java/com/opus/readerparser/ui/browse/` | Provides a source-picker and browse/search interface for discovering series across all registered sources. | [View Map](app/src/main/java/com/opus/readerparser/ui/browse/codemap.md) |
 | `app/src/main/java/com/opus/readerparser/ui/downloads/` | Manages the download queue screen — displays queued, running, completed, and failed chapter downloads, and allows the user to cancel running/queued items or retry failed ones. | [View Map](app/src/main/java/com/opus/readerparser/ui/downloads/codemap.md) |
 | `app/src/main/java/com/opus/readerparser/ui/library/` | Displays the user's saved series library and provides local sort/filter controls. | [View Map](app/src/main/java/com/opus/readerparser/ui/library/codemap.md) |
 | `app/src/main/java/com/opus/readerparser/ui/navigation/` | Defines all app routes and the single compose-navigation graph. | [View Map](app/src/main/java/com/opus/readerparser/ui/navigation/codemap.md) |
-| `app/src/main/java/com/opus/readerparser/ui/reader/` | Orchestrates the two distinct reader screens — novel (text) and manhwa (image pages). | [View Map](app/src/main/java/com/opus/readerparser/ui/reader/codemap.md) |
-| `app/src/main/java/com/opus/readerparser/ui/reader/manhwa/` | The manhwa (manga) reader screen — renders chapter image pages in a `HorizontalPager` with previous/next chapter navigation, tracks reading progress as the current page index, and auto-marks the chapter read when the last page is reached. | [View Map](app/src/main/java/com/opus/readerparser/ui/reader/manhwa/codemap.md) |
-| `app/src/main/java/com/opus/readerparser/ui/reader/novel/` | The novel reader screen — renders sanitized chapter HTML inside a WebView with custom CSS theming, tracks reading progress via scroll position, and enables chapter-to-chapter navigation (previous/next) within the same series. | [View Map](app/src/main/java/com/opus/readerparser/ui/reader/novel/codemap.md) |
+| `app/src/main/java/com/opus/readerparser/ui/reader/` | Unified Reader screen — renders both text and image content through dedicated renderers with shared immersive controls. | [View Map](app/src/main/java/com/opus/readerparser/ui/reader/codemap.md) |
 | `app/src/main/java/com/opus/readerparser/ui/series/` | Displays full series details (cover, title, author, status, description, genre) and its chapter list with read/downloaded state. | [View Map](app/src/main/java/com/opus/readerparser/ui/series/codemap.md) |
 | `app/src/main/java/com/opus/readerparser/ui/settings/` | Manages the app-wide settings screen — lets the user configure theme (system / light / dark), novel reader font size and font family, and manhwa reader layout (paged LTR / paged RTL / webtoon) and zoom (fit width / fit height / original). | [View Map](app/src/main/java/com/opus/readerparser/ui/settings/codemap.md) |
 | `app/src/main/java/com/opus/readerparser/ui/theme/` | Defines the app's visual identity: Material 3 colour palette, typography, and the top-level composable that wires them into `MaterialTheme`. | [View Map](app/src/main/java/com/opus/readerparser/ui/theme/codemap.md) |

@@ -14,8 +14,8 @@ ReaderParser has three core architectural goals:
 
 1. keep site-specific scraping isolated behind a stable plugin boundary
 2. keep domain contracts Android-free and easy to test on the JVM
-3. keep novel and manhwa reading flows separate where their UX and data shapes
-   genuinely differ
+3. keep novel and manhwa reading experiences distinct where their content
+   shapes genuinely differ, while sharing one Reader screen and control layout
 
 The repository is currently a single Android module, but the architectural
 boundaries below still apply even when code lives in one Gradle module.
@@ -35,8 +35,9 @@ jobs, and Hilt for DI.
   Room, Compose, and Ktor types.
 - **Explicit ownership:** repositories coordinate remote and local data; source
   plugins fetch and parse remote content; UI renders state and forwards actions.
-- **Separate reader experiences:** novel and manhwa readers remain separate
-  screens and separate implementations.
+- **Unified reader with content-specific renderers:** one Reader screen
+  renders both text and image content through dedicated renderers while
+  sharing immersive controls.
 
 ## 3. Layer model and dependency rules
 
@@ -70,7 +71,7 @@ The following rules are stable across refactors and file moves.
 - Series and chapters are identified by `(sourceId, url)` across layers.
 - `sourceId` must be stable and deterministic because it participates in
   persistence identity.
-- Novel and manhwa readers stay separate screens.
+- One Reader screen with content-specific renderers for text and image pages.
 - Downloads stay in app-private storage under `context.filesDir`.
 - No `runBlocking` in production code.
 
@@ -151,18 +152,20 @@ Ownership rules:
 8. WorkManager workers reuse the same repository/source/storage graph outside
    the UI lifecycle.
 
-Reader navigation branches on content type once, then stays separate:
+Reader navigation opens one Reader destination with an explicit content type.
+The screen branches once on `ChapterContent` to select the renderer:
 
-- `ChapterContent.Text` flows into the novel reader.
-- `ChapterContent.Pages` flows into the manhwa reader.
+- `ChapterContent.Text` uses the JavaScript-disabled WebView renderer.
+- `ChapterContent.Pages` uses the vertical image-page renderer.
 
 ## 8. Key architectural decisions and trade-offs
 
-### Separate novel and manhwa readers
+### Unified reader with content-specific renderers
 
-This avoids a leaky “universal reader” abstraction. The two content types differ
-in rendering, progress tracking, and interaction patterns, so separate screens
-are the default design.
+One Reader screen shares immersive controls, navigation, and state management
+while keeping text and image rendering as private composables selected by
+`ChapterContent`. This eliminates duplicated navigation, effects, and control
+logic without introducing a polymorphic renderer abstraction.
 
 ### Repositories own orchestration
 

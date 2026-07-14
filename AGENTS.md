@@ -19,7 +19,7 @@ delegation/tool discipline.
 1. Domain code has **zero** Android, Room, Compose, or Ktor dependencies.
 2. Ktor calls live only inside `Source` implementations or repositories.
 3. ViewModels never reference `SourceRegistry` or concrete `Source`s.
-4. Novel and manhwa readers stay separate screens.
+4. One Reader screen with content-specific renderers for text and image pages.
 5. `ChapterContent` stays a sealed interface with exactly `Text(html)` and
    `Pages(imageUrls)`.
 6. Domain models are immutable `data class`es.
