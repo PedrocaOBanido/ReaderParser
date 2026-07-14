@@ -23,8 +23,7 @@ import androidx.navigation.navArgument
 import com.opus.readerparser.ui.browse.BrowseScreen
 import com.opus.readerparser.ui.downloads.DownloadsScreen
 import com.opus.readerparser.ui.library.LibraryScreen
-import com.opus.readerparser.ui.reader.manhwa.MangaReaderScreen
-import com.opus.readerparser.ui.reader.novel.NovelReaderScreen
+import com.opus.readerparser.ui.reader.ReaderScreen
 import com.opus.readerparser.ui.series.SeriesScreen
 import com.opus.readerparser.ui.settings.SettingsScreen
 
@@ -130,49 +129,29 @@ fun AppNavGraph(onNavGraphReady: (NavController) -> Unit = {}) {
                 ),
             ) {
                 SeriesScreen(
-                    onNavigateToNovelReader = { sourceId, seriesUrl, chapterUrl ->
-                        navController.navigate(Destinations.novelReader(sourceId, seriesUrl, chapterUrl))
-                    },
-                    onNavigateToMangaReader = { sourceId, seriesUrl, chapterUrl ->
-                        navController.navigate(Destinations.mangaReader(sourceId, seriesUrl, chapterUrl))
+                    onNavigateToReader = { sourceId, seriesUrl, chapterUrl, contentType ->
+                        navController.navigate(Destinations.reader(sourceId, seriesUrl, chapterUrl, contentType))
                     },
                     onBack = { navController.popBackStack() },
                 )
             }
             composable(
-                route = Destinations.NOVEL_READER,
+                route = Destinations.READER,
                 arguments = listOf(
                     navArgument("sourceId") { type = NavType.LongType },
                     navArgument("seriesUrl") { type = NavType.StringType },
                     navArgument("chapterUrl") { type = NavType.StringType },
+                    navArgument("contentType") { type = NavType.StringType },
                 ),
-            ) {
-                NovelReaderScreen(
+            ) { backStackEntry ->
+                ReaderScreen(
                     onBack = { navController.popBackStack() },
                     onNavigateToChapter = { chapter ->
+                        val contentType = backStackEntry.arguments?.getString("contentType") ?: "NOVEL"
                         navController.navigate(
-                            Destinations.novelReader(chapter.sourceId, chapter.seriesUrl, chapter.url)
+                            Destinations.reader(chapter.sourceId, chapter.seriesUrl, chapter.url, contentType)
                         ) {
-                            popUpTo(Destinations.NOVEL_READER) { inclusive = true }
-                        }
-                    },
-                )
-            }
-            composable(
-                route = Destinations.MANGA_READER,
-                arguments = listOf(
-                    navArgument("sourceId") { type = NavType.LongType },
-                    navArgument("seriesUrl") { type = NavType.StringType },
-                    navArgument("chapterUrl") { type = NavType.StringType },
-                ),
-            ) {
-                MangaReaderScreen(
-                    onBack = { navController.popBackStack() },
-                    onNavigateToChapter = { chapter ->
-                        navController.navigate(
-                            Destinations.mangaReader(chapter.sourceId, chapter.seriesUrl, chapter.url)
-                        ) {
-                            popUpTo(Destinations.MANGA_READER) { inclusive = true }
+                            popUpTo(Destinations.READER) { inclusive = true }
                         }
                     },
                 )

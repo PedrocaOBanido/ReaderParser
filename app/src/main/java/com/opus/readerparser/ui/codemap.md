@@ -49,9 +49,8 @@ Every ViewModel follows:
 |---|---|---|
 | Library | `ui/library/` | Grid of saved series. Filter (unread), sort (default/title), settings gear. |
 | Browse | `ui/browse/` | Source-picker → popular/latest/search within a source. |
-| Series | `ui/series/` | Series detail + chapter list. Dispatches to novel or manga reader based on `ContentType`. |
-| NovelReader | `ui/reader/novel/` | Vertical text reader for novels (ChapterContent.Text). |
-| MangaReader | `ui/reader/manhwa/` | Pager/webtoon image reader for manhwa (ChapterContent.Pages). |
+| Series | `ui/series/` | Series detail + chapter list. Dispatches to the unified Reader based on `ContentType`. |
+| Reader | `ui/reader/` | Unified reader for both content types — text via WebView, images via LazyColumn. |
 | Downloads | `ui/downloads/` | Download queue with progress and retry. |
 | Settings | `ui/settings/` | App-wide preferences: theme, reader defaults. |
 
@@ -75,9 +74,8 @@ ViewModel.onAction → _effects.send(Effect.NavigateToReader(chapter))
 ```
 
 The `SeriesScreen` is the dispatch point: when a chapter is opened, its
-`SeriesEffect` carries both the `Chapter` and `ContentType`. The `LaunchedEffect`
-block branches on `ContentType.NOVEL` vs `MANHWA` to call the correct
-navigation callback.
+`SeriesEffect` carries both the `Chapter` and `ContentType`. The effect
+passes the content type to the single Reader navigation destination.
 
 ## Integration
 

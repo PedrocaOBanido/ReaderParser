@@ -14,7 +14,7 @@ import org.junit.runners.model.Statement
  * so items rendered via Coil's `AsyncImage` have a known non-zero size.
  *
  * Use [imageLoader] with `AsyncImage(…, imageLoader = …)` or pass to
- * [MangaReaderContent].
+ * [ReaderContent].
  *
  * Usage:
  * ```

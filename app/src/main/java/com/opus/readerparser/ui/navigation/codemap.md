@@ -15,11 +15,11 @@ A single `object Destinations` contains:
   `NavType` arguments. Six routes total:
   - `LIBRARY`, `BROWSE`, `DOWNLOADS`, `SETTINGS` — top-level, no arguments.
   - `SERIES` — requires `sourceId: Long` and `seriesUrl: String`.
-  - `NOVEL_READER` / `MANGA_READER` — require `sourceId`, `seriesUrl`, `chapterUrl`.
-- **Builder functions** — `series()`, `novelReader()`, `mangaReader()` that
-  produce concrete route strings with `Uri.encode()` applied to URL parameters
-  (URLs may contain slashes, query strings, and other characters unsafe in
-  route templates).
+  - `READER` — requires `sourceId`, `seriesUrl`, `chapterUrl`, `contentType`.
+- **Builder functions** — `series()` and `reader()` that produce concrete
+  route strings with `Uri.encode()` applied to URL parameters (URLs may
+  contain slashes, query strings, and other characters unsafe in route
+  templates).
 
 Route templates vs builder output:
 ```
@@ -41,18 +41,16 @@ wrapper). Contains:
 3. **`Scaffold` with conditional `NavigationBar`** — the bottom bar is rendered
    only when `currentRoute in bottomNavRoutes` (i.e., hidden on Series, reader,
    and Settings screens).
-4. **`NavHost`** — start destination is `LIBRARY`. Seven `composable()`
+4. **`NavHost`** — start destination is `LIBRARY`. Six `composable()`
    entries, one per route.
 
 ### Route dispatch for content type
 
-The app has two reader routes (`NOVEL_READER` and `MANGA_READER`) rather than a
-single parameterised route. This keeps route definitions simple and avoids
-parsing `ContentType` inside NavGraph argument blocks. The decision is made at
-navigation time inside `SeriesScreen`: when the effect fires, the
-`LaunchedEffect` block checks `effect.type` and calls either
-`onNavigateToNovelReader` or `onNavigateToMangaReader`. Navigation callbacks are
-typed lambda parameters of the `SeriesScreen` composable.
+The app has one reader route (`READER`) that carries `contentType` as a string
+parameter. `SeriesScreen` passes the content type from its `SeriesEffect` to
+the single `onNavigateToReader` callback. The Reader ViewModel reads the
+content type from `SavedStateHandle` and uses it to validate loaded content
+and select the appropriate renderer.
 
 ### Screen callback contract
 
@@ -70,11 +68,11 @@ composable(Destinations.LIBRARY) {
     )
 }
 
-// Reader screens get chapter-to-chapter navigation with popUpTo
-NovelReaderScreen(
+// Reader screen gets chapter-to-chapter navigation with popUpTo
+ReaderScreen(
     onNavigateToChapter = { chapter ->
-        navController.navigate(Destinations.novelReader(...)) {
-            popUpTo(Destinations.NOVEL_READER) { inclusive = true }
+        navController.navigate(Destinations.reader(...)) {
+            popUpTo(Destinations.READER) { inclusive = true }
         }
     },
 )
@@ -95,10 +93,9 @@ Activity.onCreate
       → NavHost(startDestination = LIBRARY)
         → LibraryScreen(onNavigateToSeries = { navController.navigate(...) })
           → User taps series → effect triggers callback → navController.navigate
-            → SeriesScreen(onNavigateToNovelReader = ..., onNavigateToMangaReader = ...)
-              → User taps chapter → effect branches on ContentType
-                → NOVEL  → navController.navigate(NOVEL_READER)
-                → MANHWA → navController.navigate(MANGA_READER)
+            → SeriesScreen(onNavigateToReader = ...)
+              → User taps chapter → effect passes content type
+                → navController.navigate(READER with contentType)
 ```
 
 Back navigation: reader and series screens accept `onBack: () -> Unit` which

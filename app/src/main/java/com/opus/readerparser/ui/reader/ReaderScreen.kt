@@ -1,4 +1,4 @@
-package com.opus.readerparser.ui.reader.novel
+package com.opus.readerparser.ui.reader
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.SnackbarHostState
@@ -16,10 +16,10 @@ import com.opus.readerparser.ui.components.ReaderChapterListSheet
 import kotlinx.coroutines.launch
 
 @Composable
-fun NovelReaderScreen(
+fun ReaderScreen(
     onBack: () -> Unit,
     onNavigateToChapter: (Chapter) -> Unit = {},
-    viewModel: NovelReaderViewModel = hiltViewModel(),
+    viewModel: ReaderViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val isDarkTheme = isSystemInDarkTheme()
@@ -29,22 +29,23 @@ fun NovelReaderScreen(
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
-                is NovelReaderEffect.NavigateToChapter -> onNavigateToChapter(effect.chapter)
-                is NovelReaderEffect.ShowChapterList -> showChapterList = true
-                is NovelReaderEffect.ShowError -> {
+                is ReaderEffect.NavigateToChapter -> onNavigateToChapter(effect.chapter)
+                is ReaderEffect.ShowChapterList -> showChapterList = true
+                is ReaderEffect.ShowError -> {
                     launch { snackbarHostState.showSnackbar(effect.message) }
                 }
-                is NovelReaderEffect.ShowSnackbar -> {
+                is ReaderEffect.ShowSnackbar -> {
                     launch { snackbarHostState.showSnackbar(effect.message) }
                 }
             }
         }
     }
 
-    NovelReaderContent(
+    ReaderContent(
         state = state,
         isDarkTheme = isDarkTheme,
         onAction = viewModel::onAction,
+        onBack = onBack,
         snackbarHostState = snackbarHostState,
     )
 
@@ -54,7 +55,7 @@ fun NovelReaderScreen(
             currentChapterUrl = state.chapter?.url,
             onChapterSelected = { chapter ->
                 showChapterList = false
-                viewModel.onAction(NovelReaderAction.SelectChapter(chapter))
+                viewModel.onAction(ReaderAction.SelectChapter(chapter))
             },
             onDismissRequest = { showChapterList = false },
         )

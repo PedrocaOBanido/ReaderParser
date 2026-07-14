@@ -7,13 +7,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.opus.readerparser.domain.model.ContentType
 import kotlinx.coroutines.launch
 
 @Composable
 fun SeriesScreen(
-    onNavigateToNovelReader: (sourceId: Long, seriesUrl: String, chapterUrl: String) -> Unit,
-    onNavigateToMangaReader: (sourceId: Long, seriesUrl: String, chapterUrl: String) -> Unit,
+    onNavigateToReader: (sourceId: Long, seriesUrl: String, chapterUrl: String, contentType: String) -> Unit,
     onBack: () -> Unit,
     viewModel: SeriesViewModel = hiltViewModel(),
 ) {
@@ -25,18 +23,12 @@ fun SeriesScreen(
             when (effect) {
                 is SeriesEffect.NavigateToReader -> {
                     val chapter = effect.chapter
-                    when (effect.type) {
-                        ContentType.NOVEL -> onNavigateToNovelReader(
-                            chapter.sourceId,
-                            chapter.seriesUrl,
-                            chapter.url,
-                        )
-                        ContentType.MANHWA -> onNavigateToMangaReader(
-                            chapter.sourceId,
-                            chapter.seriesUrl,
-                            chapter.url,
-                        )
-                    }
+                    onNavigateToReader(
+                        chapter.sourceId,
+                        chapter.seriesUrl,
+                        chapter.url,
+                        effect.type.name,
+                    )
                 }
                 is SeriesEffect.ShowError -> {
                     launch { snackbarHostState.showSnackbar(effect.message) }
