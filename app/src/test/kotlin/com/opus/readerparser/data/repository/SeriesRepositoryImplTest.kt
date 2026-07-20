@@ -160,9 +160,7 @@ class SeriesRepositoryImplTest {
         override fun query(
             uri: Uri,
             projection: Array<String>?,
-            selection: String?,
-            selectionArgs: Array<String>?,
-            sortOrder: String?,
+            queryArgs: Bundle?,
         ): Cursor? = null
         override fun bulkInsert(uri: Uri, values: Array<ContentValues>): Int = values.size
         override fun delete(uri: Uri, where: String?, selectionArgs: Array<String?>?): Int = 0

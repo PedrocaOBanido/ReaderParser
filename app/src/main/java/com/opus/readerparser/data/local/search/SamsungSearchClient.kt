@@ -100,9 +100,10 @@ open class SamsungSearchClient @Inject constructor(
             val cursor = delegate.query(
                 SCHEMA_URI,
                 SEARCH_PROJECTION,
-                SEARCH_SELECTION,
-                arrayOf("%$trimmedQuery%", "%$trimmedQuery%", "%$trimmedQuery%"),
-                null,
+                Bundle().apply {
+                    putString("query-json", QUERY_JSON)
+                    putStringArray("query-json-args", arrayOf(trimmedQuery))
+                },
             )
             if (cursor == null) {
                 SamsungSearchQueryResult.Failure("Samsung Search query returned null cursor")
@@ -155,7 +156,7 @@ open class SamsungSearchClient @Inject constructor(
         private const val COLUMN_ID = "_id"
         private const val COLUMN_TITLE = "title"
         private const val COLUMN_SOURCE_URL = "source_url"
-        private const val SEARCH_SELECTION = "title LIKE ? OR author LIKE ? OR genres LIKE ?"
+        private const val QUERY_JSON = "{\"query\":{\"text\":\"$0\",\"match\":{\"fields\":[\"title\",\"author\",\"genres\"],\"term_operator\":\"and\"}}}"
         private val SEARCH_PROJECTION = arrayOf(COLUMN_ID, COLUMN_TITLE, COLUMN_SOURCE_URL)
 
         /**
@@ -185,7 +186,7 @@ open class SamsungSearchClient @Inject constructor(
 interface SearchProviderDelegate {
     fun getType(uri: Uri): String?
     fun call(authority: Uri, method: String, arg: String?, extras: Bundle?): Bundle?
-    fun query(uri: Uri, projection: Array<String>?, selection: String?, selectionArgs: Array<String>?, sortOrder: String?): Cursor?
+    fun query(uri: Uri, projection: Array<String>?, queryArgs: Bundle?): Cursor?
     fun bulkInsert(uri: Uri, values: Array<ContentValues>): Int
     fun delete(uri: Uri, where: String?, selectionArgs: Array<String?>?): Int
 }
@@ -205,10 +206,8 @@ class ContentResolverDelegate(
     override fun query(
         uri: Uri,
         projection: Array<String>?,
-        selection: String?,
-        selectionArgs: Array<String>?,
-        sortOrder: String?,
-    ): Cursor? = resolver.query(uri, projection, selection, selectionArgs, sortOrder)
+        queryArgs: Bundle?,
+    ): Cursor? = resolver.query(uri, projection, queryArgs, null)
 
     override fun bulkInsert(uri: Uri, values: Array<ContentValues>): Int =
         resolver.bulkInsert(uri, values)

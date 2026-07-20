@@ -273,8 +273,9 @@ class SamsungSearchClientQueryTest {
                     assertEquals("Alpha", result.hits[0].title)
                     assertEquals("readerparser://series/1/https%3A%2F%2Fa", result.hits[0].sourceUrl)
                     assertEquals(SamsungSearchClient.SCHEMA_URI, fake.lastQueryUri)
-                    assertEquals("title LIKE ? OR author LIKE ? OR genres LIKE ?", fake.lastQuerySelection)
-                    assertEquals("%alpha%", fake.lastQuerySelectionArgs?.get(0))
+                    assertEquals(arrayOf("_id", "title", "source_url").toList(), fake.lastQueryProjection?.toList())
+                    assertEquals("{\"query\":{\"text\":\"$0\",\"match\":{\"fields\":[\"title\",\"author\",\"genres\"],\"term_operator\":\"and\"}}}", fake.lastQueryArgs?.getString("query-json"))
+                     assertEquals(listOf("alpha"), fake.lastQueryArgs?.getStringArray("query-json-args")?.toList())
                 }
                 is SamsungSearchQueryResult.Failure -> throw AssertionError("Expected success")
             }
@@ -393,9 +394,9 @@ internal class FakeSearchProviderDelegate(
         private set
     var lastQueryUri: Uri? = null
         private set
-    var lastQuerySelection: String? = null
+    var lastQueryProjection: Array<String>? = null
         private set
-    var lastQuerySelectionArgs: Array<String>? = null
+    var lastQueryArgs: Bundle? = null
         private set
     var queryCount = 0
         private set
@@ -421,15 +422,13 @@ internal class FakeSearchProviderDelegate(
     override fun query(
         uri: Uri,
         projection: Array<String>?,
-        selection: String?,
-        selectionArgs: Array<String>?,
-        sortOrder: String?,
+        queryArgs: Bundle?,
     ): Cursor? {
         queryException?.let { throw it }
         queryCount++
         lastQueryUri = uri
-        lastQuerySelection = selection
-        lastQuerySelectionArgs = selectionArgs
+        lastQueryProjection = projection
+        lastQueryArgs = queryArgs
         return queryResult
     }
 
